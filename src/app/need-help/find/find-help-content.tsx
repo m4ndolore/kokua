@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { ISLANDS, HUB_CATEGORIES } from '@/lib/types'
 import type { DonationLink, HelpHub, PublicNeedSummary } from '@/lib/types'
 import { ShareButton } from '@/components/share-button'
@@ -104,35 +104,30 @@ export function FindHelpContent({
   const filteredSummaries = summaries.filter(s => !islandFilter || s.island === islandFilter)
   const filteredDonations = donations.filter(d => !islandFilter || !d.island || d.island === islandFilter)
 
-  const filteredHubs = useMemo(() => {
-    let result = hubs
-      .filter(h => !islandFilter || h.island === islandFilter)
-      .filter(h => !categoryFilter || h.category === categoryFilter)
-      .filter(h => !statusFilter || h.status === statusFilter)
+  const baseHubs = hubs
+    .filter(h => !islandFilter || h.island === islandFilter)
+    .filter(h => !categoryFilter || h.category === categoryFilter)
+    .filter(h => !statusFilter || h.status === statusFilter)
 
-    if (sortBy === 'status') {
-      const order: Record<string, number> = { Open: 0, Limited: 1, Unknown: 2, Closed: 3 }
-      result = [...result].sort((a, b) => (order[a.status] ?? 9) - (order[b.status] ?? 9))
-    } else if (sortBy === 'recent') {
-      result = [...result].sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
-    } else {
-      result = [...result].sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name))
-    }
-    return result
-  }, [hubs, islandFilter, categoryFilter, statusFilter, sortBy])
+  const statusOrder: Record<string, number> = { Open: 0, Limited: 1, Unknown: 2, Closed: 3 }
+  const filteredHubs = sortBy === 'status'
+    ? baseHubs.slice().sort((a, b) => (statusOrder[a.status] ?? 9) - (statusOrder[b.status] ?? 9))
+    : sortBy === 'recent'
+      ? baseHubs.slice().sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+      : baseHubs.slice().sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name))
 
   const openHubs = filteredHubs.filter(h => h.status !== 'Closed')
-  const activeCategories = useMemo(() => {
-    const cats = new Map<string, number>()
-    hubs.filter(h => !islandFilter || h.island === islandFilter).forEach(h => cats.set(h.category, (cats.get(h.category) ?? 0) + 1))
-    return cats
-  }, [hubs, islandFilter])
+  const activeCategories = new Map<string, number>()
+  hubs.filter(h => !islandFilter || h.island === islandFilter).forEach(h => activeCategories.set(h.category, (activeCategories.get(h.category) ?? 0) + 1))
 
   return (
     <div className="py-4 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold text-ocean-900 mb-1">Find Help Near You</h1>
       <p className="text-sm text-gray-500 mb-4">
         Resources verified by volunteer coordinators. Call ahead when possible.
+      </p>
+      <p className="text-sm text-ocean-700 mb-5">
+        Prefer a map view? <a href="/map" className="underline hover:text-ocean-900">Open the resource map</a>.
       </p>
 
       {/* Filters */}

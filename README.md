@@ -41,7 +41,7 @@ Single source of truth:
 cp .dev.vars.example .dev.vars
 ```
 
-Secrets: `SUPABASE_SECRET_API_KEY`, `DASHBOARD_PASSWORD`, `DASHBOARD_SESSION_SECRET`
+Secrets: `SUPABASE_SECRET_API_KEY`, `DASHBOARD_PASSWORD`, `DASHBOARD_SESSION_SECRET`, `DASHBOARD_BOOTSTRAP_EMAIL` (optional — auto-creates admin user on first login)
 
 ### 4. Run
 
@@ -60,6 +60,7 @@ Non-secrets live in [`config/profiles`](/Users/m4ndolore/Dev/kokua/config/profil
   - `SUPABASE_SECRET_API_KEY`
   - `DASHBOARD_PASSWORD`
   - `DASHBOARD_SESSION_SECRET`
+  - `DASHBOARD_BOOTSTRAP_EMAIL` (optional — if set, this email auto-creates as admin on first login)
 
 Local Worker secrets are documented in [`.dev.vars.example`](/Users/m4ndolore/Dev/kokua/.dev.vars.example).
 

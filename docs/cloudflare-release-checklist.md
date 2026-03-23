@@ -39,8 +39,8 @@ env DASHBOARD_PASSWORD=... DASHBOARD_SESSION_SECRET=... SUPABASE_SECRET_API_KEY=
 1. Load `/` and verify the main decision page renders.
 2. Load `/need-help/find` and confirm public hubs and summaries resolve from Supabase.
 3. Submit a test item on `/feedback` and verify it lands in `review_queue_items`.
-4. Sign in at `/dashboard/login` with the shared password and verify the dashboard loads.
-5. Sign in at `/dashboard/login` with `email:password` for an active dashboard user and verify role attribution still works.
+4. Sign in at `/dashboard/login` with email + shared password and verify the dashboard loads.
+5. Verify the signed-in user name and role display correctly in the dashboard header.
 6. Change a request status in the dashboard and verify the database row updates.
 7. Sign out and verify `/dashboard` redirects back to `/dashboard/login`.
 

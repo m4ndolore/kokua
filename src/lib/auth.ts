@@ -130,19 +130,38 @@ export async function setDashboardAuth(email: string, password: string): Promise
   if (!email || !password) return false
   if (password !== sharedPassword) return false
 
+  const normalizedEmail = email.trim().toLowerCase()
+  const bootstrapEmail = process.env.DASHBOARD_BOOTSTRAP_EMAIL?.trim().toLowerCase() || null
+
   const supabase = getServiceClient()
   const { data } = await supabase
     .from('dashboard_users')
     .select('*')
-    .eq('email', email)
+    .eq('email', normalizedEmail)
     .eq('is_active', true)
     .single()
 
-  if (!data) return false
+  if (!data) {
+    if (bootstrapEmail && normalizedEmail === bootstrapEmail) {
+      const { data: upserted, error } = await supabase
+        .from('dashboard_users')
+        .upsert({
+          email: normalizedEmail,
+          name: 'Admin',
+          role: 'admin',
+          is_active: true,
+        }, { onConflict: 'email' })
+        .select('*')
+        .single()
+
+      if (error || !upserted) return false
+      return setDashboardCookie(upserted as DashboardUser)
+    }
+
+    return false
+  }
 
   return setDashboardCookie(data as DashboardUser)
-
-  return false
 }
 
 export function hasRole(session: AuthSession, ...roles: Role[]): boolean {

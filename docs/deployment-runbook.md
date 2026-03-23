@@ -25,6 +25,10 @@ Expected: `dashboard_users`, `donation_links`, `help_hubs`, `help_offers`, `help
 
 ### Create initial admin user
 
+Option A (recommended): Set `DASHBOARD_BOOTSTRAP_EMAIL` as a Worker secret. The first login with that email auto-creates an admin user.
+
+Option B (manual):
+
 ```sql
 INSERT INTO dashboard_users (email, name, role)
 VALUES ('your-admin@example.com', 'Admin', 'admin');
@@ -51,6 +55,7 @@ Both values are from Supabase Dashboard > Settings > API.
 echo '<supabase-secret-api-key>' | npx wrangler secret put SUPABASE_SECRET_API_KEY
 echo '<strong-password>'  | npx wrangler secret put DASHBOARD_PASSWORD
 echo '<random-32-chars>'  | npx wrangler secret put DASHBOARD_SESSION_SECRET
+echo '<admin-email>'      | npx wrangler secret put DASHBOARD_BOOTSTRAP_EMAIL  # optional
 ```
 
 Generate `DASHBOARD_SESSION_SECRET` with:
@@ -112,9 +117,9 @@ After deploy, verify each in a browser:
 | Submit request | `/need-help/request` | Form submits, shows confirmation |
 | Submit offer | `/can-help/offer` | Form submits, shows confirmation |
 | Feedback form | `/feedback` | Form submits, shows confirmation |
-| Dashboard login | `/dashboard/login` | Password prompt renders |
+| Dashboard login | `/dashboard/login` | Email + password form renders |
 | Dashboard auth | `/dashboard` | Redirects to login if not authed |
-| Dashboard access | Login with `email:password` | Board loads with tabs |
+| Dashboard access | Login with email + shared password | Board loads with tabs |
 | Logout | Click "Sign out" | Redirected to login, cookie cleared |
 | QR redirects | `/help` | Redirects to `/need-help` |
 

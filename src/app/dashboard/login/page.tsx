@@ -29,7 +29,7 @@ export default function DashboardLogin() {
           Volunteer Dashboard
         </h1>
         <p className="text-sm text-gray-500 text-center mb-6">
-          Enter the shared password, or <code className="text-xs">email:password</code> to attribute actions to a dashboard user.
+          Sign in using your dashboard email and the shared password.
         </p>
 
         {state.error && (
@@ -40,6 +40,19 @@ export default function DashboardLogin() {
 
         <form action={formAction} className="space-y-4">
           <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              autoFocus
+              className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400"
+            />
+          </div>
+          <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
@@ -48,7 +61,6 @@ export default function DashboardLogin() {
               name="password"
               type="password"
               required
-              autoFocus
               className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400"
             />
           </div>

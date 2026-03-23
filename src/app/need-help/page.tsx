@@ -37,6 +37,12 @@ export default function NeedHelp() {
         </a>
       </div>
 
+      <p className="text-center mt-6">
+        <a href="/can-help/share-info" className="text-sm text-gray-500 hover:text-ocean-700 underline">
+          Know a resource that could help others? Contribute it →
+        </a>
+      </p>
+
       <p className="text-xs text-gray-400 text-center mt-6">
         Your personal information is never shown publicly.
       </p>

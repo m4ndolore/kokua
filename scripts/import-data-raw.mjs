@@ -66,6 +66,19 @@ function normalizeNeedUrgency(urgency) {
   return NEED_URGENCY_MAP[urgency] || 'Normal'
 }
 
+function normalizeRecommendedAction(action) {
+  switch ((action || '').toLowerCase()) {
+    case 'volunteer':
+      return 'Direct users to current volunteer opportunities.'
+    case 'check_updates':
+      return 'Keep public copy brief and direct users to the source for the latest updates.'
+    case 'go_to_hub':
+      return 'Prefer linking users to the primary organization page or resource hub.'
+    default:
+      return action || null
+  }
+}
+
 function normalizeTextArray(value) {
   if (Array.isArray(value)) return value.filter(Boolean)
   return []
@@ -226,7 +239,7 @@ async function ensureHub(supabase, hub) {
     category: normalizeHubCategory(hub.resource_type),
     status: normalizeHubStatus(hub.status),
     hours: hub.hours || null,
-    notes: joinNotes(hub.description, hub.notes),
+    notes: hub.description || null,
     public_phone: hub.public_phone || null,
     public_email: hub.public_email || null,
     address: hub.address || null,
@@ -236,6 +249,7 @@ async function ensureHub(supabase, hub) {
     confidence: hub.confidence || 'medium',
     last_verified_at: hub.last_verified_at || new Date().toISOString(),
     visibility_status: normalizeVisibility(hub),
+    coordinator_notes: hub.notes || null,
     updated_at: new Date().toISOString(),
   }
 
@@ -274,7 +288,7 @@ async function ensureSummary(supabase, summary) {
     island,
     area,
     title: summary.title,
-    description: joinNotes(summary.description, summary.recommended_action ? `Recommended action: ${summary.recommended_action}` : null),
+    description: summary.description,
     category: normalizeNeedCategory(summary.category),
     urgency: normalizeNeedUrgency(summary.urgency),
     source_name: summary.source_name || null,
@@ -283,6 +297,7 @@ async function ensureSummary(supabase, summary) {
     confidence: summary.confidence || 'medium',
     last_verified_at: summary.last_verified_at || new Date().toISOString(),
     visibility_status: normalizeVisibility(summary),
+    coordinator_notes: normalizeRecommendedAction(summary.recommended_action),
     updated_at: new Date().toISOString(),
   }
 

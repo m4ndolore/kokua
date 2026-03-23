@@ -11,6 +11,8 @@ import {
   approveDonation, hideDonation, updateDonationFlags,
   logoutAction,
   createGitHubIssue,
+  createDashboardUser,
+  toggleUserActive,
 } from '@/lib/dashboard-actions'
 import {
   ISLANDS, REQUEST_STATUSES, OFFER_STATUSES, VOLUNTEER_STATUSES,
@@ -27,7 +29,7 @@ import type {
 // Shared utilities
 // ============================================================
 
-type Tab = 'requests' | 'offers' | 'volunteers' | 'hubs' | 'summaries' | 'review' | 'signals' | 'sources' | 'donations'
+type Tab = 'requests' | 'offers' | 'volunteers' | 'hubs' | 'summaries' | 'review' | 'signals' | 'sources' | 'donations' | 'users'
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime()
@@ -171,6 +173,7 @@ export function DashboardContent({
   const [reviewItems, setReviewItems] = useState(initialReview)
   const [signals, setSignals] = useState(initialSignals)
   const [sources, setSources] = useState(initialSources)
+  const [dashboardUsers, setDashboardUsers] = useState(users)
   const [donations, setDonations] = useState(initialDonations)
   const [islandFilter, setIslandFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
@@ -195,6 +198,7 @@ export function DashboardContent({
     { key: 'signals', label: 'Signals', count: pendingSignalCount || undefined },
     { key: 'donations', label: 'Donations', count: donations.length },
     { key: 'sources', label: 'Sources', count: sources.length, adminOnly: true },
+    { key: 'users', label: 'Users', count: dashboardUsers.length, adminOnly: true },
   ]
 
   const visibleTabs = tabs.filter(t => !t.adminOnly || isAdminRole)
@@ -292,6 +296,61 @@ export function DashboardContent({
           </select>
         )}
       </div>
+
+      {/* ============ USERS (admin only) ============ */}
+      {tab === 'users' && isAdminRole && (
+        <div className="space-y-3">
+          <div className="bg-white border border-ocean-100 rounded-lg p-4">
+            <div className="text-sm font-medium mb-2">Add a dashboard user</div>
+            <form action={async (formData: FormData) => {
+              const created = await createDashboardUser(formData)
+              if (created) {
+                setDashboardUsers(p => [created as unknown as DashboardUser, ...p])
+              }
+            }} className="grid grid-cols-1 md:grid-cols-3 gap-2">
+              <input name="email" type="email" required placeholder="email@domain"
+                className="text-xs border border-gray-300 rounded-lg px-2 py-2 bg-white" />
+              <input name="name" type="text" required placeholder="Name"
+                className="text-xs border border-gray-300 rounded-lg px-2 py-2 bg-white" />
+              <select name="role" required defaultValue="coordinator"
+                className="text-xs border border-gray-300 rounded-lg px-2 py-2 bg-white">
+                <option value="coordinator">coordinator</option>
+                <option value="admin">admin</option>
+              </select>
+              <div className="md:col-span-3">
+                <button type="submit"
+                  className="text-xs px-3 py-2 bg-ocean-600 text-white rounded hover:bg-ocean-700 transition-colors">
+                  Create user
+                </button>
+              </div>
+            </form>
+            <p className="text-xs text-gray-400 mt-2">
+              Users sign in at <span className="font-mono">/dashboard/login</span> with their email and the shared password.
+            </p>
+          </div>
+
+          <CardList empty="No dashboard users.">
+            {dashboardUsers.map(u => (
+              <div key={u.id} className="bg-white border border-ocean-100 rounded-lg p-4">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <div className="text-sm font-medium">{u.name}</div>
+                    <div className="text-xs text-gray-500">{u.email}</div>
+                    <div className="text-xs text-gray-400">Role: {u.role}</div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ActiveToggle isActive={u.is_active}
+                      onToggle={val => {
+                        setDashboardUsers(p => p.map(x => x.id === u.id ? { ...x, is_active: val } : x))
+                        toggleUserActive(u.id, val)
+                      }} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </CardList>
+        </div>
+      )}
 
       {/* ============ REQUESTS ============ */}
       {tab === 'requests' && (

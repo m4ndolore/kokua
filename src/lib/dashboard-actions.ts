@@ -17,11 +17,12 @@ export async function loginAction(
   _prev: FormState,
   formData: FormData
 ): Promise<FormState> {
-  const password = formData.get('password') as string
-  if (!password) return { success: false, error: 'Please enter a password.' }
+  const email = (formData.get('email') as string | null)?.trim() ?? ''
+  const password = (formData.get('password') as string | null) ?? ''
+  if (!email || !password) return { success: false, error: 'Please enter your email and password.' }
 
-  const valid = await setDashboardAuth(password)
-  if (!valid) return { success: false, error: 'Incorrect password.' }
+  const valid = await setDashboardAuth(email, password)
+  if (!valid) return { success: false, error: 'Invalid login.' }
 
   redirect('/dashboard')
 }
@@ -344,13 +345,13 @@ export async function updateDonationTrustScore(id: string, trustScore: number) {
 export async function createDashboardUser(formData: FormData) {
   await requireAdminAccess()
   const supabase = getServiceClient()
-  const { error } = await supabase.from('dashboard_users').insert({
+  const { data, error } = await supabase.from('dashboard_users').insert({
     email: formData.get('email') as string,
     name: formData.get('name') as string,
     role: formData.get('role') as string,
-  })
-  if (error) { console.error('Failed to create dashboard user:', error); return false }
-  return true
+  }).select('*').single()
+  if (error) { console.error('Failed to create dashboard user:', error); return null }
+  return data
 }
 
 export async function toggleUserActive(id: string, isActive: boolean) {

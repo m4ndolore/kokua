@@ -31,6 +31,12 @@ export default function Home() {
         >
           Donate &amp; Support
         </a>
+        <a
+          href="/can-help/share-info"
+          className="block text-center text-sm text-ocean-700 hover:text-ocean-900 underline"
+        >
+          Contribute: Share a resource →
+        </a>
       </div>
 
       {/* How it works */}

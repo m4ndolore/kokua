@@ -3,6 +3,19 @@ import type { DonationLink, PublicNeedSummary } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 
+function truncateText(text: string, maxLength = 160) {
+  if (text.length <= maxLength) return text
+  return `${text.slice(0, maxLength).trimEnd()}...`
+}
+
+function sourceHost(url: string) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '')
+  } catch {
+    return url
+  }
+}
+
 export default async function CanHelp() {
   const summariesRes = await supabase?.from('public_need_summaries')
     .select('*')
@@ -48,7 +61,19 @@ export default async function CanHelp() {
                     <span className="text-xs text-ocean-600">{s.category}</span>
                   </div>
                   <h3 className="font-medium text-sm text-gray-900">{s.title}</h3>
-                  <p className="text-sm text-gray-600 mt-0.5">{s.description}</p>
+                  <p className="text-sm text-gray-600 mt-0.5">{truncateText(s.description)}</p>
+                  {s.source_url && (
+                    <div className="mt-2">
+                      <a
+                        href={s.source_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center rounded-md border border-ocean-200 px-3 py-1.5 text-xs font-medium text-ocean-700 hover:bg-ocean-50 transition-colors"
+                      >
+                        {s.source_name ? `Read source: ${s.source_name}` : `Read source: ${sourceHost(s.source_url)}`} ↗
+                      </a>
+                    </div>
+                  )}
                 </div>
               )
             })}
@@ -68,8 +93,16 @@ export default async function CanHelp() {
                   <div>
                     <h3 className="font-medium text-sm text-gray-900">{d.title}</h3>
                     {d.organization && <p className="text-xs text-gray-500">{d.organization}</p>}
+                    {d.description && <p className="text-xs text-gray-600 mt-1">{truncateText(d.description, 120)}</p>}
                   </div>
-                  <span className="shrink-0 text-xs text-earth-600">Donate →</span>
+                  <span className="shrink-0 text-xs text-earth-600">Donate ↗</span>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {d.source_url && (
+                    <span className="text-[11px] text-gray-500">
+                      Listed from {d.source_name || sourceHost(d.source_url)}
+                    </span>
+                  )}
                 </div>
               </a>
             ))}

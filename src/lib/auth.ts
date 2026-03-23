@@ -81,17 +81,6 @@ function verifySessionToken(token: string): DashboardUser | null {
   }
 }
 
-function createLegacyAdminUser(): DashboardUser {
-  return {
-    id: 'legacy',
-    created_at: '',
-    email: 'admin@local',
-    name: 'Admin',
-    role: 'admin',
-    is_active: true,
-  }
-}
-
 async function setDashboardCookie(user: DashboardUser) {
   const token = createSessionToken(user)
   if (!token) return false
@@ -117,10 +106,6 @@ export async function verifyDashboardAuth(): Promise<AuthSession> {
     return { authenticated: false, user: null }
   }
 
-  if (user.id === 'legacy') {
-    return { authenticated: true, user }
-  }
-
   try {
     const supabase = getServiceClient()
     const { data } = await supabase
@@ -138,35 +123,24 @@ export async function verifyDashboardAuth(): Promise<AuthSession> {
   }
 }
 
-export async function setDashboardAuth(password: string): Promise<boolean> {
+export async function setDashboardAuth(email: string, password: string): Promise<boolean> {
   const sharedPassword = getSharedPassword()
   if (!sharedPassword) return false
 
-  // Check legacy single password
-  if (password === sharedPassword) {
-    return setDashboardCookie(createLegacyAdminUser())
-  }
+  if (!email || !password) return false
+  if (password !== sharedPassword) return false
 
-  // Check email-based login: "email:password"
-  // For simplicity, coordinators/admins use their email + the shared password
-  // The password is still DASHBOARD_PASSWORD, but we track who logged in
-  const parts = password.split(':')
-  if (parts.length === 2) {
-    const [email, pwd] = parts
-    if (pwd !== sharedPassword) return false
+  const supabase = getServiceClient()
+  const { data } = await supabase
+    .from('dashboard_users')
+    .select('*')
+    .eq('email', email)
+    .eq('is_active', true)
+    .single()
 
-    const supabase = getServiceClient()
-    const { data } = await supabase
-      .from('dashboard_users')
-      .select('*')
-      .eq('email', email)
-      .eq('is_active', true)
-      .single()
+  if (!data) return false
 
-    if (!data) return false
-
-    return setDashboardCookie(data as DashboardUser)
-  }
+  return setDashboardCookie(data as DashboardUser)
 
   return false
 }

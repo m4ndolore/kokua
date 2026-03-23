@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { useFormState, useFormStatus } from 'react-dom'
 import { submitFeedback, type FormState } from '@/lib/actions'
 import { FEEDBACK_CATEGORIES } from '@/lib/types'
@@ -31,6 +32,11 @@ const initialState: FormState = { success: false, error: null }
 
 export default function FeedbackPage() {
   const [state, formAction] = useFormState(submitFeedback, initialState)
+  const [pageUrl, setPageUrl] = useState('')
+
+  useEffect(() => {
+    setPageUrl(window.location.href)
+  }, [])
 
   if (state.success) {
     return (
@@ -50,9 +56,9 @@ export default function FeedbackPage() {
 
   return (
     <div className="py-4 max-w-lg mx-auto">
-      <h1 className="text-2xl font-bold text-ocean-900 mb-1">Feedback</h1>
+      <h1 className="text-2xl font-bold text-ocean-900 mb-1">Report an issue / correction</h1>
       <p className="text-sm text-gray-500 mb-6">
-        Questions, corrections, suggestions — all welcome. No login required.
+        Incorrect or missing info, broken links, bugs, or suggestions. No login required.
       </p>
 
       {state.error && (
@@ -66,7 +72,7 @@ export default function FeedbackPage() {
           <label htmlFor="feedback_category" className="block text-sm font-medium text-gray-700 mb-1.5">
             What kind of feedback? <span className="text-lava-500">*</span>
           </label>
-          <select id="feedback_category" name="feedback_category" required
+          <select id="feedback_category" name="feedback_category" required defaultValue="report_issue"
             className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base bg-white focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400">
             <option value="">Select</option>
             {FEEDBACK_CATEGORIES.map(c => (
@@ -94,7 +100,7 @@ export default function FeedbackPage() {
         </div>
 
         {/* Hidden field to track which page the feedback came from */}
-        <input type="hidden" name="feedback_page_url" value="" />
+        <input type="hidden" name="feedback_page_url" value={pageUrl} />
 
         <SubmitButton />
 

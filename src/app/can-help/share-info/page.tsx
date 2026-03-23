@@ -57,17 +57,18 @@ export default function ShareInfo() {
         </div>
       )}
 
-      <form action={formAction} className="space-y-6">
-        <div>
-          <label htmlFor="submitted_island" className="block text-sm font-medium text-gray-700 mb-1.5">
-            Island <span className="text-lava-500">*</span>
-          </label>
-          <select id="submitted_island" name="submitted_island" required
-            className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base bg-white focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400">
-            <option value="">Select island</option>
-            {ISLANDS.map(i => <option key={i} value={i}>{i}</option>)}
-          </select>
-        </div>
+      <div className="bg-white border border-ocean-100 rounded-xl p-5 sm:p-6">
+        <form action={formAction} className="space-y-6">
+          <div>
+            <label htmlFor="submitted_island" className="block text-sm font-medium text-gray-700 mb-1.5">
+              Island <span className="text-lava-500">*</span>
+            </label>
+            <select id="submitted_island" name="submitted_island" required
+              className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base bg-white focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400">
+              <option value="">Select island</option>
+              {ISLANDS.map(i => <option key={i} value={i}>{i}</option>)}
+            </select>
+          </div>
 
         <div>
           <label htmlFor="submitted_area" className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -116,12 +117,13 @@ export default function ShareInfo() {
             className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400" />
         </div>
 
-        <SubmitButton />
+          <SubmitButton />
 
-        <p className="text-xs text-gray-400 text-center">
-          Submissions are reviewed before publishing. Your contact info is never shown publicly.
-        </p>
-      </form>
+          <p className="text-xs text-gray-400 text-center">
+            Submissions are reviewed before publishing. Your contact info is never shown publicly.
+          </p>
+        </form>
+      </div>
     </div>
   )
 }

@@ -28,6 +28,15 @@ yarn-error.log*
 .dev.vars
 /.runtime/
 
+# local backups / secrets
+.env.local.old
+
+# local agent/editor state
+.claude/
+
+# supabase local temp
+supabase/.temp/
+
 # vercel
 .vercel
 

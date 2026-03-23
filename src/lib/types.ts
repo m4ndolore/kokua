@@ -53,7 +53,7 @@ export const NEED_SUMMARY_CATEGORIES = [
 
 export const NEED_SUMMARY_URGENCY = ['Urgent', 'High', 'Normal'] as const
 
-export const REVIEW_STATUSES = ['Pending', 'Approved', 'Rejected', 'Duplicate', 'Escalated'] as const
+export const REVIEW_STATUSES = ['Pending', 'Approved', 'Acknowledged', 'Rejected', 'Duplicate', 'Escalated'] as const
 export const REVIEW_ORIGINS = ['community_tip', 'source_signal', 'stale_flag', 'feedback', 'conflict', 'other'] as const
 
 // Source system constants
@@ -79,7 +79,7 @@ export const FEEDBACK_CATEGORIES = [
 ] as const
 
 // Categories safe to bridge to GitHub issues (no personal data risk)
-export const GITHUB_SAFE_CATEGORIES = ['bug', 'feature_request', 'suggest_resource'] as const
+export const GITHUB_SAFE_CATEGORIES = ['report_issue', 'bug', 'feature_request', 'suggest_resource'] as const
 
 // Donation constants
 export const DONATION_TYPES = ['institutional', 'platform_hub', 'community_campaign', 'in_kind_support', 'volunteer'] as const

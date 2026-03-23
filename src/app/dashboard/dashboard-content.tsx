@@ -13,6 +13,7 @@ import {
   bulkUpdateHubVisibility, bulkApproveDonations, bulkHideDonations, bulkUpdateReviewStatus,
   logoutAction,
   createGitHubIssue,
+  approveAndCreateGitHubIssue,
   createDashboardUser,
   toggleUserActive,
 } from '@/lib/dashboard-actions'
@@ -169,6 +170,108 @@ function VisibilitySelect({ current, onUpdate }: {
       className={`text-xs border rounded px-1.5 py-1 disabled:opacity-50 ${visibilityColors[current] ?? 'bg-gray-100'}`}>
       {VISIBILITY_STATUSES.map(v => <option key={v} value={v}>{v}</option>)}
     </select>
+  )
+}
+
+function ActionButton({
+  label,
+  active = false,
+  tone = 'neutral',
+  onClick,
+}: {
+  label: string
+  active?: boolean
+  tone?: 'success' | 'warning' | 'danger' | 'neutral'
+  onClick: () => void
+}) {
+  const styles = {
+    success: active ? 'bg-green-100 text-green-800 border-green-200' : 'bg-white text-green-800 border-green-200 hover:bg-green-50',
+    warning: active ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-white text-amber-800 border-amber-200 hover:bg-amber-50',
+    danger: active ? 'bg-lava-500/10 text-lava-700 border-lava-200' : 'bg-white text-lava-700 border-lava-200 hover:bg-lava-50',
+    neutral: active ? 'bg-gray-100 text-gray-700 border-gray-200' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50',
+  } as const
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`text-xs px-3 py-1.5 rounded border transition-colors ${styles[tone]}`}
+    >
+      {label}
+    </button>
+  )
+}
+
+function VisibilityActionRow({
+  current,
+  onUpdate,
+}: {
+  current: string
+  onUpdate: (val: string) => void
+}) {
+  return (
+    <div className="flex flex-wrap gap-2 mt-2">
+      <ActionButton label="Make public" tone="success" active={current === 'public'} onClick={() => onUpdate('public')} />
+      <ActionButton label="Move to review" tone="warning" active={current === 'review'} onClick={() => onUpdate('review')} />
+      <ActionButton label="Keep internal" tone="neutral" active={current === 'internal'} onClick={() => onUpdate('internal')} />
+    </div>
+  )
+}
+
+function StatusActionRow({
+  current,
+  actions,
+  onUpdate,
+}: {
+  current: string
+  actions: Array<{ label: string; value: string; tone?: 'success' | 'warning' | 'danger' | 'neutral' }>
+  onUpdate: (val: string) => void
+}) {
+  return (
+    <div className="flex flex-wrap gap-2 mt-2">
+      {actions.map(action => (
+        <ActionButton
+          key={action.value}
+          label={action.label}
+          tone={action.tone ?? 'neutral'}
+          active={current === action.value}
+          onClick={() => onUpdate(action.value)}
+        />
+      ))}
+    </div>
+  )
+}
+
+function SelectionToolbar({
+  visibleCount,
+  selectedCount,
+  onSelectVisible,
+  onClear,
+}: {
+  visibleCount: number
+  selectedCount: number
+  onSelectVisible: () => void
+  onClear: () => void
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-2 mb-3">
+      <button
+        type="button"
+        onClick={onSelectVisible}
+        className="text-xs px-3 py-1.5 bg-white border border-gray-200 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+      >
+        Select visible ({visibleCount})
+      </button>
+      {selectedCount > 0 && (
+        <button
+          type="button"
+          onClick={onClear}
+          className="text-xs px-3 py-1.5 bg-white border border-gray-200 text-gray-500 rounded hover:bg-gray-50 transition-colors"
+        >
+          Clear selection
+        </button>
+      )}
+    </div>
   )
 }
 
@@ -347,6 +450,14 @@ export function DashboardContent({
   ]
 
   const visibleTabs = tabs.filter(t => !t.adminOnly || isAdminRole)
+  const filteredRequests = requests.filter(r => (!islandFilter || r.island === islandFilter) && (!statusFilter || r.status === statusFilter))
+  const filteredOffers = offers.filter(o => (!islandFilter || o.island === islandFilter) && (!statusFilter || o.status === statusFilter))
+  const filteredVolunteers = volunteers.filter(v => (!islandFilter || v.island === islandFilter) && (!statusFilter || v.status === statusFilter))
+  const filteredHubs = hubs.filter(h => (!islandFilter || h.island === islandFilter) && (!statusFilter || (statusFilter === 'stale' ? isStale(h.last_verified_at) : h.status === statusFilter)))
+  const filteredSummaries = summaries.filter(s => !islandFilter || s.island === islandFilter)
+  const filteredReviewItems = reviewItems.filter(r => (!islandFilter || r.submitted_island === islandFilter) && (!statusFilter || r.status === statusFilter))
+  const filteredSignals = signals.filter(s => (!islandFilter || s.island === islandFilter) && (!statusFilter || s.review_status === statusFilter))
+  const filteredDonations = donations.filter(d => (!islandFilter || d.island === islandFilter) && (!statusFilter || d.donation_type === statusFilter))
 
   return (
     <div className="py-4">
@@ -538,18 +649,31 @@ export function DashboardContent({
       {/* ============ REQUESTS ============ */}
       {tab === 'requests' && (
         <CardList empty="No requests match your filters.">
-          {requests
-            .filter(r => (!islandFilter || r.island === islandFilter) && (!statusFilter || r.status === statusFilter))
-            .map(r => (
+          <SelectionToolbar
+            visibleCount={filteredRequests.length}
+            selectedCount={selected.size}
+            onSelectVisible={() => selectAll(filteredRequests.map(r => r.id))}
+            onClear={clearSelection}
+          />
+          <BulkActionBar count={selected.size}>
+            <button onClick={async () => { const ids = Array.from(selected); await Promise.all(ids.map(id => updateStatus('help_requests', id, 'Reviewing'))); setRequests(p => p.map(r => selected.has(r.id) ? { ...r, status: 'Reviewing' } : r)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Mark Reviewing</button>
+            <button onClick={async () => { const ids = Array.from(selected); await Promise.all(ids.map(id => updateStatus('help_requests', id, 'Matched'))); setRequests(p => p.map(r => selected.has(r.id) ? { ...r, status: 'Matched' } : r)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Mark Matched</button>
+            <button onClick={async () => { const ids = Array.from(selected); await Promise.all(ids.map(id => updateStatus('help_requests', id, 'Completed'))); setRequests(p => p.map(r => selected.has(r.id) ? { ...r, status: 'Completed' } : r)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Mark Completed</button>
+            <button onClick={() => clearSelection()}
+              className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded transition-colors">Clear</button>
+          </BulkActionBar>
+          {filteredRequests.map(r => (
               <div key={r.id} className="bg-white border border-ocean-100 rounded-lg p-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex flex-wrap items-center gap-1.5">
+                    <input type="checkbox" checked={selected.has(r.id)} onChange={() => toggleSelect(r.id)} className="rounded border-gray-300" />
                     <Badge label={r.urgency} color={urgencyColors[r.urgency] ?? 'bg-gray-100 text-gray-700'} />
                     <Badge label={r.status} color={statusColors[r.status] ?? 'bg-gray-100 text-gray-700'} />
                     <span className="text-xs text-gray-400">{timeAgo(r.created_at)}</span>
                   </div>
-                  <StatusSelect current={r.status} options={REQUEST_STATUSES}
-                    onUpdate={s => { setRequests(p => p.map(x => x.id === r.id ? { ...x, status: s } : x)); updateStatus('help_requests', r.id, s) }} />
                 </div>
                 <div className="text-sm mb-1.5"><span className="font-medium">{r.island}</span><span className="text-gray-400 mx-1">·</span><span className="text-gray-600">{r.neighborhood}</span></div>
                 <div className="flex flex-wrap gap-1 mb-2">{r.need_types.map(t => <span key={t} className="bg-ocean-50 text-ocean-700 text-xs px-2 py-0.5 rounded">{t}</span>)}</div>
@@ -559,6 +683,17 @@ export function DashboardContent({
                   {r.alt_contact && <span>Alt: {r.alt_contact}</span>}
                   {r.can_be_contacted && <span className="text-ocean-600 font-medium">Can contact</span>}
                 </div>
+                <StatusActionRow
+                  current={r.status}
+                  actions={[
+                    { label: 'New', value: 'New' },
+                    { label: 'Reviewing', value: 'Reviewing', tone: 'warning' },
+                    { label: 'Matched', value: 'Matched', tone: 'success' },
+                    { label: 'Completed', value: 'Completed', tone: 'neutral' },
+                    { label: 'Archive', value: 'Archived', tone: 'danger' },
+                  ]}
+                  onUpdate={s => { setRequests(p => p.map(x => x.id === r.id ? { ...x, status: s } : x)); updateStatus('help_requests', r.id, s) }}
+                />
                 <NotesField table="help_requests" id={r.id} initial={r.coordinator_notes} />
               </div>
             ))}
@@ -568,24 +703,48 @@ export function DashboardContent({
       {/* ============ OFFERS ============ */}
       {tab === 'offers' && (
         <CardList empty="No offers match your filters.">
-          {offers
-            .filter(o => (!islandFilter || o.island === islandFilter) && (!statusFilter || o.status === statusFilter))
-            .map(o => (
+          <SelectionToolbar
+            visibleCount={filteredOffers.length}
+            selectedCount={selected.size}
+            onSelectVisible={() => selectAll(filteredOffers.map(o => o.id))}
+            onClear={clearSelection}
+          />
+          <BulkActionBar count={selected.size}>
+            <button onClick={async () => { const ids = Array.from(selected); await Promise.all(ids.map(id => updateStatus('help_offers', id, 'Available'))); setOffers(p => p.map(o => selected.has(o.id) ? { ...o, status: 'Available' } : o)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Mark Available</button>
+            <button onClick={async () => { const ids = Array.from(selected); await Promise.all(ids.map(id => updateStatus('help_offers', id, 'Assigned'))); setOffers(p => p.map(o => selected.has(o.id) ? { ...o, status: 'Assigned' } : o)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Mark Assigned</button>
+            <button onClick={async () => { const ids = Array.from(selected); await Promise.all(ids.map(id => updateStatus('help_offers', id, 'Completed'))); setOffers(p => p.map(o => selected.has(o.id) ? { ...o, status: 'Completed' } : o)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Mark Completed</button>
+            <button onClick={() => clearSelection()}
+              className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded transition-colors">Clear</button>
+          </BulkActionBar>
+          {filteredOffers.map(o => (
               <div key={o.id} className="bg-white border border-earth-100 rounded-lg p-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex flex-wrap items-center gap-1.5">
+                    <input type="checkbox" checked={selected.has(o.id)} onChange={() => toggleSelect(o.id)} className="rounded border-gray-300" />
                     <Badge label={o.status} color={statusColors[o.status] ?? 'bg-gray-100 text-gray-700'} />
                     <span className="text-xs text-earth-600 font-medium">{o.availability}</span>
                     <span className="text-xs text-gray-400">{timeAgo(o.created_at)}</span>
                   </div>
-                  <StatusSelect current={o.status} options={OFFER_STATUSES}
-                    onUpdate={s => { setOffers(p => p.map(x => x.id === o.id ? { ...x, status: s } : x)); updateStatus('help_offers', o.id, s) }} />
                 </div>
                 <div className="text-sm mb-1.5"><span className="font-medium">{o.island}</span><span className="text-gray-400 mx-1">·</span><span className="text-gray-600">{o.neighborhood}</span></div>
                 <div className="flex flex-wrap gap-1 mb-2">{o.offer_types.map(t => <span key={t} className="bg-earth-50 text-earth-700 text-xs px-2 py-0.5 rounded">{t}</span>)}</div>
                 {o.capacity && <p className="text-xs text-earth-600 mb-1">Capacity: {o.capacity}</p>}
                 {o.note && <p className="text-sm text-gray-600 mb-2">{o.note}</p>}
                 <div className="text-xs text-gray-500"><span>{o.contact_method}: {o.contact_value}</span></div>
+                <StatusActionRow
+                  current={o.status}
+                  actions={[
+                    { label: 'New', value: 'New' },
+                    { label: 'Available', value: 'Available', tone: 'success' },
+                    { label: 'Assigned', value: 'Assigned', tone: 'warning' },
+                    { label: 'Completed', value: 'Completed', tone: 'neutral' },
+                    { label: 'Archive', value: 'Archived', tone: 'danger' },
+                  ]}
+                  onUpdate={s => { setOffers(p => p.map(x => x.id === o.id ? { ...x, status: s } : x)); updateStatus('help_offers', o.id, s) }}
+                />
                 <NotesField table="help_offers" id={o.id} initial={o.coordinator_notes} />
               </div>
             ))}
@@ -595,18 +754,31 @@ export function DashboardContent({
       {/* ============ VOLUNTEERS ============ */}
       {tab === 'volunteers' && (
         <CardList empty="No volunteers match your filters.">
-          {volunteers
-            .filter(v => (!islandFilter || v.island === islandFilter) && (!statusFilter || v.status === statusFilter))
-            .map(v => (
+          <SelectionToolbar
+            visibleCount={filteredVolunteers.length}
+            selectedCount={selected.size}
+            onSelectVisible={() => selectAll(filteredVolunteers.map(v => v.id))}
+            onClear={clearSelection}
+          />
+          <BulkActionBar count={selected.size}>
+            <button onClick={async () => { const ids = Array.from(selected); await Promise.all(ids.map(id => updateStatus('volunteers', id, 'Active'))); setVolunteers(p => p.map(v => selected.has(v.id) ? { ...v, status: 'Active' } : v)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Mark Active</button>
+            <button onClick={async () => { const ids = Array.from(selected); await Promise.all(ids.map(id => updateStatus('volunteers', id, 'On hold'))); setVolunteers(p => p.map(v => selected.has(v.id) ? { ...v, status: 'On hold' } : v)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Place On Hold</button>
+            <button onClick={async () => { const ids = Array.from(selected); await Promise.all(ids.map(id => updateStatus('volunteers', id, 'Inactive'))); setVolunteers(p => p.map(v => selected.has(v.id) ? { ...v, status: 'Inactive' } : v)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Mark Inactive</button>
+            <button onClick={() => clearSelection()}
+              className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded transition-colors">Clear</button>
+          </BulkActionBar>
+          {filteredVolunteers.map(v => (
               <div key={v.id} className="bg-white border border-ocean-100 rounded-lg p-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex flex-wrap items-center gap-1.5">
+                    <input type="checkbox" checked={selected.has(v.id)} onChange={() => toggleSelect(v.id)} className="rounded border-gray-300" />
                     <Badge label={v.status} color={statusColors[v.status] ?? 'bg-gray-100 text-gray-700'} />
                     <span className="text-xs text-ocean-600 font-medium">{v.availability}</span>
                     <span className="text-xs text-gray-400">{timeAgo(v.created_at)}</span>
                   </div>
-                  <StatusSelect current={v.status} options={VOLUNTEER_STATUSES}
-                    onUpdate={s => { setVolunteers(p => p.map(x => x.id === v.id ? { ...x, status: s } : x)); updateStatus('volunteers', v.id, s) }} />
                 </div>
                 <div className="text-sm font-medium mb-1">{v.name}</div>
                 <div className="text-xs text-gray-500 mb-1.5">{v.island}{v.neighborhood ? ` · ${v.neighborhood}` : ''}</div>
@@ -617,6 +789,16 @@ export function DashboardContent({
                   {v.has_vehicle && <span className="text-ocean-600 font-medium">Has vehicle</span>}
                 </div>
                 {v.note && <p className="text-sm text-gray-600 mt-1">{v.note}</p>}
+                <StatusActionRow
+                  current={v.status}
+                  actions={[
+                    { label: 'New', value: 'New' },
+                    { label: 'Active', value: 'Active', tone: 'success' },
+                    { label: 'On hold', value: 'On hold', tone: 'warning' },
+                    { label: 'Inactive', value: 'Inactive', tone: 'danger' },
+                  ]}
+                  onUpdate={s => { setVolunteers(p => p.map(x => x.id === v.id ? { ...x, status: s } : x)); updateStatus('volunteers', v.id, s) }}
+                />
                 <NotesField table="volunteers" id={v.id} initial={v.coordinator_notes} />
               </div>
             ))}
@@ -626,6 +808,12 @@ export function DashboardContent({
       {/* ============ HELP HUBS ============ */}
       {tab === 'hubs' && (
         <CardList empty="No help hubs match your filters.">
+          <SelectionToolbar
+            visibleCount={filteredHubs.length}
+            selectedCount={selected.size}
+            onSelectVisible={() => selectAll(filteredHubs.map(h => h.id))}
+            onClear={clearSelection}
+          />
           <BulkActionBar count={selected.size}>
             <button onClick={async () => { await bulkUpdateHubVisibility(Array.from(selected), 'public'); setHubs(p => p.map(h => selected.has(h.id) ? { ...h, visibility_status: 'public' } : h)); clearSelection() }}
               className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Make Public</button>
@@ -634,9 +822,7 @@ export function DashboardContent({
             <button onClick={() => clearSelection()}
               className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded transition-colors">Clear</button>
           </BulkActionBar>
-          {hubs
-            .filter(h => (!islandFilter || h.island === islandFilter) && (!statusFilter || (statusFilter === 'stale' ? isStale(h.last_verified_at) : h.status === statusFilter)))
-            .map(h => {
+          {filteredHubs.map(h => {
               const src = h.source_registry_id ? sourceMap.get(h.source_registry_id) : null
               return (
                 <div key={h.id} className="bg-white border border-ocean-100 rounded-lg p-4">
@@ -646,8 +832,6 @@ export function DashboardContent({
                       <Badge label={h.status} color={statusColors[h.status] ?? 'bg-gray-100 text-gray-700'} />
                       <Badge label={h.confidence} color={confidenceColors[h.confidence] ?? 'bg-gray-100'} />
                       {isStale(h.last_verified_at) && <Badge label="stale" color="bg-amber-100 text-amber-700" />}
-                      <VisibilitySelect current={h.visibility_status}
-                        onUpdate={v => { setHubs(p => p.map(x => x.id === h.id ? { ...x, visibility_status: v } : x)); updateHubVisibility(h.id, v) }} />
                       <span className="text-xs text-gray-400">{timeAgo(h.updated_at)}</span>
                     </div>
                     <StatusSelect current={h.status} options={HUB_STATUSES}
@@ -674,6 +858,13 @@ export function DashboardContent({
                     {h.last_verified_at && <span>Verified: {new Date(h.last_verified_at).toLocaleDateString()}</span>}
                     <span>✓{h.verification_count} ⚠{h.stale_flag_count} ♻{h.active_confirm_count}</span>
                   </div>
+                  <VisibilityActionRow
+                    current={h.visibility_status}
+                    onUpdate={v => {
+                      setHubs(p => p.map(x => x.id === h.id ? { ...x, visibility_status: v } : x))
+                      updateHubVisibility(h.id, v)
+                    }}
+                  />
                   <NotesField table="help_hubs" id={h.id} initial={h.coordinator_notes} />
                 </div>
               )
@@ -684,18 +875,39 @@ export function DashboardContent({
       {/* ============ NEED SUMMARIES ============ */}
       {tab === 'summaries' && (
         <CardList empty="No need summaries yet.">
-          {summaries
-            .filter(s => !islandFilter || s.island === islandFilter)
-            .map(s => (
+          <SelectionToolbar
+            visibleCount={filteredSummaries.length}
+            selectedCount={selected.size}
+            onSelectVisible={() => selectAll(filteredSummaries.map(s => s.id))}
+            onClear={clearSelection}
+          />
+          <BulkActionBar count={selected.size}>
+            <button onClick={async () => {
+              const ids = Array.from(selected)
+              await Promise.all(ids.map(id => updateSummaryVisibility(id, 'public')))
+              setSummaries(p => p.map(s => selected.has(s.id) ? { ...s, visibility_status: 'public' } : s))
+              clearSelection()
+            }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Make Public</button>
+            <button onClick={async () => {
+              const ids = Array.from(selected)
+              await Promise.all(ids.map(id => updateSummaryVisibility(id, 'review')))
+              setSummaries(p => p.map(s => selected.has(s.id) ? { ...s, visibility_status: 'review' } : s))
+              clearSelection()
+            }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Move to Review</button>
+            <button onClick={() => clearSelection()}
+              className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded transition-colors">Clear</button>
+          </BulkActionBar>
+          {filteredSummaries.map(s => (
               <div key={s.id} className="bg-white border border-ocean-100 rounded-lg p-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex flex-wrap items-center gap-1.5">
+                    <input type="checkbox" checked={selected.has(s.id)} onChange={() => toggleSelect(s.id)} className="rounded border-gray-300" />
                     <Badge label={s.urgency} color={urgencyColors[s.urgency] ?? 'bg-gray-100 text-gray-700'} />
                     <Badge label={s.category} color="bg-ocean-50 text-ocean-700" />
                     <Badge label={s.confidence} color={confidenceColors[s.confidence] ?? 'bg-gray-100'} />
-                    <VisibilitySelect current={s.visibility_status}
-                      onUpdate={v => { setSummaries(p => p.map(x => x.id === s.id ? { ...x, visibility_status: v } : x)); updateSummaryVisibility(s.id, v) }} />
-                  </div>
+                    </div>
                   <span className="text-xs text-gray-400">{timeAgo(s.updated_at)}</span>
                 </div>
                 <div className="text-xs text-gray-500 mb-0.5">{s.island}{s.area ? ` · ${s.area}` : ''}</div>
@@ -712,6 +924,13 @@ export function DashboardContent({
                     {s.last_verified_at && <span>Verified: {new Date(s.last_verified_at).toLocaleDateString()}</span>}
                   </div>
                 )}
+                <VisibilityActionRow
+                  current={s.visibility_status}
+                  onUpdate={v => {
+                    setSummaries(p => p.map(x => x.id === s.id ? { ...x, visibility_status: v } : x))
+                    updateSummaryVisibility(s.id, v)
+                  }}
+                />
                 <NotesField table="public_need_summaries" id={s.id} initial={s.coordinator_notes} />
               </div>
             ))}
@@ -721,11 +940,27 @@ export function DashboardContent({
       {/* ============ REVIEW QUEUE ============ */}
       {tab === 'review' && (
         <CardList empty="No items in the review queue.">
-          {reviewItems
-            .filter(r => (!islandFilter || r.submitted_island === islandFilter) && (!statusFilter || r.status === statusFilter))
-            .map(r => {
+          <SelectionToolbar
+            visibleCount={filteredReviewItems.length}
+            selectedCount={selected.size}
+            onSelectVisible={() => selectAll(filteredReviewItems.map(r => r.id))}
+            onClear={clearSelection}
+          />
+          <BulkActionBar count={selected.size}>
+            <button onClick={async () => { await bulkUpdateReviewStatus(Array.from(selected), 'Approved'); setReviewItems(p => p.map(r => selected.has(r.id) ? { ...r, status: 'Approved' } : r)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Approve</button>
+            <button onClick={async () => { await bulkUpdateReviewStatus(Array.from(selected), 'Acknowledged'); setReviewItems(p => p.map(r => selected.has(r.id) ? { ...r, status: 'Acknowledged' } : r)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Acknowledge</button>
+            <button onClick={async () => { await bulkUpdateReviewStatus(Array.from(selected), 'Escalated'); setReviewItems(p => p.map(r => selected.has(r.id) ? { ...r, status: 'Escalated' } : r)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Escalate</button>
+            <button onClick={() => clearSelection()}
+              className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded transition-colors">Clear</button>
+          </BulkActionBar>
+          {filteredReviewItems.map(r => {
               const src = r.source_registry_id ? sourceMap.get(r.source_registry_id) : null
               return <ReviewCard key={r.id} item={r} sourceName={src?.name}
+                selected={selected.has(r.id)}
+                onToggleSelected={() => toggleSelect(r.id)}
                 relatedHubs={findRelatedHubs(r, hubs)}
                 relatedSummaries={findRelatedSummaries(r, summaries)}
                 relatedDonations={findRelatedDonations(r, donations)}
@@ -796,6 +1031,17 @@ export function DashboardContent({
                 if (result) {
                   setReviewItems(p => p.map(x => x.id === id ? { ...x, github_issue_url: result.url, github_issue_number: result.number } : x))
                 }
+              }} onApproveAndCreateIssue={async (id, notes) => {
+                const result = await approveAndCreateGitHubIssue(id, notes)
+                if (result) {
+                  setReviewItems(p => p.map(x => x.id === id ? {
+                    ...x,
+                    status: 'Approved',
+                    reviewer_notes: notes,
+                    github_issue_url: result.url,
+                    github_issue_number: result.number,
+                  } : x))
+                }
               }} />
             })}
         </CardList>
@@ -804,11 +1050,27 @@ export function DashboardContent({
       {/* ============ SIGNALS ============ */}
       {tab === 'signals' && (
         <CardList empty="No source signals.">
-          {signals
-            .filter(s => (!islandFilter || s.island === islandFilter) && (!statusFilter || s.review_status === statusFilter))
-            .map(s => {
+          <SelectionToolbar
+            visibleCount={filteredSignals.length}
+            selectedCount={selected.size}
+            onSelectVisible={() => selectAll(filteredSignals.map(s => s.id))}
+            onClear={clearSelection}
+          />
+          <BulkActionBar count={selected.size}>
+            <button onClick={async () => { const ids = Array.from(selected); await Promise.all(ids.map(id => updateSignalReview(id, 'approved', ''))); setSignals(p => p.map(s => selected.has(s.id) ? { ...s, review_status: 'approved', needs_review: false } : s)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Approve</button>
+            <button onClick={async () => { const ids = Array.from(selected); await Promise.all(ids.map(id => updateSignalReview(id, 'escalated', ''))); setSignals(p => p.map(s => selected.has(s.id) ? { ...s, review_status: 'escalated', needs_review: false } : s)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Escalate</button>
+            <button onClick={async () => { const ids = Array.from(selected); await Promise.all(ids.map(id => updateSignalReview(id, 'rejected', ''))); setSignals(p => p.map(s => selected.has(s.id) ? { ...s, review_status: 'rejected', needs_review: false } : s)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Reject</button>
+            <button onClick={() => clearSelection()}
+              className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded transition-colors">Clear</button>
+          </BulkActionBar>
+          {filteredSignals.map(s => {
               const src = s.source_registry_id ? sourceMap.get(s.source_registry_id) : null
               return <SignalCard key={s.id} signal={s} sourceName={src?.name} sourceType={src?.source_type}
+                selected={selected.has(s.id)}
+                onToggleSelected={() => toggleSelect(s.id)}
                 onReview={(status, notes) => {
                   setSignals(p => p.map(x => x.id === s.id ? { ...x, review_status: status, needs_review: status === 'pending', coordinator_notes: notes } : x))
                   updateSignalReview(s.id, status, notes)
@@ -820,6 +1082,12 @@ export function DashboardContent({
       {/* ============ DONATIONS ============ */}
       {tab === 'donations' && (
         <CardList empty="No donation links.">
+          <SelectionToolbar
+            visibleCount={filteredDonations.length}
+            selectedCount={selected.size}
+            onSelectVisible={() => selectAll(filteredDonations.map(d => d.id))}
+            onClear={clearSelection}
+          />
           <BulkActionBar count={selected.size}>
             <button onClick={async () => { await bulkApproveDonations(Array.from(selected)); setDonations(p => p.map(d => selected.has(d.id) ? { ...d, is_visible: true, needs_review: false } : d)); clearSelection() }}
               className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Approve All</button>
@@ -828,9 +1096,7 @@ export function DashboardContent({
             <button onClick={() => clearSelection()}
               className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded transition-colors">Clear</button>
           </BulkActionBar>
-          {donations
-            .filter(d => (!islandFilter || d.island === islandFilter) && (!statusFilter || d.donation_type === statusFilter))
-            .map(d => (
+          {filteredDonations.map(d => (
               <div key={d.id} className="bg-white border border-earth-100 rounded-lg p-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex flex-wrap items-center gap-1.5">
@@ -936,6 +1202,8 @@ function ActiveToggle({ isActive, onToggle }: { isActive: boolean; onToggle: (va
 function ReviewCard({
   item,
   sourceName,
+  selected,
+  onToggleSelected,
   relatedHubs,
   relatedSummaries,
   relatedDonations,
@@ -946,8 +1214,11 @@ function ReviewCard({
   onMarkSummaryNeedsReview,
   onHideDonationFromReview,
   onCreateIssue,
+  onApproveAndCreateIssue,
 }: {
   item: ReviewQueueItem; sourceName?: string
+  selected?: boolean
+  onToggleSelected?: () => void
   relatedHubs: HelpHub[]
   relatedSummaries: PublicNeedSummary[]
   relatedDonations: DonationLink[]
@@ -958,6 +1229,7 @@ function ReviewCard({
   onMarkSummaryNeedsReview?: (reviewId: string, summaryId: string, summaryTitle: string) => void
   onHideDonationFromReview?: (reviewId: string, donationId: string, donationTitle: string) => void
   onCreateIssue?: (id: string) => void
+  onApproveAndCreateIssue?: (id: string, notes: string) => void
 }) {
   const [notes, setNotes] = useState(item.reviewer_notes ?? '')
   const isFeedback = item.origin === 'feedback'
@@ -982,6 +1254,9 @@ function ReviewCard({
     <div className="bg-white border border-amber-100 rounded-lg p-4">
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="flex flex-wrap items-center gap-1.5">
+          {onToggleSelected && (
+            <input type="checkbox" checked={selected ?? false} onChange={onToggleSelected} className="rounded border-gray-300" />
+          )}
           <Badge label={item.status} color={statusColors[item.status] ?? 'bg-gray-100 text-gray-700'} />
           <Badge label={item.origin} color="bg-gray-100 text-gray-600" />
           {isFeedback && item.feedback_category && (
@@ -1118,6 +1393,14 @@ function ReviewCard({
         </button>
       )}
 
+      {/* One-click flow: approve + create issue */}
+      {!item.github_issue_url && canBridge && item.status === 'Pending' && onApproveAndCreateIssue && (
+        <button onClick={() => onApproveAndCreateIssue(item.id, notes)}
+          className="text-xs px-3 py-1.5 mt-2 bg-gray-800 text-white rounded hover:bg-gray-900 transition-colors">
+          Approve + Create GitHub Issue
+        </button>
+      )}
+
       {item.status === 'Pending' && (
         <div className="mt-2 pt-2 border-t border-gray-100 space-y-2">
           {quickTemplates.length > 0 && (
@@ -1140,10 +1423,14 @@ function ReviewCard({
           <input type="text" value={notes} onChange={e => setNotes(e.target.value)}
             placeholder="Reviewer notes…"
             className="w-full text-xs border border-gray-200 rounded px-2 py-1.5 focus:ring-1 focus:ring-ocean-400" />
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button onClick={() => onStatusUpdate('Approved', notes)}
               className="text-xs px-3 py-1.5 bg-green-100 text-green-800 rounded hover:bg-green-200 transition-colors">
               {isCorrectionReport ? 'Reviewed' : 'Approve'}
+            </button>
+            <button onClick={() => onStatusUpdate('Acknowledged', notes)}
+              className="text-xs px-3 py-1.5 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors">
+              Acknowledge
             </button>
             <button onClick={() => onStatusUpdate('Rejected', notes)}
               className="text-xs px-3 py-1.5 bg-lava-500/10 text-lava-700 rounded hover:bg-lava-500/20 transition-colors">
@@ -1167,8 +1454,10 @@ function ReviewCard({
   )
 }
 
-function SignalCard({ signal, sourceName, sourceType, onReview }: {
+function SignalCard({ signal, sourceName, sourceType, selected, onToggleSelected, onReview }: {
   signal: SourceSignal; sourceName?: string; sourceType?: string
+  selected?: boolean
+  onToggleSelected?: () => void
   onReview: (status: string, notes: string) => void
 }) {
   const [notes, setNotes] = useState(signal.coordinator_notes ?? '')
@@ -1177,6 +1466,9 @@ function SignalCard({ signal, sourceName, sourceType, onReview }: {
     <div className="bg-white border border-purple-100 rounded-lg p-4">
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="flex flex-wrap items-center gap-1.5">
+          {onToggleSelected && (
+            <input type="checkbox" checked={selected ?? false} onChange={onToggleSelected} className="rounded border-gray-300" />
+          )}
           <Badge label={signal.review_status} color={statusColors[signal.review_status] ?? 'bg-gray-100 text-gray-700'} />
           <Badge label={signal.signal_type} color="bg-purple-50 text-purple-700" />
           <Badge label={signal.confidence} color={confidenceColors[signal.confidence] ?? 'bg-gray-100'} />
@@ -1233,14 +1525,15 @@ function SignalCard({ signal, sourceName, sourceType, onReview }: {
           <input type="text" value={notes} onChange={e => setNotes(e.target.value)}
             placeholder="Review notes…"
             className="w-full text-xs border border-gray-200 rounded px-2 py-1.5 focus:ring-1 focus:ring-ocean-400" />
-          <div className="flex gap-2">
-            <button onClick={() => onReview('approved', notes)}
-              className="text-xs px-3 py-1.5 bg-green-100 text-green-800 rounded hover:bg-green-200 transition-colors">Approve</button>
-            <button onClick={() => onReview('rejected', notes)}
-              className="text-xs px-3 py-1.5 bg-lava-500/10 text-lava-700 rounded hover:bg-lava-500/20 transition-colors">Reject</button>
-            <button onClick={() => onReview('escalated', notes)}
-              className="text-xs px-3 py-1.5 bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors">Escalate</button>
-          </div>
+          <StatusActionRow
+            current={signal.review_status}
+            actions={[
+              { label: 'Approve', value: 'approved', tone: 'success' },
+              { label: 'Escalate', value: 'escalated', tone: 'warning' },
+              { label: 'Reject', value: 'rejected', tone: 'danger' },
+            ]}
+            onUpdate={status => onReview(status, notes)}
+          />
         </div>
       )}
 

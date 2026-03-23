@@ -412,12 +412,31 @@ export async function toggleUserActive(id: string, isActive: boolean) {
 // GitHub Issue Bridge
 // ============================================================
 
-const GITHUB_SAFE_CATEGORIES = ['bug', 'feature_request', 'suggest_resource']
+const GITHUB_SAFE_CATEGORIES = ['report_issue', 'bug', 'feature_request', 'suggest_resource']
 
 const CATEGORY_LABELS: Record<string, string> = {
+  report_issue: 'bug',
   bug: 'bug',
   feature_request: 'enhancement',
   suggest_resource: 'enhancement',
+}
+
+export async function approveAndCreateGitHubIssue(
+  reviewItemId: string,
+  reviewerNotes: string
+): Promise<{ url: string; number: number } | null> {
+  await requireCoordinatorAccess()
+
+  const supabase = getServiceClient()
+  const { error } = await supabase.from('review_queue_items')
+    .update({ status: 'Approved', reviewer_notes: reviewerNotes, reviewed_at: new Date().toISOString() })
+    .eq('id', reviewItemId)
+  if (error) {
+    console.error('Failed to approve review item before GitHub issue:', error)
+    return null
+  }
+
+  return createGitHubIssue(reviewItemId)
 }
 
 export async function createGitHubIssue(reviewItemId: string): Promise<{ url: string; number: number } | null> {
@@ -439,7 +458,7 @@ export async function createGitHubIssue(reviewItemId: string): Promise<{ url: st
   }
 
   // Sanitize: no personal data (contact info) in the issue
-  const title = item.feedback_category === 'bug'
+  const title = item.feedback_category === 'bug' || item.feedback_category === 'report_issue'
     ? `Bug: ${(item.feedback_message ?? '').slice(0, 80)}`
     : item.feedback_category === 'feature_request'
       ? `Feature: ${(item.feedback_message ?? '').slice(0, 80)}`

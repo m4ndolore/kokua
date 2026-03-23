@@ -10,11 +10,12 @@ import {
   updateSourceActive,
   approveDonation, hideDonation, updateDonationFlags,
   logoutAction,
+  createGitHubIssue,
 } from '@/lib/dashboard-actions'
 import {
   ISLANDS, REQUEST_STATUSES, OFFER_STATUSES, VOLUNTEER_STATUSES,
   URGENCY_LEVELS, HUB_STATUSES, REVIEW_STATUSES, VISIBILITY_STATUSES,
-  SIGNAL_REVIEW_STATUSES, CONFIDENCE_LEVELS, SIGNAL_TYPES, DONATION_TYPES,
+  SIGNAL_REVIEW_STATUSES, CONFIDENCE_LEVELS, SIGNAL_TYPES, DONATION_TYPES, GITHUB_SAFE_CATEGORIES,
 } from '@/lib/types'
 import type {
   HelpRequest, HelpOffer, Volunteer,
@@ -469,6 +470,11 @@ export function DashboardContent({
               return <ReviewCard key={r.id} item={r} sourceName={src?.name} onStatusUpdate={(status, notes) => {
                 setReviewItems(p => p.map(x => x.id === r.id ? { ...x, status, reviewer_notes: notes } : x))
                 updateReviewItemStatus(r.id, status, notes)
+              }} onCreateIssue={async (id) => {
+                const result = await createGitHubIssue(id)
+                if (result) {
+                  setReviewItems(p => p.map(x => x.id === id ? { ...x, github_issue_url: result.url, github_issue_number: result.number } : x))
+                }
               }} />
             })}
         </CardList>
@@ -592,12 +598,14 @@ function ActiveToggle({ isActive, onToggle }: { isActive: boolean; onToggle: (va
   )
 }
 
-function ReviewCard({ item, sourceName, onStatusUpdate }: {
+function ReviewCard({ item, sourceName, onStatusUpdate, onCreateIssue }: {
   item: ReviewQueueItem; sourceName?: string
   onStatusUpdate: (status: string, notes: string) => void
+  onCreateIssue?: (id: string) => void
 }) {
   const [notes, setNotes] = useState(item.reviewer_notes ?? '')
   const isFeedback = item.origin === 'feedback'
+  const canBridge = isFeedback && item.feedback_category && GITHUB_SAFE_CATEGORIES.includes(item.feedback_category as typeof GITHUB_SAFE_CATEGORIES[number])
 
   return (
     <div className="bg-white border border-amber-100 rounded-lg p-4">
@@ -639,9 +647,18 @@ function ReviewCard({ item, sourceName, onStatusUpdate }: {
       )}
 
       {item.github_issue_url && (
-        <div className="text-xs text-gray-400 mt-1">
-          GitHub: #{item.github_issue_number}
-        </div>
+        <a href={item.github_issue_url} target="_blank" rel="noopener noreferrer"
+          className="inline-block text-xs text-ocean-500 hover:text-ocean-700 underline mt-1">
+          GitHub #{item.github_issue_number}
+        </a>
+      )}
+
+      {/* GitHub issue bridge for approved safe-category feedback */}
+      {!item.github_issue_url && canBridge && item.status === 'Approved' && onCreateIssue && (
+        <button onClick={() => onCreateIssue(item.id)}
+          className="text-xs px-3 py-1.5 mt-2 bg-gray-800 text-white rounded hover:bg-gray-900 transition-colors">
+          Create GitHub Issue
+        </button>
       )}
 
       {item.status === 'Pending' && (

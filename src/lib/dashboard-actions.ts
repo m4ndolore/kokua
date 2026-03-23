@@ -362,3 +362,77 @@ export async function toggleUserActive(id: string, isActive: boolean) {
   if (error) { console.error('Failed to toggle user active:', error); return false }
   return true
 }
+
+// ============================================================
+// GitHub Issue Bridge
+// ============================================================
+
+const GITHUB_SAFE_CATEGORIES = ['bug', 'feature_request', 'suggest_resource']
+
+const CATEGORY_LABELS: Record<string, string> = {
+  bug: 'bug',
+  feature_request: 'enhancement',
+  suggest_resource: 'enhancement',
+}
+
+export async function createGitHubIssue(reviewItemId: string): Promise<{ url: string; number: number } | null> {
+  await requireCoordinatorAccess()
+
+  const token = process.env.GITHUB_TOKEN
+  if (!token) { console.error('GITHUB_TOKEN not configured'); return null }
+
+  const supabase = getServiceClient()
+  const { data: item } = await supabase.from('review_queue_items')
+    .select('*')
+    .eq('id', reviewItemId)
+    .single()
+
+  if (!item) { console.error('Review item not found'); return null }
+  if (item.github_issue_url) { return { url: item.github_issue_url, number: item.github_issue_number } }
+  if (!item.feedback_category || !GITHUB_SAFE_CATEGORIES.includes(item.feedback_category)) {
+    console.error('Category not safe for GitHub'); return null
+  }
+
+  // Sanitize: no personal data (contact info) in the issue
+  const title = item.feedback_category === 'bug'
+    ? `Bug: ${(item.feedback_message ?? '').slice(0, 80)}`
+    : item.feedback_category === 'feature_request'
+      ? `Feature: ${(item.feedback_message ?? '').slice(0, 80)}`
+      : `Resource suggestion: ${(item.feedback_message ?? '').slice(0, 80)}`
+
+  const body = [
+    `**Category:** ${item.feedback_category}`,
+    item.feedback_page_url ? `**Page:** ${item.feedback_page_url}` : null,
+    '',
+    item.feedback_message ?? '',
+    '',
+    `---`,
+    `_Created from Kōkua Hub feedback (review queue item)_`,
+  ].filter(Boolean).join('\n')
+
+  const labels = [CATEGORY_LABELS[item.feedback_category] ?? 'enhancement', 'agent-ready']
+
+  const repo = process.env.GITHUB_REPO ?? 'm4ndolore/kokua'
+  const res = await fetch(`https://api.github.com/repos/${repo}/issues`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/vnd.github+json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ title, body, labels }),
+  })
+
+  if (!res.ok) {
+    console.error('GitHub API error:', res.status, await res.text())
+    return null
+  }
+
+  const issue = await res.json() as { html_url: string; number: number }
+
+  await supabase.from('review_queue_items')
+    .update({ github_issue_url: issue.html_url, github_issue_number: issue.number })
+    .eq('id', reviewItemId)
+
+  return { url: issue.html_url, number: issue.number }
+}

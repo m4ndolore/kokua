@@ -134,10 +134,12 @@ const SECTIONS: readonly SectionConfig[] = [
 
 export function DonateContent({ donations }: { donations: DonationLink[] }) {
   const [islandFilter, setIslandFilter] = useState('')
+  const [typeFilter, setTypeFilter] = useState('')
 
-  const filtered = donations.filter(
-    (d) => !islandFilter || d.island === null || d.island === islandFilter
-  )
+  const filtered = donations
+    .filter(d => !islandFilter || d.island === null || d.island === islandFilter)
+    .filter(d => !typeFilter || d.donation_type === typeFilter)
+    .sort((a, b) => (b.trust_score ?? 0) - (a.trust_score ?? 0))
 
   return (
     <div className="py-4 max-w-2xl mx-auto">
@@ -157,21 +159,32 @@ export function DonateContent({ donations }: { donations: DonationLink[] }) {
         </p>
       </div>
 
-      {/* Island filter */}
-      <div className="mb-6">
+      {/* Filters */}
+      <div className="flex flex-wrap gap-2 mb-4">
         <select
           value={islandFilter}
           onChange={(e) => setIslandFilter(e.target.value)}
-          className="w-full sm:w-auto rounded-lg border border-gray-300 px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-ocean-400"
+          className="rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-ocean-400"
         >
           <option value="">All islands</option>
           {ISLANDS.map((i) => (
-            <option key={i} value={i}>
-              {i}
-            </option>
+            <option key={i} value={i}>{i}</option>
           ))}
         </select>
+        <select
+          value={typeFilter}
+          onChange={(e) => setTypeFilter(e.target.value)}
+          className="rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-ocean-400"
+        >
+          <option value="">All types</option>
+          <option value="institutional">Relief Funds</option>
+          <option value="platform_hub">Campaign Hubs</option>
+          <option value="community_campaign">Community Campaigns</option>
+          <option value="in_kind_support">In-Kind Support</option>
+          <option value="volunteer">Volunteer</option>
+        </select>
       </div>
+      <p className="text-xs text-gray-400 mb-6">{filtered.length} donation options</p>
 
       {/* Empty state */}
       {filtered.length === 0 ? (
@@ -187,9 +200,12 @@ export function DonateContent({ donations }: { donations: DonationLink[] }) {
           if (items.length === 0) return null
           return (
             <section key={section.title} className="mb-8">
-              <h2 className="text-lg font-semibold text-ocean-800 mb-3">
-                {section.title}
-              </h2>
+              <div className="flex items-baseline justify-between mb-3">
+                <h2 className="text-lg font-semibold text-ocean-800">
+                  {section.title}
+                </h2>
+                <span className="text-xs text-gray-400">{items.length}</span>
+              </div>
               <div className="space-y-2">
                 {items.map((d) => (
                   <DonationCard key={d.id} donation={d} />

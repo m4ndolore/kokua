@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { ISLANDS } from '@/lib/types'
+import { useState, useMemo } from 'react'
+import { ISLANDS, HUB_CATEGORIES } from '@/lib/types'
 import type { DonationLink, HelpHub, PublicNeedSummary } from '@/lib/types'
 import { ShareButton } from '@/components/share-button'
 import { HubSignalButtons } from '@/components/signal-buttons'
@@ -97,11 +97,36 @@ export function FindHelpContent({
   donations: DonationLink[]
 }) {
   const [islandFilter, setIslandFilter] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
+  const [sortBy, setSortBy] = useState<'category' | 'status' | 'recent'>('category')
 
-  const filteredHubs = hubs.filter(h => !islandFilter || h.island === islandFilter)
   const filteredSummaries = summaries.filter(s => !islandFilter || s.island === islandFilter)
   const filteredDonations = donations.filter(d => !islandFilter || !d.island || d.island === islandFilter)
+
+  const filteredHubs = useMemo(() => {
+    let result = hubs
+      .filter(h => !islandFilter || h.island === islandFilter)
+      .filter(h => !categoryFilter || h.category === categoryFilter)
+      .filter(h => !statusFilter || h.status === statusFilter)
+
+    if (sortBy === 'status') {
+      const order: Record<string, number> = { Open: 0, Limited: 1, Unknown: 2, Closed: 3 }
+      result = [...result].sort((a, b) => (order[a.status] ?? 9) - (order[b.status] ?? 9))
+    } else if (sortBy === 'recent') {
+      result = [...result].sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+    } else {
+      result = [...result].sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name))
+    }
+    return result
+  }, [hubs, islandFilter, categoryFilter, statusFilter, sortBy])
+
   const openHubs = filteredHubs.filter(h => h.status !== 'Closed')
+  const activeCategories = useMemo(() => {
+    const cats = new Map<string, number>()
+    hubs.filter(h => !islandFilter || h.island === islandFilter).forEach(h => cats.set(h.category, (cats.get(h.category) ?? 0) + 1))
+    return cats
+  }, [hubs, islandFilter])
 
   return (
     <div className="py-4 max-w-2xl mx-auto">
@@ -110,15 +135,44 @@ export function FindHelpContent({
         Resources verified by volunteer coordinators. Call ahead when possible.
       </p>
 
-      {/* Island filter */}
-      <div className="mb-6">
+      {/* Filters */}
+      <div className="flex flex-wrap gap-2 mb-6">
         <select
           value={islandFilter}
-          onChange={e => setIslandFilter(e.target.value)}
-          className="w-full sm:w-auto rounded-lg border border-gray-300 px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-ocean-400"
+          onChange={e => { setIslandFilter(e.target.value); setCategoryFilter('') }}
+          className="rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-ocean-400"
         >
           <option value="">All islands</option>
           {ISLANDS.map(i => <option key={i} value={i}>{i}</option>)}
+        </select>
+        <select
+          value={categoryFilter}
+          onChange={e => setCategoryFilter(e.target.value)}
+          className="rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-ocean-400"
+        >
+          <option value="">All categories</option>
+          {HUB_CATEGORIES.filter(c => activeCategories.has(c)).map(c => (
+            <option key={c} value={c}>{c} ({activeCategories.get(c)})</option>
+          ))}
+        </select>
+        <select
+          value={statusFilter}
+          onChange={e => setStatusFilter(e.target.value)}
+          className="rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-ocean-400"
+        >
+          <option value="">Any status</option>
+          <option value="Open">Open</option>
+          <option value="Limited">Limited</option>
+          <option value="Closed">Closed</option>
+        </select>
+        <select
+          value={sortBy}
+          onChange={e => setSortBy(e.target.value as 'category' | 'status' | 'recent')}
+          className="rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-ocean-400"
+        >
+          <option value="category">Sort: Category</option>
+          <option value="status">Sort: Status</option>
+          <option value="recent">Sort: Recently updated</option>
         </select>
       </div>
 
@@ -209,14 +263,15 @@ export function FindHelpContent({
 
       {/* Help Hubs */}
       <section>
-        <h2 className="text-lg font-semibold text-ocean-800 mb-3">
-          Resources &amp; Services
-          {openHubs.length > 0 && (
-            <span className="text-sm font-normal text-gray-400 ml-2">
-              {openHubs.length} currently open
-            </span>
-          )}
-        </h2>
+        <div className="flex items-baseline justify-between mb-3">
+          <h2 className="text-lg font-semibold text-ocean-800">
+            Resources &amp; Services
+          </h2>
+          <span className="text-xs text-gray-400">
+            {filteredHubs.length} shown
+            {openHubs.length !== filteredHubs.length && ` · ${openHubs.length} open`}
+          </span>
+        </div>
 
         {filteredHubs.length === 0 ? (
           <div className="bg-white border border-ocean-100 rounded-lg p-6 text-center">

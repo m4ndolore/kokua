@@ -14,6 +14,7 @@ Kōkua Hub is a **hub**, not the source of truth for every spoke. We aggregate, 
 - **Tailwind CSS v4**
 - **Supabase** (PostgreSQL, Row Level Security)
 - **TypeScript**
+- **Cloudflare Workers** via **OpenNext** for production hosting
 
 ## Quick Start
 
@@ -31,16 +32,42 @@ git clone <repo-url> && cd kokua && npm install
 
 ### 3. Configure environment
 
+Single source of truth:
+
+- Public non-secrets live in `config/profiles/*.json`
+- Local secrets live in `.dev.vars`
+
 ```bash
-cp .env.local.example .env.local
+cp .dev.vars.example .dev.vars
 ```
 
-Variables: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `DASHBOARD_PASSWORD`
+Secrets: `SUPABASE_SECRET_API_KEY`, `DASHBOARD_PASSWORD`, `DASHBOARD_SESSION_SECRET`
 
 ### 4. Run
 
 ```bash
 npm run dev
+```
+
+## Configuration Contract
+
+Non-secrets live in [`config/profiles`](/Users/m4ndolore/Dev/kokua/config/profiles) and are validated by [`config/doctor.mjs`](/Users/m4ndolore/Dev/kokua/config/doctor.mjs). Rendered artifacts go to `.runtime/` and are not committed.
+
+- Public non-secrets for the Worker runtime:
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- Runtime secrets for Cloudflare Workers:
+  - `SUPABASE_SECRET_API_KEY`
+  - `DASHBOARD_PASSWORD`
+  - `DASHBOARD_SESSION_SECRET`
+
+Local Worker secrets are documented in [`.dev.vars.example`](/Users/m4ndolore/Dev/kokua/.dev.vars.example).
+
+Validate a profile before build or deploy:
+
+```bash
+set -a; source .dev.vars; set +a
+node config/doctor.mjs development
 ```
 
 ## Architecture
@@ -205,6 +232,45 @@ Implementation: Add a server action that calls the GitHub API via `GITHUB_TOKEN`
 - Automated matching
 - Audit logging
 - Rate limiting / CAPTCHA
+
+## Deploy To Cloudflare Workers
+
+This repo targets Cloudflare Workers, not Pages SSR.
+
+1. Fill in the non-secret profile values in [`config/profiles/production.json`](/Users/m4ndolore/Dev/kokua/config/profiles/production.json).
+2. Set Worker secrets for `SUPABASE_SECRET_API_KEY`, `DASHBOARD_PASSWORD`, and `DASHBOARD_SESSION_SECRET`.
+3. Validate the production contract:
+
+```bash
+env DASHBOARD_PASSWORD=... DASHBOARD_SESSION_SECRET=... SUPABASE_SECRET_API_KEY=... \
+  npm run doctor:production
+```
+
+4. Build for Cloudflare locally:
+
+```bash
+env DASHBOARD_PASSWORD=... DASHBOARD_SESSION_SECRET=... SUPABASE_SECRET_API_KEY=... \
+  npm run cf:build
+```
+
+5. Preview locally in Wrangler:
+
+```bash
+npm run cf:preview
+```
+
+6. Deploy:
+
+```bash
+env DASHBOARD_PASSWORD=... DASHBOARD_SESSION_SECRET=... SUPABASE_SECRET_API_KEY=... \
+  npm run cf:deploy
+```
+
+Notes:
+
+- `wrangler.json` is the checked-in base config.
+- Profile-specific Worker vars are rendered into `.runtime/wrangler.<profile>.json` during build/deploy.
+- The current Cloudflare path is pinned through `@opennextjs/cloudflare@1.5.2` to stay compatible with `next@14`.
 
 ## License
 

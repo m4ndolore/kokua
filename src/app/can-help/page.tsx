@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase'
-import type { PublicNeedSummary } from '@/lib/types'
+import type { DonationLink, PublicNeedSummary } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,6 +12,14 @@ export default async function CanHelp() {
     .limit(5)
 
   const summaries = (summariesRes?.data ?? []) as PublicNeedSummary[]
+
+  const donationsRes = await supabase?.from('donation_links')
+    .select('*')
+    .eq('is_visible', true)
+    .order('trust_score', { ascending: false })
+    .limit(3)
+
+  const donations = (donationsRes?.data ?? []) as DonationLink[]
 
   return (
     <div className="py-6 sm:py-10 max-w-lg mx-auto">
@@ -45,6 +53,32 @@ export default async function CanHelp() {
               )
             })}
           </div>
+        </section>
+      )}
+
+      {/* Donation options */}
+      {donations.length > 0 && (
+        <section className="mb-8">
+          <h2 className="text-base font-semibold text-earth-700 mb-3">Donate & Support</h2>
+          <div className="space-y-2 mb-3">
+            {donations.map(d => (
+              <a key={d.id} href={d.destination_url} target="_blank" rel="noopener noreferrer"
+                className="block bg-white border border-earth-100 rounded-lg p-3 hover:bg-earth-50 transition-colors">
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <h3 className="font-medium text-sm text-gray-900">{d.title}</h3>
+                    {d.organization && <p className="text-xs text-gray-500">{d.organization}</p>}
+                  </div>
+                  <span className="shrink-0 text-xs text-earth-600">Donate →</span>
+                </div>
+              </a>
+            ))}
+          </div>
+          <p className="text-center">
+            <a href="/donate" className="text-sm text-earth-600 hover:text-earth-800 underline">
+              View all donation options →
+            </a>
+          </p>
         </section>
       )}
 

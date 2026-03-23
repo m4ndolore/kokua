@@ -29,7 +29,7 @@ export default function DashboardLogin() {
           Volunteer Dashboard
         </h1>
         <p className="text-sm text-gray-500 text-center mb-6">
-          Enter the coordinator password to access the dashboard.
+          Enter the shared password, or <code className="text-xs">email:password</code> to attribute actions to a dashboard user.
         </p>
 
         {state.error && (

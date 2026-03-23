@@ -8,23 +8,25 @@ import {
   updateReviewItemStatus,
   updateSignalReview,
   updateSourceActive,
+  approveDonation, hideDonation, updateDonationFlags,
+  logoutAction,
 } from '@/lib/dashboard-actions'
 import {
   ISLANDS, REQUEST_STATUSES, OFFER_STATUSES, VOLUNTEER_STATUSES,
   URGENCY_LEVELS, HUB_STATUSES, REVIEW_STATUSES, VISIBILITY_STATUSES,
-  SIGNAL_REVIEW_STATUSES, CONFIDENCE_LEVELS, SIGNAL_TYPES,
+  SIGNAL_REVIEW_STATUSES, CONFIDENCE_LEVELS, SIGNAL_TYPES, DONATION_TYPES,
 } from '@/lib/types'
 import type {
   HelpRequest, HelpOffer, Volunteer,
   HelpHub, PublicNeedSummary, ReviewQueueItem,
-  SourceRegistry, SourceSignal, DashboardUser, Role,
+  SourceRegistry, SourceSignal, DashboardUser, DonationLink, Role,
 } from '@/lib/types'
 
 // ============================================================
 // Shared utilities
 // ============================================================
 
-type Tab = 'requests' | 'offers' | 'volunteers' | 'hubs' | 'summaries' | 'review' | 'signals' | 'sources'
+type Tab = 'requests' | 'offers' | 'volunteers' | 'hubs' | 'summaries' | 'review' | 'signals' | 'sources' | 'donations'
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime()
@@ -151,11 +153,13 @@ export function DashboardContent({
   requests: initialRequests, offers: initialOffers, volunteers: initialVolunteers,
   hubs: initialHubs, summaries: initialSummaries, reviewItems: initialReview,
   signals: initialSignals, sources: initialSources, users,
+  donations: initialDonations,
 }: {
   role: Role; userName: string
   requests: HelpRequest[]; offers: HelpOffer[]; volunteers: Volunteer[]
   hubs: HelpHub[]; summaries: PublicNeedSummary[]; reviewItems: ReviewQueueItem[]
   signals: SourceSignal[]; sources: SourceRegistry[]; users: DashboardUser[]
+  donations: DonationLink[]
 }) {
   const [tab, setTab] = useState<Tab>('requests')
   const [requests, setRequests] = useState(initialRequests)
@@ -166,6 +170,7 @@ export function DashboardContent({
   const [reviewItems, setReviewItems] = useState(initialReview)
   const [signals, setSignals] = useState(initialSignals)
   const [sources, setSources] = useState(initialSources)
+  const [donations, setDonations] = useState(initialDonations)
   const [islandFilter, setIslandFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const isAdminRole = role === 'admin'
@@ -174,6 +179,7 @@ export function DashboardContent({
   const pendingSignalCount = signals.filter(s => s.needs_review).length
   const newRequestCount = requests.filter(r => r.status === 'New').length
   const urgentCount = requests.filter(r => r.urgency === 'Urgent' && r.status !== 'Completed' && r.status !== 'Archived').length
+  const needsReviewDonations = donations.filter(d => d.needs_review).length
 
   // Source name lookup
   const sourceMap = new Map(sources.map(s => [s.id, s]))
@@ -186,6 +192,7 @@ export function DashboardContent({
     { key: 'summaries', label: 'Needs', count: summaries.length },
     { key: 'review', label: 'Review', count: pendingReviewCount || undefined },
     { key: 'signals', label: 'Signals', count: pendingSignalCount || undefined },
+    { key: 'donations', label: 'Donations', count: donations.length },
     { key: 'sources', label: 'Sources', count: sources.length, adminOnly: true },
   ]
 
@@ -199,11 +206,18 @@ export function DashboardContent({
           <h1 className="text-2xl font-bold text-ocean-900">Coordination Board</h1>
           <p className="text-xs text-gray-400">Signed in as {userName} ({role})</p>
         </div>
+        <div className="flex items-center gap-3">
+        <form action={logoutAction}>
+          <button type="submit" className="text-xs text-gray-400 hover:text-lava-600 transition-colors">
+            Sign out
+          </button>
+        </form>
         <div className="text-xs text-right text-gray-500">
           {newRequestCount > 0 && <span className="block text-blue-700 font-medium">{newRequestCount} new requests</span>}
           {urgentCount > 0 && <span className="block text-lava-600 font-medium">{urgentCount} urgent</span>}
           {pendingReviewCount > 0 && <span className="block text-amber-700 font-medium">{pendingReviewCount} pending review</span>}
           {pendingSignalCount > 0 && <span className="block text-purple-700 font-medium">{pendingSignalCount} signals need review</span>}
+        </div>
         </div>
       </div>
 
@@ -267,6 +281,13 @@ export function DashboardContent({
             className="text-xs border border-gray-300 rounded-lg px-2 py-2 bg-white">
             <option value="">All review statuses</option>
             {SIGNAL_REVIEW_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+        )}
+        {tab === 'donations' && (
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
+            className="text-xs border border-gray-300 rounded-lg px-2 py-2 bg-white">
+            <option value="">All types</option>
+            {DONATION_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
         )}
       </div>
@@ -466,6 +487,61 @@ export function DashboardContent({
                   updateSignalReview(s.id, status, notes)
                 }} />
             })}
+        </CardList>
+      )}
+
+      {/* ============ DONATIONS ============ */}
+      {tab === 'donations' && (
+        <CardList empty="No donation links.">
+          {donations
+            .filter(d => (!islandFilter || d.island === islandFilter) && (!statusFilter || d.donation_type === statusFilter))
+            .map(d => (
+              <div key={d.id} className="bg-white border border-earth-100 rounded-lg p-4">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <Badge label={d.donation_type} color="bg-earth-50 text-earth-700" />
+                    <Badge label={d.confidence} color={confidenceColors[d.confidence] ?? 'bg-gray-100'} />
+                    {d.is_visible
+                      ? <Badge label="public" color="bg-green-100 text-green-800" />
+                      : <Badge label="hidden" color="bg-gray-100 text-gray-600" />}
+                    {d.needs_review && <Badge label="needs review" color="bg-amber-100 text-amber-800" />}
+                    {d.trust_score !== null && <span className="text-[10px] text-gray-400">Score: {d.trust_score}</span>}
+                    <span className="text-xs text-gray-400">{timeAgo(d.updated_at)}</span>
+                  </div>
+                </div>
+                <div className="text-sm font-medium mb-0.5">{d.title}</div>
+                {d.organization && <div className="text-xs text-gray-500 mb-0.5">{d.organization}</div>}
+                {d.description && <p className="text-xs text-gray-600 mb-1">{d.description}</p>}
+                <div className="text-xs text-gray-500 mb-1">
+                  {d.island && <span>{d.island}</span>}
+                  {d.area && <span> · {d.area}</span>}
+                </div>
+                {/* Badges and flags */}
+                <div className="flex flex-wrap gap-1 mb-1">
+                  {d.badges.map(b => <span key={b} className="bg-ocean-50 text-ocean-700 text-[10px] px-1.5 py-0.5 rounded">{b}</span>)}
+                  {d.flags.map(f => <span key={f} className="bg-lava-500/10 text-lava-600 text-[10px] px-1.5 py-0.5 rounded">{f}</span>)}
+                </div>
+                {/* Source provenance */}
+                <div className="text-xs text-gray-400 flex flex-wrap gap-2 mb-2">
+                  {d.source_name && <span>Source: {d.source_name}</span>}
+                  {d.source_type && <span>({d.source_type})</span>}
+                  {d.source_url && <a href={d.source_url} target="_blank" rel="noopener noreferrer" className="text-ocean-500 hover:text-ocean-700 underline">Source link</a>}
+                  {d.destination_url && <a href={d.destination_url} target="_blank" rel="noopener noreferrer" className="text-earth-600 hover:text-earth-700 underline">Destination</a>}
+                  {d.last_verified_at && <span>Verified: {new Date(d.last_verified_at).toLocaleDateString()}</span>}
+                </div>
+                {/* Actions */}
+                <div className="flex gap-2">
+                  {!d.is_visible && (
+                    <button onClick={() => { setDonations(p => p.map(x => x.id === d.id ? { ...x, is_visible: true, needs_review: false } : x)); approveDonation(d.id) }}
+                      className="text-xs px-3 py-1.5 bg-green-100 text-green-800 rounded hover:bg-green-200 transition-colors">Approve</button>
+                  )}
+                  {d.is_visible && (
+                    <button onClick={() => { setDonations(p => p.map(x => x.id === d.id ? { ...x, is_visible: false, needs_review: true } : x)); hideDonation(d.id, 'Hidden by coordinator') }}
+                      className="text-xs px-3 py-1.5 bg-lava-500/10 text-lava-700 rounded hover:bg-lava-500/20 transition-colors">Hide</button>
+                  )}
+                </div>
+              </div>
+            ))}
         </CardList>
       )}
 

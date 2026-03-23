@@ -5,7 +5,7 @@ import { DashboardContent } from './dashboard-content'
 import type {
   HelpRequest, HelpOffer, Volunteer,
   HelpHub, PublicNeedSummary, ReviewQueueItem,
-  SourceRegistry, SourceSignal, DashboardUser,
+  SourceRegistry, SourceSignal, DashboardUser, DonationLink,
 } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -22,7 +22,7 @@ export default async function Dashboard() {
   const [
     requestsRes, offersRes, volunteersRes,
     hubsRes, summariesRes, reviewRes,
-    signalsRes, sourcesRes, usersRes,
+    signalsRes, sourcesRes, usersRes, donationsRes,
   ] = await Promise.all([
     supabase.from('help_requests').select('*').order('created_at', { ascending: false }),
     supabase.from('help_offers').select('*').order('created_at', { ascending: false }),
@@ -31,10 +31,13 @@ export default async function Dashboard() {
     supabase.from('public_need_summaries').select('*').order('updated_at', { ascending: false }),
     supabase.from('review_queue_items').select('*').order('created_at', { ascending: false }),
     supabase.from('source_signals').select('*').order('created_at', { ascending: false }),
-    supabase.from('source_registry').select('*').order('name'),
+    admin
+      ? supabase.from('source_registry').select('*').order('name')
+      : supabase.from('source_registry').select('id, name, source_type').order('name'),
     admin
       ? supabase.from('dashboard_users').select('*').order('created_at', { ascending: false })
       : Promise.resolve({ data: [] }),
+    supabase.from('donation_links').select('*').order('updated_at', { ascending: false }),
   ])
 
   return (
@@ -50,6 +53,7 @@ export default async function Dashboard() {
       signals={(signalsRes.data ?? []) as SourceSignal[]}
       sources={(sourcesRes.data ?? []) as SourceRegistry[]}
       users={(usersRes.data ?? []) as DashboardUser[]}
+      donations={(donationsRes.data ?? []) as DonationLink[]}
     />
   )
 }

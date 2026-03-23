@@ -81,6 +81,16 @@ export const FEEDBACK_CATEGORIES = [
 // Categories safe to bridge to GitHub issues (no personal data risk)
 export const GITHUB_SAFE_CATEGORIES = ['bug', 'feature_request', 'suggest_resource'] as const
 
+// Donation constants
+export const DONATION_TYPES = ['institutional', 'platform_hub', 'community_campaign', 'in_kind_support', 'volunteer'] as const
+export const DONATION_BADGES = [
+  'Established Organization', 'Platform Verified', 'Local Organization',
+  'Newly Added', 'Limited Verification', 'Needs Review',
+] as const
+export const DONATION_FLAGS = [
+  'low_confidence', 'source_conflict', 'stale', 'broken_link', 'suspicious',
+] as const
+
 export const ROLES = ['coordinator', 'admin'] as const
 export type Role = typeof ROLES[number]
 
@@ -253,6 +263,35 @@ export type SourceSignal = {
   linked_help_hub_id: string | null
   linked_need_summary_id: string | null
   coordinator_notes: string | null
+}
+
+export type DonationLink = {
+  id: string
+  created_at: string
+  updated_at: string
+  external_id: string
+  title: string
+  organization: string | null
+  donation_type: string
+  description: string | null
+  island: string | null
+  area: string | null
+  neighborhood: string | null
+  address: string | null
+  hours: string | null
+  destination_url: string
+  source_name: string | null
+  source_type: string | null
+  source_url: string | null
+  confidence: string
+  trust_score: number | null
+  badges: string[]
+  flags: string[]
+  last_verified_at: string | null
+  is_visible: boolean
+  needs_review: boolean
+  review_reason: string | null
+  tags: string[]
 }
 
 export type DashboardUser = {

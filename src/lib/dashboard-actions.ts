@@ -1,9 +1,17 @@
 'use server'
 
-import { setDashboardAuth } from './auth'
+import { requireDashboardUser, setDashboardAuth, clearDashboardAuth } from './auth'
 import { getServiceClient } from './supabase'
 import { redirect } from 'next/navigation'
 import type { FormState } from './actions'
+
+async function requireCoordinatorAccess() {
+  await requireDashboardUser('coordinator', 'admin')
+}
+
+async function requireAdminAccess() {
+  await requireDashboardUser('admin')
+}
 
 export async function loginAction(
   _prev: FormState,
@@ -18,6 +26,11 @@ export async function loginAction(
   redirect('/dashboard')
 }
 
+export async function logoutAction(): Promise<void> {
+  await clearDashboardAuth()
+  redirect('/dashboard/login')
+}
+
 // ============================================================
 // Generic status and notes updates (coordinator + admin)
 // ============================================================
@@ -27,6 +40,7 @@ export async function updateStatus(
   id: string,
   status: string
 ) {
+  await requireCoordinatorAccess()
   const supabase = getServiceClient()
   const { error } = await supabase.from(table).update({ status }).eq('id', id)
   if (error) { console.error(`Failed to update ${table} status:`, error); return false }
@@ -38,6 +52,7 @@ export async function updateCoordinatorNotes(
   id: string,
   notes: string
 ) {
+  await requireCoordinatorAccess()
   const supabase = getServiceClient()
   const { error } = await supabase.from(table).update({ coordinator_notes: notes }).eq('id', id)
   if (error) { console.error(`Failed to update ${table} notes:`, error); return false }
@@ -49,6 +64,7 @@ export async function updateCoordinatorNotes(
 // ============================================================
 
 export async function updateHubStatus(id: string, status: string) {
+  await requireCoordinatorAccess()
   const supabase = getServiceClient()
   const { error } = await supabase.from('help_hubs')
     .update({ status, updated_at: new Date().toISOString() })
@@ -58,6 +74,7 @@ export async function updateHubStatus(id: string, status: string) {
 }
 
 export async function updateHubVisibility(id: string, visibility: string) {
+  await requireCoordinatorAccess()
   const supabase = getServiceClient()
   const { error } = await supabase.from('help_hubs')
     .update({ visibility_status: visibility, updated_at: new Date().toISOString() })
@@ -73,6 +90,7 @@ export async function createHub(data: {
   source_name?: string; source_type?: string; source_url?: string;
   source_registry_id?: string; confidence?: string; visibility_status?: string;
 }) {
+  await requireCoordinatorAccess()
   const supabase = getServiceClient()
   const { data: hub, error } = await supabase.from('help_hubs').insert({
     ...data,
@@ -90,6 +108,7 @@ export async function createHub(data: {
 // ============================================================
 
 export async function updateSummaryVisibility(id: string, visibility: string) {
+  await requireCoordinatorAccess()
   const supabase = getServiceClient()
   const { error } = await supabase.from('public_need_summaries')
     .update({ visibility_status: visibility, updated_at: new Date().toISOString() })
@@ -103,6 +122,7 @@ export async function createNeedSummary(data: {
   area?: string; source_name?: string; source_type?: string; source_url?: string;
   source_registry_id?: string; confidence?: string; visibility_status?: string;
 }) {
+  await requireCoordinatorAccess()
   const supabase = getServiceClient()
   const { data: summary, error } = await supabase.from('public_need_summaries').insert({
     ...data,
@@ -119,6 +139,7 @@ export async function createNeedSummary(data: {
 // ============================================================
 
 export async function updateReviewItemStatus(id: string, status: string, reviewerNotes: string) {
+  await requireCoordinatorAccess()
   const supabase = getServiceClient()
   const { error } = await supabase.from('review_queue_items')
     .update({ status, reviewer_notes: reviewerNotes, reviewed_at: new Date().toISOString() })
@@ -133,6 +154,7 @@ export async function promoteToHub(reviewItemId: string, hubData: {
   source_name?: string; source_type?: string; source_url?: string;
   source_registry_id?: string; confidence?: string;
 }) {
+  await requireCoordinatorAccess()
   const hubId = await createHub({ ...hubData, visibility_status: 'review' })
   if (!hubId) return false
 
@@ -149,6 +171,7 @@ export async function promoteToSummary(reviewItemId: string, summaryData: {
   area?: string; source_name?: string; source_type?: string; source_url?: string;
   confidence?: string;
 }) {
+  await requireCoordinatorAccess()
   const summaryId = await createNeedSummary({ ...summaryData, visibility_status: 'review' })
   if (!summaryId) return false
 
@@ -169,6 +192,7 @@ export async function updateSignalReview(
   reviewStatus: string,
   notes: string
 ) {
+  await requireCoordinatorAccess()
   const supabase = getServiceClient()
   const { error } = await supabase.from('source_signals')
     .update({
@@ -184,6 +208,7 @@ export async function updateSignalReview(
 }
 
 export async function linkSignalToHub(signalId: string, hubId: string) {
+  await requireCoordinatorAccess()
   const supabase = getServiceClient()
   const { error } = await supabase.from('source_signals')
     .update({ linked_help_hub_id: hubId, updated_at: new Date().toISOString() })
@@ -198,6 +223,7 @@ export async function createHubFromSignal(signalId: string, hubData: {
   source_name?: string; source_type?: string; source_url?: string;
   source_registry_id?: string; confidence?: string;
 }) {
+  await requireCoordinatorAccess()
   const hubId = await createHub({ ...hubData, visibility_status: 'review' })
   if (!hubId) return false
 
@@ -215,6 +241,7 @@ export async function createSource(data: {
   organization?: string; trust_level?: string; update_frequency?: string;
   strategy?: string; notes?: string;
 }) {
+  await requireAdminAccess()
   const supabase = getServiceClient()
   const { error } = await supabase.from('source_registry').insert({
     ...data,
@@ -227,6 +254,7 @@ export async function createSource(data: {
 }
 
 export async function updateSourceActive(id: string, isActive: boolean) {
+  await requireAdminAccess()
   const supabase = getServiceClient()
   const { error } = await supabase.from('source_registry')
     .update({ is_active: isActive, updated_at: new Date().toISOString() })
@@ -236,10 +264,85 @@ export async function updateSourceActive(id: string, isActive: boolean) {
 }
 
 // ============================================================
+// Donation Link management (coordinator + admin)
+// ============================================================
+
+export async function updateDonationVisibility(id: string, isVisible: boolean) {
+  await requireCoordinatorAccess()
+  const supabase = getServiceClient()
+  const { error } = await supabase.from('donation_links')
+    .update({ is_visible: isVisible, needs_review: false, updated_at: new Date().toISOString() })
+    .eq('id', id)
+  if (error) { console.error('Failed to update donation visibility:', error); return false }
+  return true
+}
+
+export async function updateDonationReview(id: string, needsReview: boolean, reviewReason: string) {
+  await requireCoordinatorAccess()
+  const supabase = getServiceClient()
+  const { error } = await supabase.from('donation_links')
+    .update({ needs_review: needsReview, review_reason: reviewReason, updated_at: new Date().toISOString() })
+    .eq('id', id)
+  if (error) { console.error('Failed to update donation review:', error); return false }
+  return true
+}
+
+export async function approveDonation(id: string) {
+  await requireCoordinatorAccess()
+  const supabase = getServiceClient()
+  const { error } = await supabase.from('donation_links')
+    .update({
+      is_visible: true,
+      needs_review: false,
+      review_reason: null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+  if (error) { console.error('Failed to approve donation:', error); return false }
+  return true
+}
+
+export async function hideDonation(id: string, reason: string) {
+  await requireCoordinatorAccess()
+  const supabase = getServiceClient()
+  const { error } = await supabase.from('donation_links')
+    .update({
+      is_visible: false,
+      needs_review: true,
+      review_reason: reason || 'Hidden by coordinator',
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+  if (error) { console.error('Failed to hide donation:', error); return false }
+  return true
+}
+
+export async function updateDonationFlags(id: string, flags: string[]) {
+  await requireCoordinatorAccess()
+  const supabase = getServiceClient()
+  const { error } = await supabase.from('donation_links')
+    .update({ flags, updated_at: new Date().toISOString() })
+    .eq('id', id)
+  if (error) { console.error('Failed to update donation flags:', error); return false }
+  return true
+}
+
+export async function updateDonationTrustScore(id: string, trustScore: number) {
+  await requireCoordinatorAccess()
+  const supabase = getServiceClient()
+  const { error } = await supabase.from('donation_links')
+    .update({ trust_score: trustScore, updated_at: new Date().toISOString() })
+    .eq('id', id)
+  if (error) { console.error('Failed to update donation trust score:', error); return false }
+  return true
+}
+
+// ============================================================
 // Admin-only: User management
 // ============================================================
 
 export async function createDashboardUser(formData: FormData) {
+  await requireAdminAccess()
   const supabase = getServiceClient()
   const { error } = await supabase.from('dashboard_users').insert({
     email: formData.get('email') as string,
@@ -251,6 +354,7 @@ export async function createDashboardUser(formData: FormData) {
 }
 
 export async function toggleUserActive(id: string, isActive: boolean) {
+  await requireAdminAccess()
   const supabase = getServiceClient()
   const { error } = await supabase.from('dashboard_users')
     .update({ is_active: isActive })

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ISLANDS } from '@/lib/types'
-import type { HelpHub, PublicNeedSummary } from '@/lib/types'
+import type { DonationLink, HelpHub, PublicNeedSummary } from '@/lib/types'
 
 function hubStatusColor(status: string) {
   const colors: Record<string, string> = {
@@ -56,14 +56,17 @@ function needUrgencyColor(urgency: string) {
 export function FindHelpContent({
   hubs,
   summaries,
+  donations,
 }: {
   hubs: HelpHub[]
   summaries: PublicNeedSummary[]
+  donations: DonationLink[]
 }) {
   const [islandFilter, setIslandFilter] = useState('')
 
   const filteredHubs = hubs.filter(h => !islandFilter || h.island === islandFilter)
   const filteredSummaries = summaries.filter(s => !islandFilter || s.island === islandFilter)
+  const filteredDonations = donations.filter(d => !islandFilter || !d.island || d.island === islandFilter)
   const openHubs = filteredHubs.filter(h => h.status !== 'Closed')
 
   return (
@@ -118,6 +121,45 @@ export function FindHelpContent({
               </div>
             ))}
           </div>
+        </section>
+      )}
+
+      {/* Donation links */}
+      {filteredDonations.length > 0 && (
+        <section className="mb-8">
+          <h2 className="text-lg font-semibold text-earth-700 mb-3">Donate & Support</h2>
+          <div className="space-y-2">
+            {filteredDonations.slice(0, 4).map(d => (
+              <div key={d.id} className="bg-white border border-earth-100 rounded-lg p-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h3 className="font-medium text-sm text-gray-900">{d.title}</h3>
+                    {d.organization && <p className="text-xs text-gray-500">{d.organization}</p>}
+                    {d.description && <p className="text-xs text-gray-600 mt-0.5">{d.description}</p>}
+                  </div>
+                  <a href={d.destination_url} target="_blank" rel="noopener noreferrer"
+                    className="shrink-0 text-xs font-medium text-earth-700 bg-earth-50 hover:bg-earth-100 px-3 py-1.5 rounded transition-colors">
+                    Donate →
+                  </a>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 mt-2 pt-2 border-t border-gray-50">
+                  {sourceLabel(d.source_name, d.source_type)}
+                  {confidenceBadge(d.confidence)}
+                  {d.last_verified_at && (
+                    <span className="text-[10px] text-gray-400">
+                      Verified {new Date(d.last_verified_at).toLocaleDateString()}
+                    </span>
+                  )}
+                  <span className="text-[10px] text-gray-400">External site</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-center mt-3">
+            <a href="/donate" className="text-sm text-earth-600 hover:text-earth-800 underline">
+              View all donation options →
+            </a>
+          </p>
         </section>
       )}
 

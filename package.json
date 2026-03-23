@@ -3,10 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node scripts/dev-local.mjs development",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "doctor:development": "node config/doctor.mjs development",
+    "doctor:production": "node config/doctor.mjs production",
+    "render:env:development": "node scripts/render-env.mjs development",
+    "render:env:production": "node scripts/render-env.mjs production",
+    "cf:build": "node scripts/cloudflare-command.mjs build production",
+    "cf:preview": "node scripts/cloudflare-command.mjs preview development",
+    "cf:deploy": "node scripts/cloudflare-command.mjs deploy production"
   },
   "repository": {
     "type": "git",
@@ -19,6 +26,7 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.5.2",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -26,6 +34,7 @@
     "eslint": "^10.1.0",
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "wrangler": "^4.76.0"
   }
 }

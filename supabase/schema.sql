@@ -133,6 +133,41 @@ create table if not exists volunteers (
 );
 
 -- ============================================================
+-- DONATIONS MODULE
+-- ============================================================
+
+create table if not exists donation_links (
+  id uuid default gen_random_uuid() primary key,
+  created_at timestamptz default now() not null,
+  updated_at timestamptz default now() not null,
+  external_id text unique not null,
+  title text not null,
+  organization text,
+  donation_type text not null check (donation_type in (
+    'institutional', 'community_campaign', 'in_kind_support', 'platform_hub', 'volunteer'
+  )),
+  description text,
+  island text,
+  area text,
+  neighborhood text,
+  address text,
+  hours text,
+  destination_url text not null,
+  source_name text,
+  source_type text,
+  source_url text,
+  confidence text not null default 'medium' check (confidence in ('high', 'medium', 'low')),
+  trust_score smallint check (trust_score is null or trust_score between 0 and 100),
+  badges text[] not null default '{}',
+  flags text[] not null default '{}',
+  last_verified_at timestamptz,
+  is_visible boolean not null default false,
+  needs_review boolean not null default true,
+  review_reason text,
+  tags text[] not null default '{}'
+);
+
+-- ============================================================
 -- PUBLIC-FACING CURATED TABLES (source-aware)
 -- ============================================================
 
@@ -267,6 +302,14 @@ create index if not exists idx_offers_created on help_offers(created_at desc);
 create index if not exists idx_volunteers_status on volunteers(status);
 create index if not exists idx_volunteers_island on volunteers(island);
 
+-- Donations
+create index if not exists idx_donation_links_island on donation_links(island);
+create index if not exists idx_donation_links_donation_type on donation_links(donation_type);
+create index if not exists idx_donation_links_confidence on donation_links(confidence);
+create index if not exists idx_donation_links_is_visible on donation_links(is_visible) where is_visible = true;
+create index if not exists idx_donation_links_needs_review on donation_links(needs_review) where needs_review = true;
+create index if not exists idx_donation_links_tags on donation_links using gin(tags);
+
 -- Public-facing
 create index if not exists idx_hubs_visibility on help_hubs(visibility_status) where visibility_status = 'public';
 create index if not exists idx_hubs_island on help_hubs(island);
@@ -293,6 +336,7 @@ alter table source_signals enable row level security;
 alter table help_requests enable row level security;
 alter table help_offers enable row level security;
 alter table volunteers enable row level security;
+alter table donation_links enable row level security;
 alter table help_hubs enable row level security;
 alter table public_need_summaries enable row level security;
 alter table review_queue_items enable row level security;
@@ -314,6 +358,9 @@ create policy "Public can read public help hubs"
 create policy "Public can read public need summaries"
   on public_need_summaries for select
   using (visibility_status = 'public');
+create policy "Public can read visible donation links"
+  on donation_links for select
+  using (is_visible = true);
 
 -- Service role full access (dashboard backend)
 create policy "Service role full access to dashboard_users"
@@ -328,6 +375,8 @@ create policy "Service role full access to help_offers"
   on help_offers for all using (auth.role() = 'service_role');
 create policy "Service role full access to volunteers"
   on volunteers for all using (auth.role() = 'service_role');
+create policy "Service role full access to donation_links"
+  on donation_links for all using (auth.role() = 'service_role');
 create policy "Service role full access to help_hubs"
   on help_hubs for all using (auth.role() = 'service_role');
 create policy "Service role full access to public_need_summaries"

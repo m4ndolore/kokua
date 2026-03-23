@@ -1,0 +1,6 @@
+{
+  "worker": {
+    "NEXT_PUBLIC_SUPABASE_URL": "https://dev-project.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "dev-anon-key"
+  }
+}

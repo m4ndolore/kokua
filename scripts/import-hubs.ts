@@ -2,7 +2,7 @@
  * Kōkua Hub — Import Help Hubs from JSON
  *
  * Usage:
- *   SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... npx tsx scripts/import-hubs.ts data/hubs.json
+ *   SUPABASE_URL=... SUPABASE_SECRET_API_KEY=... npx tsx scripts/import-hubs.ts data/hubs.json
  *
  * Input format: see scripts/sample-hubs.json
  * Imported hubs default to visibility_status='review' and confidence='medium'.
@@ -33,8 +33,8 @@ async function main() {
   if (!file) { console.error('Usage: npx tsx scripts/import-hubs.ts <path>'); process.exit(1) }
 
   const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !key) { console.error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY required.'); process.exit(1) }
+  const key = process.env.SUPABASE_SECRET_API_KEY
+  if (!url || !key) { console.error('SUPABASE_URL and SUPABASE_SECRET_API_KEY required.'); process.exit(1) }
 
   const supabase = createClient(url, key)
   let data: HubInput[]

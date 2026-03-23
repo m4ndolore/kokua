@@ -9,9 +9,9 @@ export const supabase = supabaseUrl
 
 export function getServiceClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !serviceKey) {
+  const secretApiKey = process.env.SUPABASE_SECRET_API_KEY
+  if (!url || !secretApiKey) {
     throw new Error('Supabase environment variables are not configured.')
   }
-  return createClient(url, serviceKey)
+  return createClient(url, secretApiKey)
 }

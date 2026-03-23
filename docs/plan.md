@@ -15,7 +15,7 @@
 
 * `help_hubs` (is_visible = true)
 * `public_need_summaries` (is_visible = true)
-* `donation_links` (is_visible = true)
+* `donation_links` (planned module, not yet in `supabase/schema.sql`)
 
 **Private (service role only):**
 
@@ -27,7 +27,7 @@
 * `dashboard_users`
 * internal notes and feedback
 
-All writes go through Server Actions using the service role key.
+All writes go through Server Actions using the server-side Supabase secret key.
 
 ---
 
@@ -87,8 +87,11 @@ Auth logic: `src/lib/auth.ts`
 * `/` — decision screen
 * `/need-help/*`
 * `/can-help/*`
-* `/donate`
 * `/help`, `/give` (QR redirects)
+
+Planned, not yet shipped:
+
+* `/donate`
 
 ### Private
 
@@ -153,7 +156,10 @@ Constraints:
 * review-first
 * outbound links only
 
-Table: `donation_links`
+Status:
+
+* spec exists in `docs/kokua_hub_donations_module_v_1_spec.md`
+* not yet implemented in the current app or schema
 
 ---
 
@@ -183,11 +189,11 @@ Never send:
 ```
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY
-SUPABASE_SERVICE_ROLE_KEY
+SUPABASE_SECRET_API_KEY
 DASHBOARD_PASSWORD
 ```
 
-Never expose service role key client-side.
+Never expose the server-side Supabase secret key client-side.
 
 ---
 

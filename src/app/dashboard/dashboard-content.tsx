@@ -627,9 +627,9 @@ export function DashboardContent({
       {tab === 'hubs' && (
         <CardList empty="No help hubs match your filters.">
           <BulkActionBar count={selected.size}>
-            <button onClick={async () => { await bulkUpdateHubVisibility([...selected], 'public'); setHubs(p => p.map(h => selected.has(h.id) ? { ...h, visibility_status: 'public' } : h)); clearSelection() }}
+            <button onClick={async () => { await bulkUpdateHubVisibility(Array.from(selected), 'public'); setHubs(p => p.map(h => selected.has(h.id) ? { ...h, visibility_status: 'public' } : h)); clearSelection() }}
               className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Make Public</button>
-            <button onClick={async () => { await bulkUpdateHubVisibility([...selected], 'internal'); setHubs(p => p.map(h => selected.has(h.id) ? { ...h, visibility_status: 'internal' } : h)); clearSelection() }}
+            <button onClick={async () => { await bulkUpdateHubVisibility(Array.from(selected), 'internal'); setHubs(p => p.map(h => selected.has(h.id) ? { ...h, visibility_status: 'internal' } : h)); clearSelection() }}
               className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Make Internal</button>
             <button onClick={() => clearSelection()}
               className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded transition-colors">Clear</button>
@@ -821,9 +821,9 @@ export function DashboardContent({
       {tab === 'donations' && (
         <CardList empty="No donation links.">
           <BulkActionBar count={selected.size}>
-            <button onClick={async () => { await bulkApproveDonations([...selected]); setDonations(p => p.map(d => selected.has(d.id) ? { ...d, is_visible: true, needs_review: false } : d)); clearSelection() }}
+            <button onClick={async () => { await bulkApproveDonations(Array.from(selected)); setDonations(p => p.map(d => selected.has(d.id) ? { ...d, is_visible: true, needs_review: false } : d)); clearSelection() }}
               className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Approve All</button>
-            <button onClick={async () => { await bulkHideDonations([...selected]); setDonations(p => p.map(d => selected.has(d.id) ? { ...d, is_visible: false, needs_review: true } : d)); clearSelection() }}
+            <button onClick={async () => { await bulkHideDonations(Array.from(selected)); setDonations(p => p.map(d => selected.has(d.id) ? { ...d, is_visible: false, needs_review: true } : d)); clearSelection() }}
               className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Hide All</button>
             <button onClick={() => clearSelection()}
               className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded transition-colors">Clear</button>

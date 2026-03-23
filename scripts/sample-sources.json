@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Hawaiʻi Emergency Management Agency",
+    "source_type": "official",
+    "platform": "website",
+    "base_url": "https://dod.hawaii.gov/hiema/",
+    "organization": "State of Hawaiʻi",
+    "trust_level": "high",
+    "update_frequency": "daily",
+    "strategy": "monitor"
+  },
+  {
+    "name": "Honolulu County Civil Defense",
+    "source_type": "official",
+    "platform": "website",
+    "organization": "City & County of Honolulu",
+    "trust_level": "high",
+    "update_frequency": "daily",
+    "strategy": "monitor"
+  },
+  {
+    "name": "American Red Cross Hawaiʻi",
+    "source_type": "nonprofit",
+    "platform": "website",
+    "organization": "American Red Cross",
+    "trust_level": "high",
+    "update_frequency": "daily",
+    "strategy": "monitor"
+  }
+]

@@ -25,21 +25,15 @@ export async function submitRequest(
   }
 
   const { error } = await supabase.from('help_requests').insert({
-    island,
-    neighborhood,
-    need_types: needTypes,
-    urgency,
-    contact_method: contactMethod,
-    contact_value: contactValue,
-    note,
-    can_be_contacted: canBeContacted,
+    island, neighborhood, need_types: needTypes, urgency,
+    contact_method: contactMethod, contact_value: contactValue,
+    note, can_be_contacted: canBeContacted,
   })
 
   if (error) {
     console.error('Request submission error:', error)
     return { success: false, error: 'Something went wrong. Please try again.' }
   }
-
   return { success: true, error: null }
 }
 
@@ -61,21 +55,15 @@ export async function submitOffer(
   }
 
   const { error } = await supabase.from('help_offers').insert({
-    island,
-    neighborhood,
-    offer_types: offerTypes,
-    availability,
-    contact_method: contactMethod,
-    contact_value: contactValue,
-    note,
-    capacity,
+    island, neighborhood, offer_types: offerTypes, availability,
+    contact_method: contactMethod, contact_value: contactValue,
+    note, capacity,
   })
 
   if (error) {
     console.error('Offer submission error:', error)
     return { success: false, error: 'Something went wrong. Please try again.' }
   }
-
   return { success: true, error: null }
 }
 
@@ -99,23 +87,15 @@ export async function submitVolunteer(
   }
 
   const { error } = await supabase.from('volunteers').insert({
-    name,
-    island,
-    neighborhood,
-    skills,
-    availability,
-    contact_method: contactMethod,
-    contact_value: contactValue,
-    languages,
-    has_vehicle: hasVehicle,
-    note,
+    name, island, neighborhood, skills, availability,
+    contact_method: contactMethod, contact_value: contactValue,
+    languages, has_vehicle: hasVehicle, note,
   })
 
   if (error) {
     console.error('Volunteer submission error:', error)
     return { success: false, error: 'Something went wrong. Please try again.' }
   }
-
   return { success: true, error: null }
 }
 
@@ -135,6 +115,7 @@ export async function submitCommunityTip(
   }
 
   const { error } = await supabase.from('review_queue_items').insert({
+    origin: 'community_tip',
     submitted_name: submittedName,
     submitted_island: submittedIsland,
     submitted_area: submittedArea,
@@ -147,6 +128,33 @@ export async function submitCommunityTip(
     console.error('Community tip submission error:', error)
     return { success: false, error: 'Something went wrong. Please try again.' }
   }
+  return { success: true, error: null }
+}
 
+export async function submitFeedback(
+  _prev: FormState,
+  formData: FormData
+): Promise<FormState> {
+  const category = formData.get('feedback_category') as string
+  const message = formData.get('feedback_message') as string
+  const contact = formData.get('feedback_contact') as string || null
+  const pageUrl = formData.get('feedback_page_url') as string || null
+
+  if (!category || !message) {
+    return { success: false, error: 'Please select a category and enter your message.' }
+  }
+
+  const { error } = await supabase.from('review_queue_items').insert({
+    origin: 'feedback',
+    feedback_category: category,
+    feedback_message: message,
+    feedback_contact: contact,
+    feedback_page_url: pageUrl,
+  })
+
+  if (error) {
+    console.error('Feedback submission error:', error)
+    return { success: false, error: 'Something went wrong. Please try again.' }
+  }
   return { success: true, error: null }
 }

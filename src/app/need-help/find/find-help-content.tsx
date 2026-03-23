@@ -14,6 +14,36 @@ function hubStatusColor(status: string) {
   return colors[status] ?? 'bg-gray-100 text-gray-700'
 }
 
+function confidenceBadge(confidence: string) {
+  if (confidence === 'high') return null // don't clutter high-confidence items
+  const colors: Record<string, string> = {
+    medium: 'bg-amber-50 text-amber-700',
+    low: 'bg-lava-500/10 text-lava-600',
+  }
+  return (
+    <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${colors[confidence] ?? ''}`}>
+      {confidence === 'low' ? 'Unverified' : 'Needs verification'}
+    </span>
+  )
+}
+
+function sourceLabel(sourceName: string | null, sourceType: string | null) {
+  if (!sourceName) return null
+  const typeLabel: Record<string, string> = {
+    official: 'Official',
+    nonprofit: 'Nonprofit',
+    news: 'News',
+    community: 'Community',
+    internal: '',
+  }
+  const prefix = sourceType ? typeLabel[sourceType] : null
+  return (
+    <span className="text-xs text-gray-400">
+      {prefix ? `${prefix}: ` : ''}{sourceName}
+    </span>
+  )
+}
+
 function needUrgencyColor(urgency: string) {
   const colors: Record<string, string> = {
     Urgent: 'bg-lava-500/15 text-lava-700',
@@ -32,13 +62,8 @@ export function FindHelpContent({
 }) {
   const [islandFilter, setIslandFilter] = useState('')
 
-  const filteredHubs = hubs.filter(h =>
-    !islandFilter || h.island === islandFilter
-  )
-  const filteredSummaries = summaries.filter(s =>
-    !islandFilter || s.island === islandFilter
-  )
-
+  const filteredHubs = hubs.filter(h => !islandFilter || h.island === islandFilter)
+  const filteredSummaries = summaries.filter(s => !islandFilter || s.island === islandFilter)
   const openHubs = filteredHubs.filter(h => h.status !== 'Closed')
 
   return (
@@ -56,13 +81,11 @@ export function FindHelpContent({
           className="w-full sm:w-auto rounded-lg border border-gray-300 px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-ocean-400"
         >
           <option value="">All islands</option>
-          {ISLANDS.map(i => (
-            <option key={i} value={i}>{i}</option>
-          ))}
+          {ISLANDS.map(i => <option key={i} value={i}>{i}</option>)}
         </select>
       </div>
 
-      {/* Need summaries — "Ways to Help Right Now" from public perspective means "Current needs" */}
+      {/* Need summaries */}
       {filteredSummaries.length > 0 && (
         <section className="mb-8">
           <h2 className="text-lg font-semibold text-ocean-800 mb-3">Current Needs</h2>
@@ -77,6 +100,21 @@ export function FindHelpContent({
                 </div>
                 <h3 className="font-medium text-sm text-gray-900 mb-1">{s.title}</h3>
                 <p className="text-sm text-gray-600">{s.description}</p>
+                {/* Source provenance */}
+                <div className="flex items-center gap-2 mt-2">
+                  {sourceLabel(s.source_name, s.source_type)}
+                  {s.last_verified_at && (
+                    <span className="text-[10px] text-gray-400">
+                      Verified {new Date(s.last_verified_at).toLocaleDateString()}
+                    </span>
+                  )}
+                  {s.source_url && (
+                    <a href={s.source_url} target="_blank" rel="noopener noreferrer"
+                      className="text-[10px] text-ocean-500 hover:text-ocean-700 underline">
+                      Source
+                    </a>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -96,9 +134,7 @@ export function FindHelpContent({
 
         {filteredHubs.length === 0 ? (
           <div className="bg-white border border-ocean-100 rounded-lg p-6 text-center">
-            <p className="text-sm text-gray-500 mb-2">
-              No resources listed for this area yet.
-            </p>
+            <p className="text-sm text-gray-500 mb-2">No resources listed for this area yet.</p>
             <p className="text-sm text-gray-400">
               Coordinators are actively adding verified resources.
               Check back soon or <a href="/need-help/request" className="text-ocean-600 underline">submit a request</a>.
@@ -119,24 +155,29 @@ export function FindHelpContent({
                   <span className="mx-1">·</span>
                   <span className="text-ocean-600">{h.category}</span>
                 </div>
-                {h.address && (
-                  <p className="text-sm text-gray-600 mb-1">{h.address}</p>
-                )}
-                {h.hours && (
-                  <p className="text-xs text-gray-500 mb-1">Hours: {h.hours}</p>
-                )}
-                {h.notes && (
-                  <p className="text-sm text-gray-600 mb-1">{h.notes}</p>
-                )}
+                {h.address && <p className="text-sm text-gray-600 mb-1">{h.address}</p>}
+                {h.hours && <p className="text-xs text-gray-500 mb-1">Hours: {h.hours}</p>}
+                {h.notes && <p className="text-sm text-gray-600 mb-1">{h.notes}</p>}
                 <div className="text-xs text-gray-500 flex flex-wrap gap-3 mt-2">
                   {h.public_phone && <span>Phone: {h.public_phone}</span>}
                   {h.public_email && <span>Email: {h.public_email}</span>}
                 </div>
-                {h.last_verified_at && (
-                  <p className="text-xs text-gray-400 mt-1">
-                    Last verified: {new Date(h.last_verified_at).toLocaleDateString()}
-                  </p>
-                )}
+                {/* Source provenance + freshness */}
+                <div className="flex flex-wrap items-center gap-2 mt-2 pt-2 border-t border-gray-50">
+                  {sourceLabel(h.source_name, h.source_type)}
+                  {confidenceBadge(h.confidence)}
+                  {h.last_verified_at && (
+                    <span className="text-[10px] text-gray-400">
+                      Verified {new Date(h.last_verified_at).toLocaleDateString()}
+                    </span>
+                  )}
+                  {h.source_url && (
+                    <a href={h.source_url} target="_blank" rel="noopener noreferrer"
+                      className="text-[10px] text-ocean-500 hover:text-ocean-700 underline">
+                      Go to source
+                    </a>
+                  )}
+                </div>
               </div>
             ))}
           </div>

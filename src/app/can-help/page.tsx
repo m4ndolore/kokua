@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 export default async function CanHelp() {
   const summariesRes = await supabase?.from('public_need_summaries')
     .select('*')
-    .eq('is_visible', true)
+    .eq('visibility_status', 'public')
     .order('urgency')
     .order('created_at', { ascending: false })
     .limit(5)

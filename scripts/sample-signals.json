@@ -1,0 +1,28 @@
+[
+  {
+    "title": "Kapolei Shelter capacity update",
+    "signal_type": "update",
+    "island": "Oʻahu",
+    "area": "Kapolei",
+    "derived_resource_name": "Kapolei Shelter",
+    "derived_resource_type": "Shelter",
+    "derived_status": "active",
+    "confidence": "high",
+    "raw_text": "Kapolei Shelter at 70% capacity as of 3pm. Accepting new arrivals.",
+    "review_reason": "Capacity update from official source"
+  },
+  {
+    "title": "Facebook post: water at Kailua High",
+    "signal_type": "resource",
+    "island": "Oʻahu",
+    "area": "Kailua",
+    "derived_resource_name": "Kailua High School Water Station",
+    "derived_resource_type": "Water distribution",
+    "derived_status": "active",
+    "confidence": "low",
+    "raw_url": "https://facebook.com/example/post/123",
+    "raw_text": "Someone set up a water station at Kailua High parking lot, looks like bottled water and ice",
+    "review_reason": "Social media source — needs verification",
+    "needs_review": true
+  }
+]

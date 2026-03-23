@@ -5,16 +5,16 @@ import { FindHelpContent } from './find-help-content'
 export const dynamic = 'force-dynamic'
 
 export default async function FindHelp() {
-  // These queries use the anon client, which can only read is_visible=true rows (via RLS)
+  // Anon client can only read visibility_status='public' rows via RLS
   const [hubsRes, summariesRes] = await Promise.all([
     supabase?.from('help_hubs')
       .select('*')
-      .eq('is_visible', true)
+      .eq('visibility_status', 'public')
       .order('island')
       .order('category'),
     supabase?.from('public_need_summaries')
       .select('*')
-      .eq('is_visible', true)
+      .eq('visibility_status', 'public')
       .order('urgency')
       .order('created_at', { ascending: false }),
   ])

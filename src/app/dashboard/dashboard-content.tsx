@@ -635,7 +635,7 @@ export function DashboardContent({
               className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded transition-colors">Clear</button>
           </BulkActionBar>
           {hubs
-            .filter(h => (!islandFilter || h.island === islandFilter) && (!statusFilter || h.status === statusFilter))
+            .filter(h => (!islandFilter || h.island === islandFilter) && (!statusFilter || (statusFilter === 'stale' ? isStale(h.last_verified_at) : h.status === statusFilter)))
             .map(h => {
               const src = h.source_registry_id ? sourceMap.get(h.source_registry_id) : null
               return (
@@ -841,6 +841,7 @@ export function DashboardContent({
                       ? <Badge label="public" color="bg-green-100 text-green-800" />
                       : <Badge label="hidden" color="bg-gray-100 text-gray-600" />}
                     {d.needs_review && <Badge label="needs review" color="bg-amber-100 text-amber-800" />}
+                    {isStale(d.last_verified_at) && <Badge label="stale" color="bg-amber-100 text-amber-700" />}
                     {d.trust_score !== null && <span className="text-[10px] text-gray-400">Score: {d.trust_score}</span>}
                     <span className="text-xs text-gray-400">{timeAgo(d.updated_at)}</span>
                   </div>

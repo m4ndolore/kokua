@@ -4,7 +4,8 @@ import { getServiceClient } from '@/lib/supabase'
 import { DashboardContent } from './dashboard-content'
 import type {
   HelpRequest, HelpOffer, Volunteer,
-  HelpHub, PublicNeedSummary, ReviewQueueItem, DashboardUser,
+  HelpHub, PublicNeedSummary, ReviewQueueItem,
+  SourceRegistry, SourceSignal, DashboardUser,
 } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -16,10 +17,12 @@ export default async function Dashboard() {
   }
 
   const supabase = getServiceClient()
+  const admin = isAdmin(session)
 
   const [
     requestsRes, offersRes, volunteersRes,
-    hubsRes, summariesRes, reviewRes, usersRes,
+    hubsRes, summariesRes, reviewRes,
+    signalsRes, sourcesRes, usersRes,
   ] = await Promise.all([
     supabase.from('help_requests').select('*').order('created_at', { ascending: false }),
     supabase.from('help_offers').select('*').order('created_at', { ascending: false }),
@@ -27,7 +30,9 @@ export default async function Dashboard() {
     supabase.from('help_hubs').select('*').order('updated_at', { ascending: false }),
     supabase.from('public_need_summaries').select('*').order('updated_at', { ascending: false }),
     supabase.from('review_queue_items').select('*').order('created_at', { ascending: false }),
-    isAdmin(session)
+    supabase.from('source_signals').select('*').order('created_at', { ascending: false }),
+    supabase.from('source_registry').select('*').order('name'),
+    admin
       ? supabase.from('dashboard_users').select('*').order('created_at', { ascending: false })
       : Promise.resolve({ data: [] }),
   ])
@@ -42,6 +47,8 @@ export default async function Dashboard() {
       hubs={(hubsRes.data ?? []) as HelpHub[]}
       summaries={(summariesRes.data ?? []) as PublicNeedSummary[]}
       reviewItems={(reviewRes.data ?? []) as ReviewQueueItem[]}
+      signals={(signalsRes.data ?? []) as SourceSignal[]}
+      sources={(sourcesRes.data ?? []) as SourceRegistry[]}
       users={(usersRes.data ?? []) as DashboardUser[]}
     />
   )

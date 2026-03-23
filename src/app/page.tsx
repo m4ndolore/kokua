@@ -65,11 +65,17 @@ export default function Home() {
         </p>
       </div>
 
-      {/* Secondary link */}
-      <div className="text-center">
+      {/* Secondary links */}
+      <div className="text-center space-y-1">
+        <a
+          href="/feedback"
+          className="block text-xs text-gray-400 hover:text-ocean-600 transition-colors"
+        >
+          Questions or feedback?
+        </a>
         <a
           href="/dashboard"
-          className="text-xs text-gray-400 hover:text-ocean-600 transition-colors"
+          className="block text-xs text-gray-400 hover:text-ocean-600 transition-colors"
         >
           Volunteer coordinator login →
         </a>

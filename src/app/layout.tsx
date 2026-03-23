@@ -40,8 +40,13 @@ export default function RootLayout({
             <p className="mb-2">
               <strong className="text-lava-600">For life-threatening emergencies, call 911.</strong>
             </p>
-            <p>
+            <p className="mb-3">
               Kōkua Hub is a community coordination tool, not an official emergency service.
+            </p>
+            <p>
+              <a href="/feedback" className="text-ocean-500 hover:text-ocean-700 underline">
+                Questions, corrections, or feedback?
+              </a>
             </p>
           </div>
         </footer>

@@ -17,7 +17,6 @@ export async function submitRequest(
   const urgency = formData.get('urgency') as string
   const contactMethod = formData.get('contact_method') as string
   const contactValue = formData.get('contact_value') as string
-  const altContact = formData.get('alt_contact') as string || null
   const note = formData.get('note') as string || null
   const canBeContacted = formData.get('can_be_contacted') === 'on'
 
@@ -32,7 +31,6 @@ export async function submitRequest(
     urgency,
     contact_method: contactMethod,
     contact_value: contactValue,
-    alt_contact: altContact,
     note,
     can_be_contacted: canBeContacted,
   })
@@ -75,6 +73,78 @@ export async function submitOffer(
 
   if (error) {
     console.error('Offer submission error:', error)
+    return { success: false, error: 'Something went wrong. Please try again.' }
+  }
+
+  return { success: true, error: null }
+}
+
+export async function submitVolunteer(
+  _prev: FormState,
+  formData: FormData
+): Promise<FormState> {
+  const name = formData.get('name') as string
+  const island = formData.get('island') as string
+  const neighborhood = formData.get('neighborhood') as string || null
+  const skills = formData.getAll('skills') as string[]
+  const availability = formData.get('availability') as string
+  const contactMethod = formData.get('contact_method') as string
+  const contactValue = formData.get('contact_value') as string
+  const languages = formData.get('languages') as string || null
+  const hasVehicle = formData.get('has_vehicle') === 'on'
+  const note = formData.get('note') as string || null
+
+  if (!name || !island || skills.length === 0 || !availability || !contactMethod || !contactValue) {
+    return { success: false, error: 'Please fill in all required fields.' }
+  }
+
+  const { error } = await supabase.from('volunteers').insert({
+    name,
+    island,
+    neighborhood,
+    skills,
+    availability,
+    contact_method: contactMethod,
+    contact_value: contactValue,
+    languages,
+    has_vehicle: hasVehicle,
+    note,
+  })
+
+  if (error) {
+    console.error('Volunteer submission error:', error)
+    return { success: false, error: 'Something went wrong. Please try again.' }
+  }
+
+  return { success: true, error: null }
+}
+
+export async function submitCommunityTip(
+  _prev: FormState,
+  formData: FormData
+): Promise<FormState> {
+  const submittedName = formData.get('submitted_name') as string || null
+  const submittedIsland = formData.get('submitted_island') as string
+  const submittedArea = formData.get('submitted_area') as string || null
+  const submittedInfo = formData.get('submitted_info') as string
+  const submittedCategory = formData.get('submitted_category') as string || null
+  const submittedContact = formData.get('submitted_contact') as string || null
+
+  if (!submittedIsland || !submittedInfo) {
+    return { success: false, error: 'Please fill in the island and resource information.' }
+  }
+
+  const { error } = await supabase.from('review_queue_items').insert({
+    submitted_name: submittedName,
+    submitted_island: submittedIsland,
+    submitted_area: submittedArea,
+    submitted_info: submittedInfo,
+    submitted_category: submittedCategory,
+    submitted_contact: submittedContact,
+  })
+
+  if (error) {
+    console.error('Community tip submission error:', error)
     return { success: false, error: 'Something went wrong. Please try again.' }
   }
 

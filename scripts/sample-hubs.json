@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Example Shelter",
+    "island": "Oʻahu",
+    "area": "Kapolei",
+    "category": "Shelter",
+    "status": "Open",
+    "hours": "24 hours",
+    "notes": "Managed by Red Cross. Pets allowed.",
+    "public_phone": "808-555-0000",
+    "address": "123 Example St, Kapolei",
+    "source_url": "https://example.com/shelters"
+  },
+  {
+    "name": "Example Water Point",
+    "island": "Oʻahu",
+    "area": "Kailua",
+    "category": "Water distribution",
+    "status": "Open",
+    "hours": "8am-4pm",
+    "notes": "Limit 2 cases per family.",
+    "address": "456 Example Ave, Kailua"
+  }
+]

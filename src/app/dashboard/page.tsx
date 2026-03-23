@@ -1,32 +1,48 @@
 import { redirect } from 'next/navigation'
-import { verifyDashboardAuth } from '@/lib/auth'
+import { verifyDashboardAuth, isAdmin } from '@/lib/auth'
 import { getServiceClient } from '@/lib/supabase'
 import { DashboardContent } from './dashboard-content'
-import type { HelpRequest, HelpOffer } from '@/lib/types'
+import type {
+  HelpRequest, HelpOffer, Volunteer,
+  HelpHub, PublicNeedSummary, ReviewQueueItem, DashboardUser,
+} from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Dashboard() {
-  const authed = await verifyDashboardAuth()
-  if (!authed) {
+  const session = await verifyDashboardAuth()
+  if (!session.authenticated) {
     redirect('/dashboard/login')
   }
 
   const supabase = getServiceClient()
 
-  const [requestsRes, offersRes] = await Promise.all([
-    supabase
-      .from('help_requests')
-      .select('*')
-      .order('created_at', { ascending: false }),
-    supabase
-      .from('help_offers')
-      .select('*')
-      .order('created_at', { ascending: false }),
+  const [
+    requestsRes, offersRes, volunteersRes,
+    hubsRes, summariesRes, reviewRes, usersRes,
+  ] = await Promise.all([
+    supabase.from('help_requests').select('*').order('created_at', { ascending: false }),
+    supabase.from('help_offers').select('*').order('created_at', { ascending: false }),
+    supabase.from('volunteers').select('*').order('created_at', { ascending: false }),
+    supabase.from('help_hubs').select('*').order('updated_at', { ascending: false }),
+    supabase.from('public_need_summaries').select('*').order('updated_at', { ascending: false }),
+    supabase.from('review_queue_items').select('*').order('created_at', { ascending: false }),
+    isAdmin(session)
+      ? supabase.from('dashboard_users').select('*').order('created_at', { ascending: false })
+      : Promise.resolve({ data: [] }),
   ])
 
-  const requests = (requestsRes.data ?? []) as HelpRequest[]
-  const offers = (offersRes.data ?? []) as HelpOffer[]
-
-  return <DashboardContent requests={requests} offers={offers} />
+  return (
+    <DashboardContent
+      role={session.user.role}
+      userName={session.user.name}
+      requests={(requestsRes.data ?? []) as HelpRequest[]}
+      offers={(offersRes.data ?? []) as HelpOffer[]}
+      volunteers={(volunteersRes.data ?? []) as Volunteer[]}
+      hubs={(hubsRes.data ?? []) as HelpHub[]}
+      summaries={(summariesRes.data ?? []) as PublicNeedSummary[]}
+      reviewItems={(reviewRes.data ?? []) as ReviewQueueItem[]}
+      users={(usersRes.data ?? []) as DashboardUser[]}
+    />
+  )
 }

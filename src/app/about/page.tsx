@@ -7,24 +7,25 @@ export default function About() {
         <section>
           <h2 className="text-lg font-semibold text-ocean-800 mb-2">What is this?</h2>
           <p>
-            Kōkua Hub is a simple community coordination tool built to help connect people
-            who need help with people who can offer help during disaster response in Hawaiʻi.
-            It is designed to support grassroots relief efforts — not to replace official
-            emergency services.
+            Kōkua Hub is a community coordination tool built to help connect people
+            who need help with verified resources and volunteer support during disaster
+            response in Hawaiʻi. It is designed to support grassroots relief efforts —
+            not to replace official emergency services.
           </p>
         </section>
 
         <section>
           <h2 className="text-lg font-semibold text-ocean-800 mb-2">How it works</h2>
           <ol className="list-decimal list-inside space-y-1">
-            <li>People who need help submit a request describing what they need.</li>
-            <li>People who can help submit an offer describing what they have available.</li>
-            <li>Volunteer coordinators review incoming requests and offers.</li>
-            <li>Coordinators manually connect people who can help with people who need it.</li>
+            <li>Browse verified resources like shelters, supply sites, and services.</li>
+            <li>Submit a private help request if you need something specific.</li>
+            <li>Offer supplies, services, or volunteer your time.</li>
+            <li>Volunteer coordinators review submissions and connect people.</li>
+            <li>Community members can share tips about resources they know of.</li>
           </ol>
           <p className="mt-2">
-            There is no automated matching. Real people review every request and offer to
-            make thoughtful, safe connections.
+            There is no automated matching. Real people review every request, offer, and
+            resource tip to make thoughtful, safe connections.
           </p>
         </section>
 
@@ -32,7 +33,8 @@ export default function About() {
           <h2 className="text-lg font-semibold text-ocean-800 mb-2">Privacy &amp; data</h2>
           <ul className="list-disc list-inside space-y-1">
             <li>We collect only the minimum information needed to coordinate help.</li>
-            <li>Your contact information is shared only with volunteer coordinators.</li>
+            <li>Help requests and personal contact info are <strong>never shown publicly</strong>.</li>
+            <li>Only curated, coordinator-verified resources appear on public pages.</li>
             <li>We do not require accounts or login for requesting or offering help.</li>
             <li>We do not sell data or use it for any purpose other than relief coordination.</li>
             <li>Data may be deleted after the active relief period ends.</li>

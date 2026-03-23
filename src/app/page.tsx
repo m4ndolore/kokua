@@ -18,37 +18,37 @@ export default function Home() {
         </p>
       </div>
 
-      {/* Primary actions — large touch targets for mobile */}
+      {/* Primary actions */}
       <div className="space-y-3 max-w-sm mx-auto mb-10">
         <a
-          href="/request"
+          href="/need-help"
           className="block bg-ocean-600 hover:bg-ocean-700 active:bg-ocean-800 text-white text-center rounded-xl px-6 py-5 text-lg font-semibold transition-colors"
         >
           I Need Help
         </a>
         <a
-          href="/offer"
+          href="/can-help"
           className="block bg-earth-600 hover:bg-earth-700 active:bg-earth-800 text-white text-center rounded-xl px-6 py-5 text-lg font-semibold transition-colors"
         >
           I Can Help
         </a>
       </div>
 
-      {/* How it works — brief and reassuring */}
+      {/* How it works */}
       <div className="bg-white rounded-xl border border-ocean-100 p-5 sm:p-6 mb-8 max-w-lg mx-auto">
         <h2 className="font-semibold text-ocean-800 mb-3 text-center">How it works</h2>
         <ol className="space-y-2 text-sm text-gray-600">
           <li className="flex gap-3">
             <span className="flex-shrink-0 w-6 h-6 rounded-full bg-ocean-100 text-ocean-700 text-xs font-bold flex items-center justify-center">1</span>
-            <span>Tell us what you need or what you can offer.</span>
+            <span>Browse available resources or tell us what you need.</span>
           </li>
           <li className="flex gap-3">
             <span className="flex-shrink-0 w-6 h-6 rounded-full bg-ocean-100 text-ocean-700 text-xs font-bold flex items-center justify-center">2</span>
-            <span>A volunteer coordinator reviews your submission.</span>
+            <span>Offer supplies, services, or volunteer your time.</span>
           </li>
           <li className="flex gap-3">
             <span className="flex-shrink-0 w-6 h-6 rounded-full bg-ocean-100 text-ocean-700 text-xs font-bold flex items-center justify-center">3</span>
-            <span>They connect people who need help with people who can help.</span>
+            <span>Volunteer coordinators review and connect people with help.</span>
           </li>
         </ol>
       </div>
@@ -61,7 +61,7 @@ export default function Home() {
         </p>
         <p>
           We only collect the minimum information needed to coordinate help.
-          Your contact info is shared only with coordinators.
+          Private requests are never shown publicly.
         </p>
       </div>
 

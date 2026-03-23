@@ -3,7 +3,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Kōkua Hub — Community Relief Coordination',
-  description: 'Request help, offer help, and coordinate disaster relief in Hawaiʻi.',
+  description: 'Find help, offer help, and coordinate disaster relief in Hawaiʻi.',
 }
 
 export default function RootLayout({
@@ -20,11 +20,11 @@ export default function RootLayout({
               Kōkua Hub
             </a>
             <div className="flex gap-4 text-sm">
-              <a href="/request" className="text-ocean-700 hover:text-ocean-900">
-                Request Help
+              <a href="/need-help" className="text-ocean-700 hover:text-ocean-900">
+                Need Help
               </a>
-              <a href="/offer" className="text-ocean-700 hover:text-ocean-900">
-                Offer Help
+              <a href="/can-help" className="text-ocean-700 hover:text-ocean-900">
+                Can Help
               </a>
               <a href="/about" className="text-ocean-700 hover:text-ocean-900">
                 About

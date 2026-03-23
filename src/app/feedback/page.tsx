@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useFormState, useFormStatus } from 'react-dom'
 import { submitFeedback, type FormState } from '@/lib/actions'
-import { FEEDBACK_CATEGORIES } from '@/lib/types'
+import { FEEDBACK_CATEGORIES, ISLANDS } from '@/lib/types'
 
 const CATEGORY_LABELS: Record<string, string> = {
   question: 'Question',
@@ -35,7 +35,9 @@ export default function FeedbackPage() {
   const [pageUrl, setPageUrl] = useState('')
 
   useEffect(() => {
-    setPageUrl(window.location.href)
+    const current = window.location.href
+    const referrer = document.referrer && document.referrer !== current ? document.referrer : ''
+    setPageUrl(referrer || current)
   }, [])
 
   if (state.success) {
@@ -44,7 +46,7 @@ export default function FeedbackPage() {
         <div className="bg-white rounded-xl border border-ocean-200 p-8 max-w-md mx-auto">
           <h2 className="text-2xl font-bold text-ocean-800 mb-3">Thank you</h2>
           <p className="text-gray-600 mb-6">
-            Your feedback has been received. A coordinator will review it.
+            Your report has been received. A coordinator will review it.
           </p>
           <a href="/" className="text-ocean-600 hover:text-ocean-800 underline text-sm">
             ← Back to home
@@ -58,8 +60,15 @@ export default function FeedbackPage() {
     <div className="py-4 max-w-lg mx-auto">
       <h1 className="text-2xl font-bold text-ocean-900 mb-1">Report an issue / correction</h1>
       <p className="text-sm text-gray-500 mb-6">
-        Incorrect or missing info, broken links, bugs, or suggestions. No login required.
+        Incorrect or missing info, stale resources, broken links, bugs, or suggestions. No login required.
       </p>
+
+      <div className="rounded-lg border border-ocean-100 bg-white p-4 mb-5">
+        <p className="text-sm text-gray-700 font-medium mb-1">Fastest reports to process</p>
+        <p className="text-sm text-gray-500">
+          Include the page or resource you saw, what looks wrong, and where the updated source of truth lives if you have it.
+        </p>
+      </div>
 
       {state.error && (
         <div className="bg-lava-500/10 border border-lava-500/30 rounded-lg p-3 mb-4 text-sm text-lava-700">
@@ -86,7 +95,29 @@ export default function FeedbackPage() {
             Your message <span className="text-lava-500">*</span>
           </label>
           <textarea id="feedback_message" name="feedback_message" rows={4} required
-            placeholder="What would you like to share?"
+            placeholder="Example: The shelter card says open, but the county page says it closed at 6 p.m. Updated source: https://..."
+            className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400" />
+        </div>
+
+        <div>
+          <label htmlFor="submitted_island" className="block text-sm font-medium text-gray-700 mb-1.5">
+            Related island <span className="text-gray-400 font-normal">(optional)</span>
+          </label>
+          <select id="submitted_island" name="submitted_island"
+            className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base bg-white focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400">
+            <option value="">Unknown / not location-specific</option>
+            {ISLANDS.map(island => (
+              <option key={island} value={island}>{island}</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="submitted_area" className="block text-sm font-medium text-gray-700 mb-1.5">
+            Related area <span className="text-gray-400 font-normal">(optional)</span>
+          </label>
+          <input id="submitted_area" name="submitted_area" type="text"
+            placeholder="North Shore, Kāneʻohe, statewide, etc."
             className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400" />
         </div>
 
@@ -101,6 +132,17 @@ export default function FeedbackPage() {
 
         {/* Hidden field to track which page the feedback came from */}
         <input type="hidden" name="feedback_page_url" value={pageUrl} />
+
+        {pageUrl && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Page or source being reported
+            </label>
+            <div className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 text-sm text-gray-500 break-all">
+              {pageUrl}
+            </div>
+          </div>
+        )}
 
         <SubmitButton />
 

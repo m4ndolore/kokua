@@ -139,6 +139,8 @@ export async function submitFeedback(
   const message = formData.get('feedback_message') as string
   const contact = formData.get('feedback_contact') as string || null
   const pageUrl = formData.get('feedback_page_url') as string || null
+  const submittedIsland = formData.get('submitted_island') as string || null
+  const submittedArea = formData.get('submitted_area') as string || null
 
   if (!category || !message) {
     return { success: false, error: 'Please select a category and enter your message.' }
@@ -150,6 +152,8 @@ export async function submitFeedback(
     feedback_message: message,
     feedback_contact: contact,
     feedback_page_url: pageUrl,
+    submitted_island: submittedIsland,
+    submitted_area: submittedArea,
   })
 
   if (error) {

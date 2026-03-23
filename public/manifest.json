@@ -1,0 +1,16 @@
+{
+  "name": "Kōkua Hub",
+  "short_name": "Kōkua",
+  "description": "Community disaster relief coordination for Hawaiʻi",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0f7fa",
+  "theme_color": "#1d6e8c",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

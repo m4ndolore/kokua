@@ -6,9 +6,11 @@ import {
   updateHubStatus, updateHubVisibility,
   updateSummaryVisibility,
   updateReviewItemStatus,
+  promoteToHub, promoteToSummary,
   updateSignalReview,
   updateSourceActive,
   approveDonation, hideDonation, updateDonationFlags,
+  bulkUpdateHubVisibility, bulkApproveDonations, bulkHideDonations, bulkUpdateReviewStatus,
   logoutAction,
   createGitHubIssue,
   createDashboardUser,
@@ -41,8 +43,39 @@ function timeAgo(dateStr: string): string {
   return `${days}d ago`
 }
 
+function isStale(lastVerifiedAt: string | null): boolean {
+  if (!lastVerifiedAt) return true
+  const ageMs = Date.now() - new Date(lastVerifiedAt).getTime()
+  return ageMs > 72 * 60 * 60 * 1000
+}
+
 function Badge({ label, color }: { label: string; color: string }) {
   return <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${color}`}>{label}</span>
+}
+
+function ExternalLink({
+  href,
+  label,
+  tone = 'ocean',
+}: {
+  href: string
+  label: string
+  tone?: 'ocean' | 'earth'
+}) {
+  const classes = tone === 'earth'
+    ? 'border-earth-200 text-earth-700 hover:bg-earth-50'
+    : 'border-ocean-200 text-ocean-700 hover:bg-ocean-50'
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${classes}`}
+    >
+      {label} ↗
+    </a>
+  )
 }
 
 const urgencyColors: Record<string, string> = {
@@ -109,7 +142,9 @@ function NotesField({ table, id, initial }: {
   }
   return (
     <div className="mt-2 pt-2 border-t border-gray-100">
-      <label className="text-xs text-gray-400 block mb-1">Coordinator notes</label>
+      <label className="text-xs text-gray-400 block mb-1">
+        {table === 'help_hubs' || table === 'public_need_summaries' ? 'Internal notes / operator guidance' : 'Coordinator notes'}
+      </label>
       <div className="flex gap-1.5">
         <input type="text" value={value} onChange={e => setValue(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') handleSave() }}
@@ -147,18 +182,109 @@ function CardList({ children, empty }: { children: React.ReactNode[]; empty: str
   )
 }
 
+function summarizeReviewText(item: ReviewQueueItem) {
+  return (item.submitted_info || item.feedback_message || '').trim()
+}
+
+function inferTitleFromReviewItem(item: ReviewQueueItem) {
+  const direct = item.submitted_name?.trim()
+  if (direct) return direct
+  const text = summarizeReviewText(item)
+  const firstLine = text.split('\n')[0]?.trim() || ''
+  if (!firstLine) return 'Community resource lead'
+  return firstLine.slice(0, 80)
+}
+
+function inferHubCategory(item: ReviewQueueItem) {
+  const text = `${item.submitted_category || ''} ${summarizeReviewText(item)}`.toLowerCase()
+  if (text.includes('shelter')) return 'Shelter'
+  if (text.includes('food')) return 'Food distribution'
+  if (text.includes('water')) return 'Water distribution'
+  if (text.includes('supply')) return 'Supply distribution'
+  if (text.includes('volunteer')) return 'Volunteer hub'
+  if (text.includes('donation')) return 'Donation drop-off'
+  if (text.includes('government')) return 'Government office'
+  return 'Other'
+}
+
+function inferSummaryCategory(item: ReviewQueueItem) {
+  const text = `${item.submitted_category || ''} ${summarizeReviewText(item)}`.toLowerCase()
+  if (text.includes('volunteer')) return 'Volunteers needed'
+  if (text.includes('transport')) return 'Transportation needed'
+  if (text.includes('donation')) return 'Donations needed'
+  if (text.includes('food') || text.includes('water') || text.includes('supply')) return 'Supplies needed'
+  return 'General'
+}
+
+function canPromoteReviewItem(item: ReviewQueueItem) {
+  return !!item.submitted_island && !item.promoted_hub_id && !item.promoted_summary_id
+}
+
+function tokenize(text: string) {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter(token => token.length >= 4)
+}
+
+function scoreCandidate(recordTitle: string, reviewText: string) {
+  const titleTokens = tokenize(recordTitle)
+  if (titleTokens.length === 0) return 0
+  const haystack = reviewText.toLowerCase()
+  return titleTokens.reduce((score, token) => score + (haystack.includes(token) ? 1 : 0), 0)
+}
+
+function findRelatedHubs(item: ReviewQueueItem, hubs: HelpHub[]) {
+  const reviewText = `${item.feedback_message || ''} ${item.feedback_page_url || ''}`
+  return hubs
+    .map(hub => ({ hub, score: scoreCandidate(hub.name, reviewText) }))
+    .filter(entry => entry.score >= 2)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+    .map(entry => entry.hub)
+}
+
+function findRelatedSummaries(item: ReviewQueueItem, summaries: PublicNeedSummary[]) {
+  const reviewText = `${item.feedback_message || ''} ${item.feedback_page_url || ''}`
+  return summaries
+    .map(summary => ({ summary, score: scoreCandidate(summary.title, reviewText) }))
+    .filter(entry => entry.score >= 2)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+    .map(entry => entry.summary)
+}
+
+function findRelatedDonations(item: ReviewQueueItem, donations: DonationLink[]) {
+  const reviewText = `${item.feedback_message || ''} ${item.feedback_page_url || ''}`
+  return donations
+    .map(donation => ({ donation, score: scoreCandidate(donation.title, reviewText) }))
+    .filter(entry => entry.score >= 2)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+    .map(entry => entry.donation)
+}
+
 // ============================================================
 // Main dashboard
 // ============================================================
 
 export function DashboardContent({
   role, userName,
+  systemStatus,
   requests: initialRequests, offers: initialOffers, volunteers: initialVolunteers,
   hubs: initialHubs, summaries: initialSummaries, reviewItems: initialReview,
   signals: initialSignals, sources: initialSources, users,
   donations: initialDonations,
 }: {
   role: Role; userName: string
+  systemStatus: {
+    hasSharedPassword: boolean
+    hasGithubToken: boolean
+    githubRepo: string
+    allowBootstrap: boolean
+    nodeEnv: string
+  }
   requests: HelpRequest[]; offers: HelpOffer[]; volunteers: Volunteer[]
   hubs: HelpHub[]; summaries: PublicNeedSummary[]; reviewItems: ReviewQueueItem[]
   signals: SourceSignal[]; sources: SourceRegistry[]; users: DashboardUser[]
@@ -177,13 +303,32 @@ export function DashboardContent({
   const [donations, setDonations] = useState(initialDonations)
   const [islandFilter, setIslandFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const [selected, setSelected] = useState<Set<string>>(new Set())
   const isAdminRole = role === 'admin'
+
+  function toggleSelect(id: string) {
+    setSelected(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  function selectAll(ids: string[]) {
+    setSelected(new Set(ids))
+  }
+
+  function clearSelection() {
+    setSelected(new Set())
+  }
 
   const pendingReviewCount = reviewItems.filter(r => r.status === 'Pending').length
   const pendingSignalCount = signals.filter(s => s.needs_review).length
   const newRequestCount = requests.filter(r => r.status === 'New').length
   const urgentCount = requests.filter(r => r.urgency === 'Urgent' && r.status !== 'Completed' && r.status !== 'Archived').length
   const needsReviewDonations = donations.filter(d => d.needs_review).length
+  const staleHubCount = hubs.filter(h => h.visibility_status === 'public' && isStale(h.last_verified_at)).length
 
   // Source name lookup
   const sourceMap = new Map(sources.map(s => [s.id, s]))
@@ -206,7 +351,7 @@ export function DashboardContent({
   return (
     <div className="py-4">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <h1 className="text-2xl font-bold text-ocean-900">Coordination Board</h1>
           <p className="text-xs text-gray-400">Signed in as {userName} ({role})</p>
@@ -222,7 +367,35 @@ export function DashboardContent({
           {urgentCount > 0 && <span className="block text-lava-600 font-medium">{urgentCount} urgent</span>}
           {pendingReviewCount > 0 && <span className="block text-amber-700 font-medium">{pendingReviewCount} pending review</span>}
           {pendingSignalCount > 0 && <span className="block text-purple-700 font-medium">{pendingSignalCount} signals need review</span>}
+          {staleHubCount > 0 && <span className="block text-amber-600 font-medium">{staleHubCount} stale hubs</span>}
         </div>
+        </div>
+      </div>
+
+      <div className="mb-4 bg-white border border-ocean-100 rounded-lg p-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="text-xs font-medium text-gray-700">System status</div>
+          <div className="text-[11px] text-gray-400">env: {systemStatus.nodeEnv}</div>
+        </div>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          <Badge
+            label={systemStatus.hasSharedPassword ? 'Shared password: OK' : 'Shared password: missing'}
+            color={systemStatus.hasSharedPassword ? 'bg-green-100 text-green-800' : 'bg-lava-500/10 text-lava-700'}
+          />
+          <Badge
+            label={systemStatus.hasGithubToken ? 'GitHub bridge: OK' : 'GitHub bridge: not configured'}
+            color={systemStatus.hasGithubToken ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}
+          />
+          <Badge
+            label={`Repo: ${systemStatus.githubRepo}`}
+            color="bg-gray-100 text-gray-700"
+          />
+          {systemStatus.allowBootstrap && (
+            <Badge
+              label="Bootstrap login enabled"
+              color="bg-amber-100 text-amber-800"
+            />
+          )}
         </div>
       </div>
 
@@ -230,7 +403,7 @@ export function DashboardContent({
       <div className="flex gap-0.5 mb-4 bg-white rounded-lg p-1 border border-ocean-100 overflow-x-auto">
         {visibleTabs.map(t => (
           <button key={t.key}
-            onClick={() => { setTab(t.key); setStatusFilter('') }}
+            onClick={() => { setTab(t.key); setStatusFilter(''); clearSelection() }}
             className={`flex-shrink-0 text-xs font-medium rounded-md px-2.5 py-2 transition-colors ${
               tab === t.key ? 'bg-ocean-600 text-white' : 'text-gray-500 hover:text-ocean-800'}`}>
             {t.label}
@@ -273,6 +446,16 @@ export function DashboardContent({
             <option value="">All statuses</option>
             {HUB_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
+        )}
+        {tab === 'hubs' && (
+          <button
+            onClick={() => setStatusFilter(statusFilter === 'stale' ? '' : 'stale')}
+            className={`text-xs px-2 py-2 rounded-lg border transition-colors ${
+              statusFilter === 'stale' ? 'bg-amber-100 border-amber-300 text-amber-800' : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            Stale only
+          </button>
         )}
         {tab === 'review' && (
           <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
@@ -443,6 +626,14 @@ export function DashboardContent({
       {/* ============ HELP HUBS ============ */}
       {tab === 'hubs' && (
         <CardList empty="No help hubs match your filters.">
+          <BulkActionBar count={selected.size}>
+            <button onClick={async () => { await bulkUpdateHubVisibility([...selected], 'public'); setHubs(p => p.map(h => selected.has(h.id) ? { ...h, visibility_status: 'public' } : h)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Make Public</button>
+            <button onClick={async () => { await bulkUpdateHubVisibility([...selected], 'internal'); setHubs(p => p.map(h => selected.has(h.id) ? { ...h, visibility_status: 'internal' } : h)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Make Internal</button>
+            <button onClick={() => clearSelection()}
+              className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded transition-colors">Clear</button>
+          </BulkActionBar>
           {hubs
             .filter(h => (!islandFilter || h.island === islandFilter) && (!statusFilter || h.status === statusFilter))
             .map(h => {
@@ -451,8 +642,10 @@ export function DashboardContent({
                 <div key={h.id} className="bg-white border border-ocean-100 rounded-lg p-4">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="flex flex-wrap items-center gap-1.5">
+                      <input type="checkbox" checked={selected.has(h.id)} onChange={() => toggleSelect(h.id)} className="rounded border-gray-300" />
                       <Badge label={h.status} color={statusColors[h.status] ?? 'bg-gray-100 text-gray-700'} />
                       <Badge label={h.confidence} color={confidenceColors[h.confidence] ?? 'bg-gray-100'} />
+                      {isStale(h.last_verified_at) && <Badge label="stale" color="bg-amber-100 text-amber-700" />}
                       <VisibilitySelect current={h.visibility_status}
                         onUpdate={v => { setHubs(p => p.map(x => x.id === h.id ? { ...x, visibility_status: v } : x)); updateHubVisibility(h.id, v) }} />
                       <span className="text-xs text-gray-400">{timeAgo(h.updated_at)}</span>
@@ -464,6 +657,7 @@ export function DashboardContent({
                   <div className="text-xs text-gray-500 mb-1">
                     {h.island} · {h.area} · <span className="text-ocean-600">{h.category}</span>
                   </div>
+                  <div className="text-[11px] uppercase tracking-wide text-gray-400 mb-1">Public description</div>
                   {h.address && <p className="text-xs text-gray-600 mb-0.5">{h.address}</p>}
                   {h.hours && <p className="text-xs text-gray-500 mb-0.5">Hours: {h.hours}</p>}
                   {h.notes && <p className="text-sm text-gray-600 mb-1">{h.notes}</p>}
@@ -471,11 +665,12 @@ export function DashboardContent({
                     {h.public_phone && <span>Phone: {h.public_phone}</span>}
                     {h.public_email && <span>Email: {h.public_email}</span>}
                   </div>
-                  {/* Source provenance */}
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {h.source_url && <ExternalLink href={h.source_url} label="Open source" />}
+                  </div>
                   <div className="text-xs text-gray-400 flex flex-wrap gap-2 mt-1">
                     {(h.source_name || src) && <span>Source: {h.source_name || src?.name}</span>}
                     {h.source_type && <span>({h.source_type})</span>}
-                    {h.source_url && <span className="text-ocean-500">Link</span>}
                     {h.last_verified_at && <span>Verified: {new Date(h.last_verified_at).toLocaleDateString()}</span>}
                     <span>✓{h.verification_count} ⚠{h.stale_flag_count} ♻{h.active_confirm_count}</span>
                   </div>
@@ -505,12 +700,16 @@ export function DashboardContent({
                 </div>
                 <div className="text-xs text-gray-500 mb-0.5">{s.island}{s.area ? ` · ${s.area}` : ''}</div>
                 <div className="text-sm font-medium mb-0.5">{s.title}</div>
+                <div className="text-[11px] uppercase tracking-wide text-gray-400 mb-1">Public description</div>
                 <p className="text-sm text-gray-600">{s.description}</p>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {s.source_url && <ExternalLink href={s.source_url} label="Open source" />}
+                </div>
                 {(s.source_name || s.source_url) && (
                   <div className="text-xs text-gray-400 mt-1">
                     {s.source_name && <span>Source: {s.source_name} </span>}
                     {s.source_type && <span>({s.source_type}) </span>}
-                    {s.source_url && <span className="text-ocean-500">Link </span>}
+                    {s.last_verified_at && <span>Verified: {new Date(s.last_verified_at).toLocaleDateString()}</span>}
                   </div>
                 )}
                 <NotesField table="public_need_summaries" id={s.id} initial={s.coordinator_notes} />
@@ -526,9 +725,72 @@ export function DashboardContent({
             .filter(r => (!islandFilter || r.submitted_island === islandFilter) && (!statusFilter || r.status === statusFilter))
             .map(r => {
               const src = r.source_registry_id ? sourceMap.get(r.source_registry_id) : null
-              return <ReviewCard key={r.id} item={r} sourceName={src?.name} onStatusUpdate={(status, notes) => {
+              return <ReviewCard key={r.id} item={r} sourceName={src?.name}
+                relatedHubs={findRelatedHubs(r, hubs)}
+                relatedSummaries={findRelatedSummaries(r, summaries)}
+                relatedDonations={findRelatedDonations(r, donations)}
+                onStatusUpdate={(status, notes) => {
                 setReviewItems(p => p.map(x => x.id === r.id ? { ...x, status, reviewer_notes: notes } : x))
                 updateReviewItemStatus(r.id, status, notes)
+              }} onPromoteHub={async (id) => {
+                const reviewItem = reviewItems.find(x => x.id === id)
+                if (!reviewItem || !reviewItem.submitted_island) return
+                const hubId = await promoteToHub(id, {
+                  name: inferTitleFromReviewItem(reviewItem),
+                  island: reviewItem.submitted_island,
+                  area: reviewItem.submitted_area || 'Unspecified area',
+                  category: inferHubCategory(reviewItem),
+                  notes: summarizeReviewText(reviewItem),
+                  source_url: reviewItem.feedback_page_url || undefined,
+                  confidence: 'medium',
+                })
+                if (hubId) {
+                  setReviewItems(p => p.map(x => x.id === id ? {
+                    ...x,
+                    status: 'Approved',
+                    promoted_hub_id: hubId,
+                    reviewer_notes: x.reviewer_notes || 'Promoted to draft hub.',
+                  } : x))
+                }
+              }} onPromoteSummary={async (id) => {
+                const reviewItem = reviewItems.find(x => x.id === id)
+                if (!reviewItem || !reviewItem.submitted_island) return
+                const summaryId = await promoteToSummary(id, {
+                  island: reviewItem.submitted_island,
+                  area: reviewItem.submitted_area || undefined,
+                  title: inferTitleFromReviewItem(reviewItem),
+                  description: summarizeReviewText(reviewItem) || 'Submitted from review queue.',
+                  category: inferSummaryCategory(reviewItem),
+                  urgency: 'Normal',
+                  source_url: reviewItem.feedback_page_url || undefined,
+                  confidence: 'medium',
+                })
+                if (summaryId) {
+                  setReviewItems(p => p.map(x => x.id === id ? {
+                    ...x,
+                    status: 'Approved',
+                    promoted_summary_id: summaryId,
+                    reviewer_notes: x.reviewer_notes || 'Promoted to draft need summary.',
+                  } : x))
+                }
+              }} onMarkHubNeedsReview={async (reviewId, hubId, hubName) => {
+                setHubs(p => p.map(x => x.id === hubId ? { ...x, visibility_status: 'review' } : x))
+                await updateHubVisibility(hubId, 'review')
+                const note = `Reported issue linked to hub: ${hubName}. Moved back to review.`
+                setReviewItems(p => p.map(x => x.id === reviewId ? { ...x, status: 'Approved', reviewer_notes: note } : x))
+                await updateReviewItemStatus(reviewId, 'Approved', note)
+              }} onMarkSummaryNeedsReview={async (reviewId, summaryId, summaryTitle) => {
+                setSummaries(p => p.map(x => x.id === summaryId ? { ...x, visibility_status: 'review' } : x))
+                await updateSummaryVisibility(summaryId, 'review')
+                const note = `Reported issue linked to need summary: ${summaryTitle}. Moved back to review.`
+                setReviewItems(p => p.map(x => x.id === reviewId ? { ...x, status: 'Approved', reviewer_notes: note } : x))
+                await updateReviewItemStatus(reviewId, 'Approved', note)
+              }} onHideDonationFromReview={async (reviewId, donationId, donationTitle) => {
+                setDonations(p => p.map(x => x.id === donationId ? { ...x, is_visible: false, needs_review: true, review_reason: 'Reported issue from review queue' } : x))
+                await hideDonation(donationId, 'Reported issue from review queue')
+                const note = `Reported issue linked to donation: ${donationTitle}. Hidden and marked for review.`
+                setReviewItems(p => p.map(x => x.id === reviewId ? { ...x, status: 'Approved', reviewer_notes: note } : x))
+                await updateReviewItemStatus(reviewId, 'Approved', note)
               }} onCreateIssue={async (id) => {
                 const result = await createGitHubIssue(id)
                 if (result) {
@@ -558,12 +820,21 @@ export function DashboardContent({
       {/* ============ DONATIONS ============ */}
       {tab === 'donations' && (
         <CardList empty="No donation links.">
+          <BulkActionBar count={selected.size}>
+            <button onClick={async () => { await bulkApproveDonations([...selected]); setDonations(p => p.map(d => selected.has(d.id) ? { ...d, is_visible: true, needs_review: false } : d)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Approve All</button>
+            <button onClick={async () => { await bulkHideDonations([...selected]); setDonations(p => p.map(d => selected.has(d.id) ? { ...d, is_visible: false, needs_review: true } : d)); clearSelection() }}
+              className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition-colors">Hide All</button>
+            <button onClick={() => clearSelection()}
+              className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded transition-colors">Clear</button>
+          </BulkActionBar>
           {donations
             .filter(d => (!islandFilter || d.island === islandFilter) && (!statusFilter || d.donation_type === statusFilter))
             .map(d => (
               <div key={d.id} className="bg-white border border-earth-100 rounded-lg p-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex flex-wrap items-center gap-1.5">
+                    <input type="checkbox" checked={selected.has(d.id)} onChange={() => toggleSelect(d.id)} className="rounded border-gray-300" />
                     <Badge label={d.donation_type} color="bg-earth-50 text-earth-700" />
                     <Badge label={d.confidence} color={confidenceColors[d.confidence] ?? 'bg-gray-100'} />
                     {d.is_visible
@@ -583,16 +854,18 @@ export function DashboardContent({
                 </div>
                 {/* Badges and flags */}
                 <div className="flex flex-wrap gap-1 mb-1">
-                  {d.badges.map(b => <span key={b} className="bg-ocean-50 text-ocean-700 text-[10px] px-1.5 py-0.5 rounded">{b}</span>)}
+                {d.badges.map(b => <span key={b} className="bg-ocean-50 text-ocean-700 text-[10px] px-1.5 py-0.5 rounded">{b}</span>)}
                   {d.flags.map(f => <span key={f} className="bg-lava-500/10 text-lava-600 text-[10px] px-1.5 py-0.5 rounded">{f}</span>)}
                 </div>
-                {/* Source provenance */}
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {d.destination_url && <ExternalLink href={d.destination_url} label="Open destination" tone="earth" />}
+                  {d.source_url && <ExternalLink href={d.source_url} label="Open source" />}
+                </div>
                 <div className="text-xs text-gray-400 flex flex-wrap gap-2 mb-2">
                   {d.source_name && <span>Source: {d.source_name}</span>}
                   {d.source_type && <span>({d.source_type})</span>}
-                  {d.source_url && <a href={d.source_url} target="_blank" rel="noopener noreferrer" className="text-ocean-500 hover:text-ocean-700 underline">Source link</a>}
-                  {d.destination_url && <a href={d.destination_url} target="_blank" rel="noopener noreferrer" className="text-earth-600 hover:text-earth-700 underline">Destination</a>}
                   {d.last_verified_at && <span>Verified: {new Date(d.last_verified_at).toLocaleDateString()}</span>}
+                  {d.review_reason && <span>Review: {d.review_reason}</span>}
                 </div>
                 {/* Actions */}
                 <div className="flex gap-2">
@@ -626,10 +899,12 @@ export function DashboardContent({
               </div>
               <div className="text-sm font-medium mb-0.5">{s.name}</div>
               {s.organization && <div className="text-xs text-gray-500 mb-0.5">{s.organization}</div>}
+              <div className="flex flex-wrap gap-2 mt-2">
+                {s.base_url && <ExternalLink href={s.base_url} label="Open source homepage" />}
+              </div>
               <div className="text-xs text-gray-400 flex flex-wrap gap-2">
                 <span>Strategy: {s.strategy}</span>
                 <span>Updates: {s.update_frequency}</span>
-                {s.base_url && <span className="text-ocean-500">URL</span>}
                 {s.last_checked_at && <span>Last checked: {new Date(s.last_checked_at).toLocaleDateString()}</span>}
               </div>
               {s.notes && <p className="text-xs text-gray-500 mt-1">{s.notes}</p>}
@@ -657,14 +932,50 @@ function ActiveToggle({ isActive, onToggle }: { isActive: boolean; onToggle: (va
   )
 }
 
-function ReviewCard({ item, sourceName, onStatusUpdate, onCreateIssue }: {
+function ReviewCard({
+  item,
+  sourceName,
+  relatedHubs,
+  relatedSummaries,
+  relatedDonations,
+  onStatusUpdate,
+  onPromoteHub,
+  onPromoteSummary,
+  onMarkHubNeedsReview,
+  onMarkSummaryNeedsReview,
+  onHideDonationFromReview,
+  onCreateIssue,
+}: {
   item: ReviewQueueItem; sourceName?: string
+  relatedHubs: HelpHub[]
+  relatedSummaries: PublicNeedSummary[]
+  relatedDonations: DonationLink[]
   onStatusUpdate: (status: string, notes: string) => void
+  onPromoteHub?: (id: string) => void
+  onPromoteSummary?: (id: string) => void
+  onMarkHubNeedsReview?: (reviewId: string, hubId: string, hubName: string) => void
+  onMarkSummaryNeedsReview?: (reviewId: string, summaryId: string, summaryTitle: string) => void
+  onHideDonationFromReview?: (reviewId: string, donationId: string, donationTitle: string) => void
   onCreateIssue?: (id: string) => void
 }) {
   const [notes, setNotes] = useState(item.reviewer_notes ?? '')
   const isFeedback = item.origin === 'feedback'
   const canBridge = isFeedback && item.feedback_category && GITHUB_SAFE_CATEGORIES.includes(item.feedback_category as typeof GITHUB_SAFE_CATEGORIES[number])
+  const isCorrectionReport = isFeedback && item.feedback_category === 'report_issue'
+  const isResourceSuggestion = isFeedback && item.feedback_category === 'suggest_resource'
+  const promotable = canPromoteReviewItem(item)
+  const quickTemplates = isCorrectionReport
+    ? [
+        'Verify live source and update public copy.',
+        'Reported as stale or incorrect. Check source and hide if no longer valid.',
+        'Source link needs review or replacement.',
+      ]
+    : isResourceSuggestion
+      ? [
+          'Validate source and promote if confirmed.',
+          'Needs source verification before publishing.',
+        ]
+      : []
 
   return (
     <div className="bg-white border border-amber-100 rounded-lg p-4">
@@ -674,6 +985,12 @@ function ReviewCard({ item, sourceName, onStatusUpdate, onCreateIssue }: {
           <Badge label={item.origin} color="bg-gray-100 text-gray-600" />
           {isFeedback && item.feedback_category && (
             <Badge label={item.feedback_category} color="bg-ocean-50 text-ocean-700" />
+          )}
+          {isCorrectionReport && (
+            <Badge label="correction" color="bg-lava-500/10 text-lava-700" />
+          )}
+          {isResourceSuggestion && (
+            <Badge label="resource lead" color="bg-green-100 text-green-800" />
           )}
           <span className="text-xs text-gray-400">{timeAgo(item.created_at)}</span>
         </div>
@@ -689,7 +1006,12 @@ function ReviewCard({ item, sourceName, onStatusUpdate, onCreateIssue }: {
         <>
           <p className="text-sm text-gray-800 mb-1 whitespace-pre-line">{item.feedback_message}</p>
           {item.feedback_contact && <div className="text-xs text-gray-500">Contact: {item.feedback_contact}</div>}
-          {item.feedback_page_url && <div className="text-xs text-gray-400">Page: {item.feedback_page_url}</div>}
+          {item.feedback_page_url && (
+            <div className="flex flex-wrap items-center gap-2 mt-2">
+              <span className="text-xs text-gray-400 break-all">Page: {item.feedback_page_url}</span>
+              <ExternalLink href={item.feedback_page_url} label="Open reported page" />
+            </div>
+          )}
         </>
       ) : (
         <>
@@ -712,6 +1034,81 @@ function ReviewCard({ item, sourceName, onStatusUpdate, onCreateIssue }: {
         </a>
       )}
 
+      {promotable && (onPromoteHub || onPromoteSummary) && (
+        <div className="flex flex-wrap gap-2 mt-2">
+          {onPromoteHub && (
+            <button
+              type="button"
+              onClick={() => onPromoteHub(item.id)}
+              className="text-xs px-3 py-1.5 bg-ocean-50 text-ocean-700 rounded hover:bg-ocean-100 transition-colors"
+            >
+              Create hub draft
+            </button>
+          )}
+          {onPromoteSummary && (
+            <button
+              type="button"
+              onClick={() => onPromoteSummary(item.id)}
+              className="text-xs px-3 py-1.5 bg-green-100 text-green-800 rounded hover:bg-green-200 transition-colors"
+            >
+              Create need draft
+            </button>
+          )}
+        </div>
+      )}
+
+      {isCorrectionReport && (relatedHubs.length > 0 || relatedSummaries.length > 0 || relatedDonations.length > 0) && (
+        <div className="mt-2 pt-2 border-t border-gray-100 space-y-2">
+          <div className="text-xs text-gray-400">Possible matches</div>
+          {relatedHubs.map(hub => (
+            <div key={hub.id} className="flex flex-wrap items-center gap-2 text-xs">
+              <span className="text-gray-600">Hub: {hub.name}</span>
+              {hub.source_url && <ExternalLink href={hub.source_url} label="Open source" />}
+              {onMarkHubNeedsReview && (
+                <button
+                  type="button"
+                  onClick={() => onMarkHubNeedsReview(item.id, hub.id, hub.name)}
+                  className="px-2.5 py-1 bg-amber-100 text-amber-800 rounded hover:bg-amber-200 transition-colors"
+                >
+                  Move hub to review
+                </button>
+              )}
+            </div>
+          ))}
+          {relatedSummaries.map(summary => (
+            <div key={summary.id} className="flex flex-wrap items-center gap-2 text-xs">
+              <span className="text-gray-600">Need: {summary.title}</span>
+              {summary.source_url && <ExternalLink href={summary.source_url} label="Open source" />}
+              {onMarkSummaryNeedsReview && (
+                <button
+                  type="button"
+                  onClick={() => onMarkSummaryNeedsReview(item.id, summary.id, summary.title)}
+                  className="px-2.5 py-1 bg-amber-100 text-amber-800 rounded hover:bg-amber-200 transition-colors"
+                >
+                  Move need to review
+                </button>
+              )}
+            </div>
+          ))}
+          {relatedDonations.map(donation => (
+            <div key={donation.id} className="flex flex-wrap items-center gap-2 text-xs">
+              <span className="text-gray-600">Donation: {donation.title}</span>
+              <ExternalLink href={donation.destination_url} label="Open destination" tone="earth" />
+              {donation.source_url && <ExternalLink href={donation.source_url} label="Open source" />}
+              {onHideDonationFromReview && (
+                <button
+                  type="button"
+                  onClick={() => onHideDonationFromReview(item.id, donation.id, donation.title)}
+                  className="px-2.5 py-1 bg-lava-500/10 text-lava-700 rounded hover:bg-lava-500/20 transition-colors"
+                >
+                  Hide donation
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* GitHub issue bridge for approved safe-category feedback */}
       {!item.github_issue_url && canBridge && item.status === 'Approved' && onCreateIssue && (
         <button onClick={() => onCreateIssue(item.id)}
@@ -722,16 +1119,39 @@ function ReviewCard({ item, sourceName, onStatusUpdate, onCreateIssue }: {
 
       {item.status === 'Pending' && (
         <div className="mt-2 pt-2 border-t border-gray-100 space-y-2">
+          {quickTemplates.length > 0 && (
+            <div>
+              <div className="text-xs text-gray-400 mb-1">Quick reviewer notes</div>
+              <div className="flex flex-wrap gap-1.5">
+                {quickTemplates.map(template => (
+                  <button
+                    key={template}
+                    type="button"
+                    onClick={() => setNotes(template)}
+                    className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors"
+                  >
+                    {template}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <input type="text" value={notes} onChange={e => setNotes(e.target.value)}
             placeholder="Reviewer notes…"
             className="w-full text-xs border border-gray-200 rounded px-2 py-1.5 focus:ring-1 focus:ring-ocean-400" />
           <div className="flex gap-2">
             <button onClick={() => onStatusUpdate('Approved', notes)}
-              className="text-xs px-3 py-1.5 bg-green-100 text-green-800 rounded hover:bg-green-200 transition-colors">Approve</button>
+              className="text-xs px-3 py-1.5 bg-green-100 text-green-800 rounded hover:bg-green-200 transition-colors">
+              {isCorrectionReport ? 'Reviewed' : 'Approve'}
+            </button>
             <button onClick={() => onStatusUpdate('Rejected', notes)}
-              className="text-xs px-3 py-1.5 bg-lava-500/10 text-lava-700 rounded hover:bg-lava-500/20 transition-colors">Reject</button>
+              className="text-xs px-3 py-1.5 bg-lava-500/10 text-lava-700 rounded hover:bg-lava-500/20 transition-colors">
+              {isCorrectionReport ? 'Not valid' : 'Reject'}
+            </button>
             <button onClick={() => onStatusUpdate('Escalated', notes)}
-              className="text-xs px-3 py-1.5 bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors">Escalate</button>
+              className="text-xs px-3 py-1.5 bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors">
+              {isCorrectionReport ? 'Needs follow-up' : 'Escalate'}
+            </button>
             <button onClick={() => onStatusUpdate('Duplicate', notes)}
               className="text-xs px-3 py-1.5 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors">Duplicate</button>
           </div>
@@ -828,6 +1248,16 @@ function SignalCard({ signal, sourceName, sourceType, onReview }: {
           <p className="text-xs text-gray-400">Notes: {signal.coordinator_notes}</p>
         </div>
       )}
+    </div>
+  )
+}
+
+function BulkActionBar({ count, children }: { count: number; children: React.ReactNode }) {
+  if (count === 0) return null
+  return (
+    <div className="sticky top-0 z-10 bg-ocean-600 text-white rounded-lg px-4 py-2 mb-3 flex items-center justify-between gap-3">
+      <span className="text-xs font-medium">{count} selected</span>
+      <div className="flex gap-2">{children}</div>
     </div>
   )
 }

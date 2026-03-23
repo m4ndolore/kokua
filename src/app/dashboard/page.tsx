@@ -16,6 +16,14 @@ export default async function Dashboard() {
     redirect('/dashboard/login')
   }
 
+  const systemStatus = {
+    hasSharedPassword: Boolean(process.env.DASHBOARD_PASSWORD),
+    hasGithubToken: Boolean(process.env.GITHUB_TOKEN),
+    githubRepo: process.env.GITHUB_REPO ?? 'm4ndolore/kokua',
+    allowBootstrap: process.env.NODE_ENV !== 'production' && Boolean(process.env.DASHBOARD_BOOTSTRAP_EMAIL),
+    nodeEnv: process.env.NODE_ENV ?? 'development',
+  }
+
   const supabase = getServiceClient()
   const admin = isAdmin(session)
 
@@ -44,6 +52,7 @@ export default async function Dashboard() {
     <DashboardContent
       role={session.user.role}
       userName={session.user.name}
+      systemStatus={systemStatus}
       requests={(requestsRes.data ?? []) as HelpRequest[]}
       offers={(offersRes.data ?? []) as HelpOffer[]}
       volunteers={(volunteersRes.data ?? []) as Volunteer[]}

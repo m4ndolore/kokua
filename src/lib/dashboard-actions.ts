@@ -157,14 +157,14 @@ export async function promoteToHub(reviewItemId: string, hubData: {
 }) {
   await requireCoordinatorAccess()
   const hubId = await createHub({ ...hubData, visibility_status: 'review' })
-  if (!hubId) return false
+  if (!hubId) return null
 
   const supabase = getServiceClient()
   await supabase.from('review_queue_items')
     .update({ status: 'Approved', promoted_hub_id: hubId, reviewed_at: new Date().toISOString() })
     .eq('id', reviewItemId)
 
-  return true
+  return hubId
 }
 
 export async function promoteToSummary(reviewItemId: string, summaryData: {
@@ -174,14 +174,14 @@ export async function promoteToSummary(reviewItemId: string, summaryData: {
 }) {
   await requireCoordinatorAccess()
   const summaryId = await createNeedSummary({ ...summaryData, visibility_status: 'review' })
-  if (!summaryId) return false
+  if (!summaryId) return null
 
   const supabase = getServiceClient()
   await supabase.from('review_queue_items')
     .update({ status: 'Approved', promoted_summary_id: summaryId, reviewed_at: new Date().toISOString() })
     .eq('id', reviewItemId)
 
-  return true
+  return summaryId
 }
 
 // ============================================================
@@ -335,6 +335,50 @@ export async function updateDonationTrustScore(id: string, trustScore: number) {
     .update({ trust_score: trustScore, updated_at: new Date().toISOString() })
     .eq('id', id)
   if (error) { console.error('Failed to update donation trust score:', error); return false }
+  return true
+}
+
+// ============================================================
+// Bulk operations (coordinator + admin)
+// ============================================================
+
+export async function bulkUpdateHubVisibility(ids: string[], visibility: string) {
+  await requireCoordinatorAccess()
+  const supabase = getServiceClient()
+  const { error } = await supabase.from('help_hubs')
+    .update({ visibility_status: visibility, updated_at: new Date().toISOString() })
+    .in('id', ids)
+  if (error) { console.error('Bulk hub visibility error:', error); return false }
+  return true
+}
+
+export async function bulkApproveDonations(ids: string[]) {
+  await requireCoordinatorAccess()
+  const supabase = getServiceClient()
+  const { error } = await supabase.from('donation_links')
+    .update({ is_visible: true, needs_review: false, review_reason: null, updated_at: new Date().toISOString() })
+    .in('id', ids)
+  if (error) { console.error('Bulk donation approve error:', error); return false }
+  return true
+}
+
+export async function bulkHideDonations(ids: string[]) {
+  await requireCoordinatorAccess()
+  const supabase = getServiceClient()
+  const { error } = await supabase.from('donation_links')
+    .update({ is_visible: false, needs_review: true, review_reason: 'Bulk hidden by coordinator', updated_at: new Date().toISOString() })
+    .in('id', ids)
+  if (error) { console.error('Bulk donation hide error:', error); return false }
+  return true
+}
+
+export async function bulkUpdateReviewStatus(ids: string[], status: string) {
+  await requireCoordinatorAccess()
+  const supabase = getServiceClient()
+  const { error } = await supabase.from('review_queue_items')
+    .update({ status, reviewed_at: new Date().toISOString() })
+    .in('id', ids)
+  if (error) { console.error('Bulk review status error:', error); return false }
   return true
 }
 

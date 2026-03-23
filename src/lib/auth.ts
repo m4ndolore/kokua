@@ -132,6 +132,7 @@ export async function setDashboardAuth(email: string, password: string): Promise
 
   const normalizedEmail = email.trim().toLowerCase()
   const bootstrapEmail = process.env.DASHBOARD_BOOTSTRAP_EMAIL?.trim().toLowerCase() || null
+  const allowBootstrap = process.env.NODE_ENV !== 'production'
 
   const supabase = getServiceClient()
   const { data } = await supabase
@@ -142,7 +143,7 @@ export async function setDashboardAuth(email: string, password: string): Promise
     .single()
 
   if (!data) {
-    if (bootstrapEmail && normalizedEmail === bootstrapEmail) {
+    if (allowBootstrap && bootstrapEmail && normalizedEmail === bootstrapEmail) {
       const { data: upserted, error } = await supabase
         .from('dashboard_users')
         .upsert({

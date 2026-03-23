@@ -34,6 +34,96 @@ import type {
 
 type Tab = 'requests' | 'offers' | 'volunteers' | 'hubs' | 'summaries' | 'review' | 'signals' | 'sources' | 'donations' | 'users'
 
+const WORKFLOW_CONFIG: Record<Tab, {
+  family: string
+  title: string
+  description: string
+  accent: string
+  panel: string
+  chip: string
+}> = {
+  requests: {
+    family: 'Coordination',
+    title: 'Incoming help requests',
+    description: 'Triage community requests, move them into active handling, and keep coordinator notes close to the record.',
+    accent: 'text-ocean-700',
+    panel: 'border-ocean-100 bg-ocean-50/40',
+    chip: 'bg-ocean-100 text-ocean-800',
+  },
+  offers: {
+    family: 'Coordination',
+    title: 'Incoming offers',
+    description: 'Track offered help, assign viable offers quickly, and archive what has already been used or exhausted.',
+    accent: 'text-earth-700',
+    panel: 'border-earth-100 bg-earth-50/40',
+    chip: 'bg-earth-100 text-earth-800',
+  },
+  volunteers: {
+    family: 'Coordination',
+    title: 'Volunteer coordination',
+    description: 'Keep volunteer records actionable: who is ready, who is on hold, and who should be removed from active rotation.',
+    accent: 'text-ocean-700',
+    panel: 'border-ocean-100 bg-ocean-50/40',
+    chip: 'bg-ocean-100 text-ocean-800',
+  },
+  hubs: {
+    family: 'Public Curation',
+    title: 'Public help hubs',
+    description: 'Curate what should be public, what needs review, and what stays internal while keeping source provenance visible.',
+    accent: 'text-ocean-700',
+    panel: 'border-ocean-100 bg-ocean-50/40',
+    chip: 'bg-ocean-100 text-ocean-800',
+  },
+  summaries: {
+    family: 'Public Curation',
+    title: 'Public need summaries',
+    description: 'Maintain short, public-facing summaries that point people to the latest source rather than becoming the source themselves.',
+    accent: 'text-ocean-700',
+    panel: 'border-ocean-100 bg-ocean-50/40',
+    chip: 'bg-ocean-100 text-ocean-800',
+  },
+  review: {
+    family: 'Intake Triage',
+    title: 'Review queue',
+    description: 'Handle incoming reports, resource leads, and GitHub-safe feedback with fast triage and clear next actions.',
+    accent: 'text-amber-700',
+    panel: 'border-amber-100 bg-amber-50/50',
+    chip: 'bg-amber-100 text-amber-800',
+  },
+  signals: {
+    family: 'Intake Triage',
+    title: 'Source signals',
+    description: 'Review incoming source signals, decide whether they are usable, and escalate uncertain items before they leak into public data.',
+    accent: 'text-purple-700',
+    panel: 'border-purple-100 bg-purple-50/40',
+    chip: 'bg-purple-100 text-purple-800',
+  },
+  sources: {
+    family: 'System',
+    title: 'Source registry',
+    description: 'Manage the upstream source list, trust level, and source monitoring posture.',
+    accent: 'text-gray-700',
+    panel: 'border-gray-200 bg-gray-50',
+    chip: 'bg-gray-100 text-gray-700',
+  },
+  donations: {
+    family: 'Public Curation',
+    title: 'Donation listings',
+    description: 'Review donation records for visibility, provenance, and trust signals before they appear on public pages.',
+    accent: 'text-earth-700',
+    panel: 'border-earth-100 bg-earth-50/40',
+    chip: 'bg-earth-100 text-earth-800',
+  },
+  users: {
+    family: 'System',
+    title: 'Dashboard users',
+    description: 'Manage operator access and keep coordinator accounts clean and active.',
+    accent: 'text-gray-700',
+    panel: 'border-gray-200 bg-gray-50',
+    chip: 'bg-gray-100 text-gray-700',
+  },
+}
+
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime()
   const mins = Math.floor(diff / 60000)
@@ -285,6 +375,50 @@ function CardList({ children, empty }: { children: React.ReactNode[]; empty: str
   )
 }
 
+function WorkflowHeader({
+  family,
+  title,
+  description,
+  accent,
+  panel,
+  chip,
+}: {
+  family: string
+  title: string
+  description: string
+  accent: string
+  panel: string
+  chip: string
+}) {
+  return (
+    <div className={`mb-4 rounded-xl border p-4 ${panel}`}>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <div className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] ${chip}`}>
+            {family}
+          </div>
+          <h2 className={`mt-2 text-lg font-semibold ${accent}`}>{title}</h2>
+          <p className="mt-1 max-w-3xl text-sm text-gray-600">{description}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function CardFrame({
+  children,
+  borderClass = 'border-ocean-100',
+}: {
+  children: React.ReactNode
+  borderClass?: string
+}) {
+  return (
+    <div className={`rounded-xl border bg-white p-4 shadow-[0_1px_0_rgba(15,23,42,0.04)] ${borderClass}`}>
+      {children}
+    </div>
+  )
+}
+
 function summarizeReviewText(item: ReviewQueueItem) {
   return (item.submitted_info || item.feedback_message || '').trim()
 }
@@ -458,6 +592,7 @@ export function DashboardContent({
   const filteredReviewItems = reviewItems.filter(r => (!islandFilter || r.submitted_island === islandFilter) && (!statusFilter || r.status === statusFilter))
   const filteredSignals = signals.filter(s => (!islandFilter || s.island === islandFilter) && (!statusFilter || s.review_status === statusFilter))
   const filteredDonations = donations.filter(d => (!islandFilter || d.island === islandFilter) && (!statusFilter || d.donation_type === statusFilter))
+  const workflow = WORKFLOW_CONFIG[tab]
 
   return (
     <div className="py-4">
@@ -591,6 +726,15 @@ export function DashboardContent({
         )}
       </div>
 
+      <WorkflowHeader
+        family={workflow.family}
+        title={workflow.title}
+        description={workflow.description}
+        accent={workflow.accent}
+        panel={workflow.panel}
+        chip={workflow.chip}
+      />
+
       {/* ============ USERS (admin only) ============ */}
       {tab === 'users' && isAdminRole && (
         <div className="space-y-3">
@@ -625,7 +769,7 @@ export function DashboardContent({
 
           <CardList empty="No dashboard users.">
             {dashboardUsers.map(u => (
-              <div key={u.id} className="bg-white border border-ocean-100 rounded-lg p-4">
+              <CardFrame key={u.id} borderClass="border-gray-200">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <div className="text-sm font-medium">{u.name}</div>
@@ -640,7 +784,7 @@ export function DashboardContent({
                       }} />
                   </div>
                 </div>
-              </div>
+              </CardFrame>
             ))}
           </CardList>
         </div>
@@ -666,7 +810,7 @@ export function DashboardContent({
               className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded transition-colors">Clear</button>
           </BulkActionBar>
           {filteredRequests.map(r => (
-              <div key={r.id} className="bg-white border border-ocean-100 rounded-lg p-4">
+              <CardFrame key={r.id} borderClass="border-ocean-100">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex flex-wrap items-center gap-1.5">
                     <input type="checkbox" checked={selected.has(r.id)} onChange={() => toggleSelect(r.id)} className="rounded border-gray-300" />
@@ -695,7 +839,7 @@ export function DashboardContent({
                   onUpdate={s => { setRequests(p => p.map(x => x.id === r.id ? { ...x, status: s } : x)); updateStatus('help_requests', r.id, s) }}
                 />
                 <NotesField table="help_requests" id={r.id} initial={r.coordinator_notes} />
-              </div>
+              </CardFrame>
             ))}
         </CardList>
       )}
@@ -720,7 +864,7 @@ export function DashboardContent({
               className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded transition-colors">Clear</button>
           </BulkActionBar>
           {filteredOffers.map(o => (
-              <div key={o.id} className="bg-white border border-earth-100 rounded-lg p-4">
+              <CardFrame key={o.id} borderClass="border-earth-100">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex flex-wrap items-center gap-1.5">
                     <input type="checkbox" checked={selected.has(o.id)} onChange={() => toggleSelect(o.id)} className="rounded border-gray-300" />
@@ -746,7 +890,7 @@ export function DashboardContent({
                   onUpdate={s => { setOffers(p => p.map(x => x.id === o.id ? { ...x, status: s } : x)); updateStatus('help_offers', o.id, s) }}
                 />
                 <NotesField table="help_offers" id={o.id} initial={o.coordinator_notes} />
-              </div>
+              </CardFrame>
             ))}
         </CardList>
       )}
@@ -771,7 +915,7 @@ export function DashboardContent({
               className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded transition-colors">Clear</button>
           </BulkActionBar>
           {filteredVolunteers.map(v => (
-              <div key={v.id} className="bg-white border border-ocean-100 rounded-lg p-4">
+              <CardFrame key={v.id} borderClass="border-ocean-100">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex flex-wrap items-center gap-1.5">
                     <input type="checkbox" checked={selected.has(v.id)} onChange={() => toggleSelect(v.id)} className="rounded border-gray-300" />
@@ -800,7 +944,7 @@ export function DashboardContent({
                   onUpdate={s => { setVolunteers(p => p.map(x => x.id === v.id ? { ...x, status: s } : x)); updateStatus('volunteers', v.id, s) }}
                 />
                 <NotesField table="volunteers" id={v.id} initial={v.coordinator_notes} />
-              </div>
+              </CardFrame>
             ))}
         </CardList>
       )}
@@ -825,7 +969,7 @@ export function DashboardContent({
           {filteredHubs.map(h => {
               const src = h.source_registry_id ? sourceMap.get(h.source_registry_id) : null
               return (
-                <div key={h.id} className="bg-white border border-ocean-100 rounded-lg p-4">
+                <CardFrame key={h.id} borderClass="border-ocean-100">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <input type="checkbox" checked={selected.has(h.id)} onChange={() => toggleSelect(h.id)} className="rounded border-gray-300" />
@@ -866,7 +1010,7 @@ export function DashboardContent({
                     }}
                   />
                   <NotesField table="help_hubs" id={h.id} initial={h.coordinator_notes} />
-                </div>
+                </CardFrame>
               )
             })}
         </CardList>
@@ -900,7 +1044,7 @@ export function DashboardContent({
               className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded transition-colors">Clear</button>
           </BulkActionBar>
           {filteredSummaries.map(s => (
-              <div key={s.id} className="bg-white border border-ocean-100 rounded-lg p-4">
+              <CardFrame key={s.id} borderClass="border-ocean-100">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex flex-wrap items-center gap-1.5">
                     <input type="checkbox" checked={selected.has(s.id)} onChange={() => toggleSelect(s.id)} className="rounded border-gray-300" />
@@ -932,7 +1076,7 @@ export function DashboardContent({
                   }}
                 />
                 <NotesField table="public_need_summaries" id={s.id} initial={s.coordinator_notes} />
-              </div>
+              </CardFrame>
             ))}
         </CardList>
       )}
@@ -1097,7 +1241,7 @@ export function DashboardContent({
               className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded transition-colors">Clear</button>
           </BulkActionBar>
           {filteredDonations.map(d => (
-              <div key={d.id} className="bg-white border border-earth-100 rounded-lg p-4">
+              <CardFrame key={d.id} borderClass="border-earth-100">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex flex-wrap items-center gap-1.5">
                     <input type="checkbox" checked={selected.has(d.id)} onChange={() => toggleSelect(d.id)} className="rounded border-gray-300" />
@@ -1145,7 +1289,7 @@ export function DashboardContent({
                       className="text-xs px-3 py-1.5 bg-lava-500/10 text-lava-700 rounded hover:bg-lava-500/20 transition-colors">Hide</button>
                   )}
                 </div>
-              </div>
+              </CardFrame>
             ))}
         </CardList>
       )}
@@ -1154,7 +1298,7 @@ export function DashboardContent({
       {tab === 'sources' && isAdminRole && (
         <CardList empty="No sources registered.">
           {sources.map(s => (
-            <div key={s.id} className="bg-white border border-ocean-100 rounded-lg p-4">
+            <CardFrame key={s.id} borderClass="border-gray-200">
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div className="flex flex-wrap items-center gap-1.5">
                   <Badge label={s.source_type} color="bg-ocean-50 text-ocean-700" />
@@ -1175,7 +1319,7 @@ export function DashboardContent({
                 {s.last_checked_at && <span>Last checked: {new Date(s.last_checked_at).toLocaleDateString()}</span>}
               </div>
               {s.notes && <p className="text-xs text-gray-500 mt-1">{s.notes}</p>}
-            </div>
+            </CardFrame>
           ))}
         </CardList>
       )}
@@ -1251,7 +1395,7 @@ function ReviewCard({
       : []
 
   return (
-    <div className="bg-white border border-amber-100 rounded-lg p-4">
+    <CardFrame borderClass="border-amber-100">
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="flex flex-wrap items-center gap-1.5">
           {onToggleSelected && (
@@ -1450,7 +1594,7 @@ function ReviewCard({
           <p className="text-xs text-gray-400">Reviewer: {item.reviewer_notes}</p>
         </div>
       )}
-    </div>
+    </CardFrame>
   )
 }
 
@@ -1463,7 +1607,7 @@ function SignalCard({ signal, sourceName, sourceType, selected, onToggleSelected
   const [notes, setNotes] = useState(signal.coordinator_notes ?? '')
 
   return (
-    <div className="bg-white border border-purple-100 rounded-lg p-4">
+    <CardFrame borderClass="border-purple-100">
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="flex flex-wrap items-center gap-1.5">
           {onToggleSelected && (
@@ -1542,7 +1686,7 @@ function SignalCard({ signal, sourceName, sourceType, selected, onToggleSelected
           <p className="text-xs text-gray-400">Notes: {signal.coordinator_notes}</p>
         </div>
       )}
-    </div>
+    </CardFrame>
   )
 }
 

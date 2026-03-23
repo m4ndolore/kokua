@@ -11,7 +11,7 @@
 
 ### Apply schema
 
-Run `supabase/schema.sql` in the Supabase SQL Editor for your production project. This creates all 9 tables, indexes, and RLS policies.
+Run `supabase/schema.sql` in the Supabase SQL Editor for your production project. This creates all 10 tables, indexes, and RLS policies.
 
 ### Verify tables exist
 
@@ -21,7 +21,7 @@ WHERE table_schema = 'public'
 ORDER BY table_name;
 ```
 
-Expected: `dashboard_users`, `help_hubs`, `help_offers`, `help_requests`, `public_need_summaries`, `review_queue_items`, `source_registry`, `source_signals`, `volunteers`
+Expected: `dashboard_users`, `donation_links`, `help_hubs`, `help_offers`, `help_requests`, `public_need_summaries`, `review_queue_items`, `source_registry`, `source_signals`, `volunteers`
 
 ### Create initial admin user
 

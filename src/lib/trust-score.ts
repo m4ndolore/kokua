@@ -22,6 +22,9 @@ export function computeTrustScore(link: Pick<DonationLink, 'source_type' | 'dona
   if (link.badges.includes('Established Organization')) score += 8
   if (link.badges.includes('Platform Verified')) score += 6
   if (link.badges.includes('Local Organization')) score += 4
+  if (link.badges.includes('501(c)(3) Verified')) score += 10
+  if (link.badges.includes('Charity Navigator 4-Star')) score += 8
+  if (link.badges.includes('Matching Fund')) score += 5
 
   // Flags
   if (link.flags.includes('low_confidence')) score -= 10
@@ -29,6 +32,8 @@ export function computeTrustScore(link: Pick<DonationLink, 'source_type' | 'dona
   if (link.flags.includes('stale')) score -= 12
   if (link.flags.includes('broken_link')) score -= 30
   if (link.flags.includes('suspicious')) score -= 25
+  if (link.flags.includes('social_source')) score -= 20
+  if (link.flags.includes('unresolved_shortlink')) score -= 8
 
   // Freshness
   if (link.last_verified_at) {

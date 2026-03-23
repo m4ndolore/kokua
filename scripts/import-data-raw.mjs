@@ -90,9 +90,6 @@ function getClient() {
 async function ensureSource(supabase, source, externalSourceMap) {
   if (!source?.name || !source?.source_type) return null
 
-  const island = normalizeIsland(source.island)
-  void island
-
   const { data: existing, error: existingError } = await supabase
     .from('source_registry')
     .select('id')
@@ -101,6 +98,22 @@ async function ensureSource(supabase, source, externalSourceMap) {
 
   if (existingError) throw existingError
   if (existing?.id) {
+    const { error: updateError } = await supabase
+      .from('source_registry')
+      .update({
+        source_type: source.source_type,
+        platform: source.platform || null,
+        base_url: source.base_url || null,
+        organization: source.organization || null,
+        trust_level: source.trust_level || 'medium',
+        update_frequency: source.update_frequency || 'unknown',
+        strategy: source.strategy || 'monitor',
+        is_active: source.is_active ?? true,
+        notes: source.notes || null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', existing.id)
+    if (updateError) throw updateError
     if (source.external_id) externalSourceMap.set(source.external_id, existing.id)
     return existing.id
   }
@@ -148,34 +161,43 @@ async function ensureSignal(supabase, signal, externalSourceMap) {
 
   const { data: existing, error: existingError } = await query.maybeSingle()
   if (existingError) throw existingError
-  if (existing?.id) return existing.id
-
   const confidence = signal.confidence || 'medium'
   const needsReview = signal.needs_review ?? true
+  const payload = {
+    source_registry_id: sourceRegistryId,
+    title,
+    signal_type: signal.signal_type,
+    raw_url: rawUrl,
+    raw_text: signal.raw_text || signal.raw_text_summary || null,
+    raw_payload: signal.raw_payload || null,
+    island: normalizeIsland(signal.island),
+    area: signal.area || null,
+    neighborhood: signal.neighborhood || null,
+    derived_resource_name: signal.derived_resource_name || null,
+    derived_resource_type: signal.derived_resource_type || null,
+    derived_status: signal.derived_status || 'unknown',
+    confidence,
+    freshness_score: signal.freshness_score ?? null,
+    last_observed_at: signal.last_observed_at || new Date().toISOString(),
+    needs_review: needsReview,
+    review_reason: signal.review_reason || (needsReview ? 'Imported from data-raw seed' : null),
+    review_status: needsReview ? 'pending' : 'approved',
+    coordinator_notes: signal.suggested_action || null,
+    updated_at: new Date().toISOString(),
+  }
+
+  if (existing?.id) {
+    const { error: updateError } = await supabase
+      .from('source_signals')
+      .update(payload)
+      .eq('id', existing.id)
+    if (updateError) throw updateError
+    return existing.id
+  }
 
   const { data, error } = await supabase
     .from('source_signals')
-    .insert({
-      source_registry_id: sourceRegistryId,
-      title,
-      signal_type: signal.signal_type,
-      raw_url: rawUrl,
-      raw_text: signal.raw_text || signal.raw_text_summary || null,
-      raw_payload: signal.raw_payload || null,
-      island: normalizeIsland(signal.island),
-      area: signal.area || null,
-      neighborhood: signal.neighborhood || null,
-      derived_resource_name: signal.derived_resource_name || null,
-      derived_resource_type: signal.derived_resource_type || null,
-      derived_status: signal.derived_status || 'unknown',
-      confidence,
-      freshness_score: signal.freshness_score ?? null,
-      last_observed_at: signal.last_observed_at || new Date().toISOString(),
-      needs_review: needsReview,
-      review_reason: signal.review_reason || (needsReview ? 'Imported from data-raw seed' : null),
-      review_status: needsReview ? 'pending' : 'approved',
-      coordinator_notes: signal.suggested_action || null,
-    })
+    .insert(payload)
     .select('id')
     .single()
 
@@ -197,28 +219,38 @@ async function ensureHub(supabase, hub) {
     .maybeSingle()
 
   if (existingError) throw existingError
-  if (existing?.id) return existing.id
+  const payload = {
+    name,
+    island,
+    area,
+    category: normalizeHubCategory(hub.resource_type),
+    status: normalizeHubStatus(hub.status),
+    hours: hub.hours || null,
+    notes: joinNotes(hub.description, hub.notes),
+    public_phone: hub.public_phone || null,
+    public_email: hub.public_email || null,
+    address: hub.address || null,
+    source_name: hub.source_name || hub.organization || null,
+    source_type: hub.source_type || null,
+    source_url: hub.source_url || null,
+    confidence: hub.confidence || 'medium',
+    last_verified_at: hub.last_verified_at || new Date().toISOString(),
+    visibility_status: normalizeVisibility(hub),
+    updated_at: new Date().toISOString(),
+  }
+
+  if (existing?.id) {
+    const { error: updateError } = await supabase
+      .from('help_hubs')
+      .update(payload)
+      .eq('id', existing.id)
+    if (updateError) throw updateError
+    return existing.id
+  }
 
   const { data, error } = await supabase
     .from('help_hubs')
-    .insert({
-      name,
-      island,
-      area,
-      category: normalizeHubCategory(hub.resource_type),
-      status: normalizeHubStatus(hub.status),
-      hours: hub.hours || null,
-      notes: joinNotes(hub.description, hub.notes),
-      public_phone: hub.public_phone || null,
-      public_email: hub.public_email || null,
-      address: hub.address || null,
-      source_name: hub.source_name || hub.organization || null,
-      source_type: hub.source_type || null,
-      source_url: hub.source_url || null,
-      confidence: hub.confidence || 'medium',
-      last_verified_at: hub.last_verified_at || new Date().toISOString(),
-      visibility_status: normalizeVisibility(hub),
-    })
+    .insert(payload)
     .select('id')
     .single()
 
@@ -238,24 +270,34 @@ async function ensureSummary(supabase, summary) {
     .maybeSingle()
 
   if (existingError) throw existingError
-  if (existing?.id) return existing.id
+  const payload = {
+    island,
+    area,
+    title: summary.title,
+    description: joinNotes(summary.description, summary.recommended_action ? `Recommended action: ${summary.recommended_action}` : null),
+    category: normalizeNeedCategory(summary.category),
+    urgency: normalizeNeedUrgency(summary.urgency),
+    source_name: summary.source_name || null,
+    source_type: summary.source_type || null,
+    source_url: summary.source_url || null,
+    confidence: summary.confidence || 'medium',
+    last_verified_at: summary.last_verified_at || new Date().toISOString(),
+    visibility_status: normalizeVisibility(summary),
+    updated_at: new Date().toISOString(),
+  }
+
+  if (existing?.id) {
+    const { error: updateError } = await supabase
+      .from('public_need_summaries')
+      .update(payload)
+      .eq('id', existing.id)
+    if (updateError) throw updateError
+    return existing.id
+  }
 
   const { data, error } = await supabase
     .from('public_need_summaries')
-    .insert({
-      island,
-      area,
-      title: summary.title,
-      description: joinNotes(summary.description, summary.recommended_action ? `Recommended action: ${summary.recommended_action}` : null),
-      category: normalizeNeedCategory(summary.category),
-      urgency: normalizeNeedUrgency(summary.urgency),
-      source_name: summary.source_name || null,
-      source_type: summary.source_type || null,
-      source_url: summary.source_url || null,
-      confidence: summary.confidence || 'medium',
-      last_verified_at: summary.last_verified_at || new Date().toISOString(),
-      visibility_status: normalizeVisibility(summary),
-    })
+    .insert(payload)
     .select('id')
     .single()
 
@@ -274,35 +316,45 @@ async function ensureDonationLink(supabase, donation) {
     .maybeSingle()
 
   if (existingError) throw existingError
-  if (existing?.id) return existing.id
+  const payload = {
+    external_id: externalId,
+    title: donation.title,
+    organization: donation.organization || null,
+    donation_type: donation.donation_type,
+    description: donation.description || null,
+    island: normalizeIsland(donation.island),
+    area: donation.area || null,
+    neighborhood: donation.neighborhood || null,
+    address: donation.address || null,
+    hours: donation.hours || null,
+    destination_url: donation.destination_url,
+    source_name: donation.source_name || null,
+    source_type: donation.source_type || null,
+    source_url: donation.source_url || null,
+    confidence: donation.confidence || 'medium',
+    trust_score: donation.trust_score ?? null,
+    badges: normalizeTextArray(donation.badges),
+    flags: normalizeTextArray(donation.flags),
+    last_verified_at: donation.last_verified_at || new Date().toISOString(),
+    is_visible: donation.is_visible ?? false,
+    needs_review: donation.needs_review ?? true,
+    review_reason: donation.review_reason || null,
+    tags: normalizeTextArray(donation.tags),
+    updated_at: new Date().toISOString(),
+  }
+
+  if (existing?.id) {
+    const { error: updateError } = await supabase
+      .from('donation_links')
+      .update(payload)
+      .eq('id', existing.id)
+    if (updateError) throw updateError
+    return existing.id
+  }
 
   const { data, error } = await supabase
     .from('donation_links')
-    .insert({
-      external_id: externalId,
-      title: donation.title,
-      organization: donation.organization || null,
-      donation_type: donation.donation_type,
-      description: donation.description || null,
-      island: normalizeIsland(donation.island),
-      area: donation.area || null,
-      neighborhood: donation.neighborhood || null,
-      address: donation.address || null,
-      hours: donation.hours || null,
-      destination_url: donation.destination_url,
-      source_name: donation.source_name || null,
-      source_type: donation.source_type || null,
-      source_url: donation.source_url || null,
-      confidence: donation.confidence || 'medium',
-      trust_score: donation.trust_score ?? null,
-      badges: normalizeTextArray(donation.badges),
-      flags: normalizeTextArray(donation.flags),
-      last_verified_at: donation.last_verified_at || new Date().toISOString(),
-      is_visible: donation.is_visible ?? false,
-      needs_review: donation.needs_review ?? true,
-      review_reason: donation.review_reason || null,
-      tags: normalizeTextArray(donation.tags),
-    })
+    .insert(payload)
     .select('id')
     .single()
 

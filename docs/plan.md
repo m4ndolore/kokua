@@ -15,7 +15,7 @@
 
 * `help_hubs` (is_visible = true)
 * `public_need_summaries` (is_visible = true)
-* `donation_links` (planned module, not yet in `supabase/schema.sql`)
+* `donation_links` (is_visible = true)
 
 **Private (service role only):**
 
@@ -88,8 +88,6 @@ Auth logic: `src/lib/auth.ts`
 * `/need-help/*`
 * `/can-help/*`
 * `/help`, `/give` (QR redirects)
-
-Planned, not yet shipped:
 
 * `/donate`
 

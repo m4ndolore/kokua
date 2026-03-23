@@ -32,12 +32,17 @@ function computeTrustScore(link: DonationInput): number {
   if (badges.includes('Established Organization')) score += 8
   if (badges.includes('Platform Verified')) score += 6
   if (badges.includes('Local Organization')) score += 4
+  if (badges.includes('501(c)(3) Verified')) score += 10
+  if (badges.includes('Charity Navigator 4-Star')) score += 8
+  if (badges.includes('Matching Fund')) score += 5
   const flags = link.flags ?? []
   if (flags.includes('low_confidence')) score -= 10
   if (flags.includes('source_conflict')) score -= 15
   if (flags.includes('stale')) score -= 12
   if (flags.includes('broken_link')) score -= 30
   if (flags.includes('suspicious')) score -= 25
+  if (flags.includes('social_source')) score -= 20
+  if (flags.includes('unresolved_shortlink')) score -= 8
   if (link.last_verified_at) {
     const ageMs = Date.now() - new Date(link.last_verified_at).getTime()
     if (ageMs <= 48 * 60 * 60 * 1000) score += 6

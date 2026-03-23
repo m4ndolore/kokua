@@ -86,9 +86,11 @@ export const DONATION_TYPES = ['institutional', 'platform_hub', 'community_campa
 export const DONATION_BADGES = [
   'Established Organization', 'Platform Verified', 'Local Organization',
   'Newly Added', 'Limited Verification', 'Needs Review',
+  '501(c)(3) Verified', 'Charity Navigator 4-Star', 'Matching Fund',
 ] as const
 export const DONATION_FLAGS = [
   'low_confidence', 'source_conflict', 'stale', 'broken_link', 'suspicious',
+  'social_source', 'unresolved_shortlink',
 ] as const
 
 export const ROLES = ['coordinator', 'admin'] as const

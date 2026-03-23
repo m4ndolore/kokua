@@ -1,6 +1,6 @@
 'use server'
 
-import { supabase } from './supabase'
+import { supabase, getServiceClient } from './supabase'
 
 export type FormState = {
   success: boolean
@@ -157,4 +157,36 @@ export async function submitFeedback(
     return { success: false, error: 'Something went wrong. Please try again.' }
   }
   return { success: true, error: null }
+}
+
+export async function signalHubActive(hubId: string): Promise<boolean> {
+  if (!hubId) return false
+  const supa = getServiceClient()
+  const { data } = await supa.from('help_hubs')
+    .select('active_confirm_count')
+    .eq('id', hubId)
+    .eq('visibility_status', 'public')
+    .single()
+  if (!data) return false
+  const { error } = await supa.from('help_hubs')
+    .update({ active_confirm_count: (data.active_confirm_count ?? 0) + 1 })
+    .eq('id', hubId)
+  if (error) { console.error('Signal hub active error:', error); return false }
+  return true
+}
+
+export async function signalHubStale(hubId: string): Promise<boolean> {
+  if (!hubId) return false
+  const supa = getServiceClient()
+  const { data } = await supa.from('help_hubs')
+    .select('stale_flag_count')
+    .eq('id', hubId)
+    .eq('visibility_status', 'public')
+    .single()
+  if (!data) return false
+  const { error } = await supa.from('help_hubs')
+    .update({ stale_flag_count: (data.stale_flag_count ?? 0) + 1 })
+    .eq('id', hubId)
+  if (error) { console.error('Signal hub stale error:', error); return false }
+  return true
 }

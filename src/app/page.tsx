@@ -1,20 +1,13 @@
 export default function Home() {
   return (
     <div className="py-6 sm:py-10">
-      {/* Emergency banner */}
-      <div className="bg-lava-500/10 border border-lava-500/20 rounded-lg px-4 py-3 mb-8 text-center">
-        <p className="text-sm text-lava-700 font-medium">
-          For life-threatening emergencies, call 911.
-        </p>
-      </div>
-
       {/* Hero */}
-      <div className="text-center mb-10">
+      <div className="text-center mb-8">
         <h1 className="text-3xl sm:text-4xl font-bold text-ocean-900 mb-2">
           Kōkua Hub
         </h1>
-        <p className="text-base text-ocean-700">
-          Community relief coordination for Hawaiʻi
+        <p className="text-base text-ocean-700 max-w-md mx-auto">
+          Connecting Hawaiʻi communities during disaster relief — find resources, share what you have, and coordinate with neighbors.
         </p>
       </div>
 
@@ -32,32 +25,38 @@ export default function Home() {
         >
           I Can Help
         </a>
+        <a
+          href="/donate"
+          className="block bg-white hover:bg-gray-50 active:bg-gray-100 border border-gray-200 text-gray-800 text-center rounded-xl px-6 py-4 text-base font-semibold transition-colors"
+        >
+          Donate &amp; Support
+        </a>
       </div>
 
       {/* How it works */}
       <div className="bg-white rounded-xl border border-ocean-100 p-5 sm:p-6 mb-8 max-w-lg mx-auto">
         <h2 className="font-semibold text-ocean-800 mb-3 text-center">How it works</h2>
-        <ol className="space-y-2 text-sm text-gray-600">
+        <ol className="space-y-2.5 text-sm text-gray-600">
           <li className="flex gap-3">
             <span className="flex-shrink-0 w-6 h-6 rounded-full bg-ocean-100 text-ocean-700 text-xs font-bold flex items-center justify-center">1</span>
-            <span>Browse available resources or tell us what you need.</span>
+            <span>Browse verified resources or reach volunteers to ask for help.</span>
           </li>
           <li className="flex gap-3">
-            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-ocean-100 text-ocean-700 text-xs font-bold flex items-center justify-center">2</span>
-            <span>Offer supplies, services, or volunteer your time.</span>
+            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-earth-100 text-earth-700 text-xs font-bold flex items-center justify-center">2</span>
+            <span>Share resources, connect to offer supplies and services, or donate to relief efforts.</span>
           </li>
           <li className="flex gap-3">
             <span className="flex-shrink-0 w-6 h-6 rounded-full bg-ocean-100 text-ocean-700 text-xs font-bold flex items-center justify-center">3</span>
-            <span>Volunteer coordinators review and connect people with help.</span>
+            <span>Coordinators review what&apos;s working and connect people with the help they need.</span>
           </li>
         </ol>
       </div>
 
-      {/* Trust statement */}
+      {/* Trust + safety */}
       <div className="text-center text-sm text-gray-500 max-w-md mx-auto space-y-2 mb-8">
         <p>
-          This is a community tool, not an official emergency service.
-          Response depends on volunteer availability.
+          A community coordination tool — not an official emergency service.
+          For life-threatening emergencies, call 911.
         </p>
         <p>
           We only collect the minimum information needed to coordinate help.

@@ -3,6 +3,20 @@
 import { useState } from 'react'
 import { ISLANDS } from '@/lib/types'
 import type { DonationLink } from '@/lib/types'
+import { ShareButton } from '@/components/share-button'
+
+function truncateText(text: string, maxLength = 180) {
+  if (text.length <= maxLength) return text
+  return `${text.slice(0, maxLength).trimEnd()}...`
+}
+
+function sourceHost(url: string) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '')
+  } catch {
+    return url
+  }
+}
 
 function confidenceBadge(confidence: string) {
   if (confidence === 'high') return null
@@ -50,7 +64,7 @@ function DonationCard({ donation }: { donation: DonationLink }) {
         <p className="text-xs text-gray-500 mb-1.5">{donation.organization}</p>
       )}
       {donation.description && (
-        <p className="text-sm text-gray-600 mb-2">{donation.description}</p>
+        <p className="text-sm text-gray-600 mb-2">{truncateText(donation.description)}</p>
       )}
 
       <BadgeChips badges={donation.badges} />
@@ -66,10 +80,11 @@ function DonationCard({ donation }: { donation: DonationLink }) {
             Verified {new Date(donation.last_verified_at).toLocaleDateString()}
           </span>
         )}
+        <ShareButton title={donation.title} text={`${donation.title}${donation.organization ? ` by ${donation.organization}` : ''}`} />
       </div>
 
       {/* Donate button */}
-      <div className="flex items-center gap-2 mt-3">
+      <div className="flex flex-wrap items-center gap-2 mt-3">
         <a
           href={donation.destination_url}
           target="_blank"
@@ -78,7 +93,17 @@ function DonationCard({ donation }: { donation: DonationLink }) {
         >
           Donate &rarr;
         </a>
-        <span className="text-[10px] text-gray-400">External site</span>
+        {donation.source_url && (
+          <a
+            href={donation.source_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium border border-ocean-200 text-ocean-700 hover:bg-ocean-50 transition-colors"
+          >
+            {donation.source_name ? 'View source' : `View source: ${sourceHost(donation.source_url)}`} &rarr;
+          </a>
+        )}
+        <span className="text-[10px] text-gray-400">External links</span>
       </div>
     </div>
   )

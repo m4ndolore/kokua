@@ -3,6 +3,21 @@
 import { useState } from 'react'
 import { ISLANDS } from '@/lib/types'
 import type { DonationLink, HelpHub, PublicNeedSummary } from '@/lib/types'
+import { ShareButton } from '@/components/share-button'
+import { HubSignalButtons } from '@/components/signal-buttons'
+
+function truncateText(text: string, maxLength = 180) {
+  if (text.length <= maxLength) return text
+  return `${text.slice(0, maxLength).trimEnd()}...`
+}
+
+function sourceHost(url: string) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '')
+  } catch {
+    return url
+  }
+}
 
 function hubStatusColor(status: string) {
   const colors: Record<string, string> = {
@@ -41,6 +56,25 @@ function sourceLabel(sourceName: string | null, sourceType: string | null) {
     <span className="text-xs text-gray-400">
       {prefix ? `${prefix}: ` : ''}{sourceName}
     </span>
+  )
+}
+
+function SourceAction({
+  href,
+  label,
+}: {
+  href: string
+  label: string
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center rounded-md border border-ocean-200 px-3 py-1.5 text-xs font-medium text-ocean-700 hover:bg-ocean-50 transition-colors"
+    >
+      {label} ↗
+    </a>
   )
 }
 
@@ -102,20 +136,21 @@ export function FindHelpContent({
                   <span className="text-xs text-gray-400">{s.island}{s.area ? ` · ${s.area}` : ''}</span>
                 </div>
                 <h3 className="font-medium text-sm text-gray-900 mb-1">{s.title}</h3>
-                <p className="text-sm text-gray-600">{s.description}</p>
-                {/* Source provenance */}
-                <div className="flex items-center gap-2 mt-2">
+                <p className="text-sm text-gray-600">{truncateText(s.description, 160)}</p>
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  {s.source_url && (
+                    <SourceAction
+                      href={s.source_url}
+                      label={s.source_name ? `Read source: ${s.source_name}` : `Read source: ${sourceHost(s.source_url)}`}
+                    />
+                  )}
+                </div>
+                <div className="flex flex-wrap items-center gap-2 mt-2">
                   {sourceLabel(s.source_name, s.source_type)}
                   {s.last_verified_at && (
                     <span className="text-[10px] text-gray-400">
                       Verified {new Date(s.last_verified_at).toLocaleDateString()}
                     </span>
-                  )}
-                  {s.source_url && (
-                    <a href={s.source_url} target="_blank" rel="noopener noreferrer"
-                      className="text-[10px] text-ocean-500 hover:text-ocean-700 underline">
-                      Source
-                    </a>
                   )}
                 </div>
               </div>
@@ -135,12 +170,20 @@ export function FindHelpContent({
                   <div>
                     <h3 className="font-medium text-sm text-gray-900">{d.title}</h3>
                     {d.organization && <p className="text-xs text-gray-500">{d.organization}</p>}
-                    {d.description && <p className="text-xs text-gray-600 mt-0.5">{d.description}</p>}
+                    {d.description && <p className="text-xs text-gray-600 mt-0.5">{truncateText(d.description, 140)}</p>}
                   </div>
-                  <a href={d.destination_url} target="_blank" rel="noopener noreferrer"
-                    className="shrink-0 text-xs font-medium text-earth-700 bg-earth-50 hover:bg-earth-100 px-3 py-1.5 rounded transition-colors">
-                    Donate →
-                  </a>
+                  <div className="shrink-0 flex flex-col gap-2">
+                    <a href={d.destination_url} target="_blank" rel="noopener noreferrer"
+                      className="text-xs font-medium text-earth-700 bg-earth-50 hover:bg-earth-100 px-3 py-1.5 rounded transition-colors text-center">
+                      Donate ↗
+                    </a>
+                    {d.source_url && (
+                      <a href={d.source_url} target="_blank" rel="noopener noreferrer"
+                        className="text-xs font-medium text-ocean-700 border border-ocean-200 hover:bg-ocean-50 px-3 py-1.5 rounded transition-colors text-center">
+                        Source ↗
+                      </a>
+                    )}
+                  </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-2 mt-2 pt-2 border-t border-gray-50">
                   {sourceLabel(d.source_name, d.source_type)}
@@ -151,6 +194,7 @@ export function FindHelpContent({
                     </span>
                   )}
                   <span className="text-[10px] text-gray-400">External site</span>
+                  <ShareButton title={d.title} text={`${d.title}${d.organization ? ` by ${d.organization}` : ''}`} />
                 </div>
               </div>
             ))}
@@ -199,12 +243,19 @@ export function FindHelpContent({
                 </div>
                 {h.address && <p className="text-sm text-gray-600 mb-1">{h.address}</p>}
                 {h.hours && <p className="text-xs text-gray-500 mb-1">Hours: {h.hours}</p>}
-                {h.notes && <p className="text-sm text-gray-600 mb-1">{h.notes}</p>}
+                {h.notes && <p className="text-sm text-gray-600 mb-1">{truncateText(h.notes, 180)}</p>}
                 <div className="text-xs text-gray-500 flex flex-wrap gap-3 mt-2">
                   {h.public_phone && <span>Phone: {h.public_phone}</span>}
                   {h.public_email && <span>Email: {h.public_email}</span>}
                 </div>
-                {/* Source provenance + freshness */}
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  {h.source_url && (
+                    <SourceAction
+                      href={h.source_url}
+                      label={h.source_name ? `Open latest source: ${h.source_name}` : `Open latest source: ${sourceHost(h.source_url)}`}
+                    />
+                  )}
+                </div>
                 <div className="flex flex-wrap items-center gap-2 mt-2 pt-2 border-t border-gray-50">
                   {sourceLabel(h.source_name, h.source_type)}
                   {confidenceBadge(h.confidence)}
@@ -213,12 +264,8 @@ export function FindHelpContent({
                       Verified {new Date(h.last_verified_at).toLocaleDateString()}
                     </span>
                   )}
-                  {h.source_url && (
-                    <a href={h.source_url} target="_blank" rel="noopener noreferrer"
-                      className="text-[10px] text-ocean-500 hover:text-ocean-700 underline">
-                      Go to source
-                    </a>
-                  )}
+                  <ShareButton title={h.name} text={`${h.name} — ${h.category} on ${h.island}`} />
+                  <HubSignalButtons hubId={h.id} />
                 </div>
               </div>
             ))}

@@ -1,0 +1,1485 @@
+{
+  "sql": "-- =============================================================\n-- help_hubs  (31 records)\n-- =============================================================\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('oahu-kaneohe-district-park-shelter', 'Kaneʻohe District Park Evacuation Shelter', 'Oahu', 'Windward', 'Kaneʻohe', 'evacuation_center', 'The sole remaining open evacuation shelter on Oahu as of Saturday evening, March 21. All other city-operated shelters closed at 6 p.m. Provides cots, food, and water. Pets allowed in crates.', 'City and County of Honolulu / American Red Cross', '45-660 Keaahala Rd, Kaneʻohe, HI 96744', NULL, NULL, NULL, NULL, 'https://p.veoci.com/hnlshelter', 'https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat/', '[\"https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat/\", \"https://www.khon2.com/top-stories/list-evacuation-shelters-on-oahu/\", \"https://dod.hawaii.gov/hiema/march-2026-kona-low/\", \"https://www.hawaiinewsnow.com/2026/03/21/state-city-officials-give-update-kona-low-impacts/\"]'::jsonb, 'active', 'Open as of 2026-03-21 19:00 HST; duration depends on conditions', 'All other Oahu city shelters closed at 6 p.m. March 21. This is the only active city-operated shelter as of Saturday evening. Confirm status before traveling.', ARRAY['English']::text[], 'Pet-friendly if animals are crated', '2026-03-21T21:00:00-10:00', 'high', ARRAY['shelter', 'oahu', 'kaneohe', 'windward', 'red-cross', 'kona-low-2026', 'pets-allowed']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('oahu-wahiawa-district-park-shelter', 'George Fred Wright Wahiawa District Park Evacuation Shelter', 'Oahu', 'Central Oahu', 'Wahiawa', 'evacuation_center', 'City evacuation shelter opened March 20 for residents displaced by North Shore and Central Oahu flooding. Scheduled to close 6 p.m. March 21 per HNL Alert. Verify current status before traveling.', 'City and County of Honolulu', '1139 Kilani Ave, Wahiawa, HI 96786', NULL, NULL, NULL, NULL, 'https://p.veoci.com/hnlshelter', 'https://www.staradvertiser.com/2026/03/20/breaking-news/a-list-of-oahu-evacuation-shelters-assembly-areas-and-closures/', '[\"https://www.staradvertiser.com/2026/03/20/breaking-news/a-list-of-oahu-evacuation-shelters-assembly-areas-and-closures/\", \"https://www.khon2.com/top-stories/list-evacuation-shelters-on-oahu/\", \"https://dod.hawaii.gov/hiema/march-2026-kona-low/\"]'::jsonb, 'likely_closed', 'Opened 2026-03-20; scheduled closure 6 p.m. 2026-03-21', 'Scheduled to close 6 p.m. March 21 per official HNL Alert. Previously received evacuees transferred from Waialua High School after that site closed due to dam threat. Verify before traveling. | Status was unknown/scheduled-closed as of source collection. Likely closed as of 2026-03-22. Retained in dataset — may reopen. Re-verify when government offices resume (Mon 2026-03-23 or later).', ARRAY['English']::text[], 'Pet-friendly if animals are crated', '2026-03-21T15:28:00-10:00', 'medium', ARRAY['shelter', 'oahu', 'wahiawa', 'central-oahu', 'kona-low-2026', 'closing']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('oahu-salvation-army-kroc-center-shelter', 'The Salvation Army Kroc Center Hawaii Evacuation Shelter', 'Oahu', 'Ewa', 'Ewa Beach', 'evacuation_center', 'Evacuation shelter opened by Salvation Army during the Kona low storm. Scheduled to close noon Saturday March 21 per city officials. Verify current status.', 'The Salvation Army', '91-3257 Kualakai Pkwy, Ewa Beach, HI 96706', NULL, NULL, '808-440-1800', NULL, 'https://hawaii.salvationarmy.org', 'https://www.staradvertiser.com/2026/03/20/breaking-news/a-list-of-oahu-evacuation-shelters-assembly-areas-and-closures/', '[\"https://www.staradvertiser.com/2026/03/20/breaking-news/a-list-of-oahu-evacuation-shelters-assembly-areas-and-closures/\", \"https://www.khon2.com/top-stories/list-evacuation-shelters-on-oahu/\"]'::jsonb, 'likely_closed', 'Opened 2026-03-20; city-noted closure noon 2026-03-21', 'City officials noted this shelter would close at noon Saturday March 21. Salvation Army is continuing broader disaster relief operations statewide. Call ahead to confirm. | Status was unknown/scheduled-closed as of source collection. Likely closed as of 2026-03-22. Retained in dataset — may reopen. Re-verify when government offices resume (Mon 2026-03-23 or later).', ARRAY['English']::text[], NULL, '2026-03-21T12:00:00-10:00', 'medium', ARRAY['shelter', 'oahu', 'ewa-beach', 'salvation-army', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('oahu-leilehua-high-assembly-area', 'Leilehua High School Assembly Area', 'Oahu', 'Central Oahu', 'Wahiawa', 'evacuation_center', 'Assembly area opened for North Shore evacuees, including those transferred from the closed Waialua High School site. Scheduled to close 6 p.m. March 21. Supplies were being staged here during active operations.', 'City and County of Honolulu', '1515 California Ave, Wahiawa, HI 96786', NULL, NULL, NULL, NULL, 'https://p.veoci.com/hnlshelter', 'https://www.staradvertiser.com/2026/03/20/breaking-news/a-list-of-oahu-evacuation-shelters-assembly-areas-and-closures/', '[\"https://www.staradvertiser.com/2026/03/20/breaking-news/a-list-of-oahu-evacuation-shelters-assembly-areas-and-closures/\", \"https://alohastatedaily.com/2026/03/20/assembly-areas-open-for-north-shore-oahu-evacuations/\", \"https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/\"]'::jsonb, 'likely_closed', 'Opened 2026-03-20; scheduled closure 6 p.m. 2026-03-21', 'Photo documentation confirmed supplies being staged here March 20. Scheduled to close 6 p.m. March 21 per HNL Alert. Verify before traveling. | Status was unknown/scheduled-closed as of source collection. Likely closed as of 2026-03-22. Retained in dataset — may reopen. Re-verify when government offices resume (Mon 2026-03-23 or later).', ARRAY['English']::text[], NULL, '2026-03-21T15:28:00-10:00', 'medium', ARRAY['assembly-area', 'oahu', 'wahiawa', 'central-oahu', 'kona-low-2026', 'closing']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('oahu-kahuku-elementary-donation-dropoff', 'Kahuku Elementary School - LāHui Foundation Donation Drop-Off', 'Oahu', 'North Shore', 'Kahuku', 'donation_dropoff', 'LāHui Foundation accepting flood recovery supplies at Kahuku Elementary School. Recovery items only — no household goods. Open 10 a.m. to 4 p.m.', 'LāHui Foundation', '56-170 Pualalea St, Kahuku, HI 96731', NULL, NULL, NULL, NULL, 'https://www.facebook.com/lahuifoundation', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', '[\"https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/\"]'::jsonb, 'active', '10:00 a.m. - 4:00 p.m.; confirm ongoing dates', 'Recovery supplies only. No household items accepted. LāHui is also mobilizing cleanup crews and coordinating volunteer distribution.', ARRAY['English']::text[], NULL, '2026-03-20T00:00:00-10:00', 'medium', ARRAY['donation-dropoff', 'oahu', 'north-shore', 'kahuku', 'lahui-foundation', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('oahu-north-shore-salon-donation-sorting', 'North Shore Salon and Spa - Donation Collection and Sorting', 'Oahu', 'North Shore', 'Waialua', 'donation_dropoff', 'Donation collection and sorting site on the North Shore operating Sunday March 22, 8 a.m. to 5 p.m.', NULL, '66-935 Kaukonahua Rd, Waialua, HI 96791', NULL, NULL, NULL, NULL, NULL, 'https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/', '[\"https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/\"]'::jsonb, 'active', 'Sun Mar 22: 8:00 a.m. - 5:00 p.m.', 'Listed in KHON2 community recovery roundup for March 22. Volunteers also needed for sorting.', ARRAY['English']::text[], NULL, '2026-03-22T12:03:00-10:00', 'medium', ARRAY['donation-dropoff', 'volunteer-coordination', 'oahu', 'north-shore', 'waialua', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('oahu-foodbank-mililani-park-ride-distribution', 'Hawaii Foodbank - Mililani Park & Ride Food Distribution', 'Oahu', 'Central Oahu', 'Mililani', 'food_distribution', 'Emergency food distribution for flood-impacted residents hosted by Hawaii Foodbank at the Mililani Park and Ride. Open Sunday March 22 starting at 9 a.m. Supplies distributed while available.', 'Hawaii Foodbank', '95-1101 Ukuwai St, Mililani, HI 96789', NULL, NULL, '808-836-3600', NULL, 'https://hawaiifoodbank.org', 'https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/', '[\"https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/\", \"https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/\", \"https://www.kitv.com/news/hawaii-foodbank-emergency-food-distributions-on-oahu-for-flood-impacted-residents/article_a247f570-9e46-4687-b208-57a02f71b4c9.html\"]'::jsonb, 'active', 'Sun Mar 22: starting 9:00 a.m., while supplies last', 'For flood-impacted residents of Central Oahu and North Shore. First-come, first-served. Foodbank CEO confirmed additional North Shore and Central Oahu distributions on March 22 at city press conference.', ARRAY['English']::text[], NULL, '2026-03-22T12:03:00-10:00', 'high', ARRAY['food-distribution', 'oahu', 'central-oahu', 'mililani', 'hawaii-foodbank', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('oahu-foodbank-north-shore-mobile-distribution', 'Hawaii Foodbank - North Shore Mobile Food Distribution', 'Oahu', 'North Shore', NULL, 'food_distribution', 'Emergency mobile food distribution routing through the North Shore with stops in Hauula, Laie, and up to Sunset Beach. For flood-impacted individuals and families. Times and specific stop locations may vary.', 'Hawaii Foodbank', NULL, NULL, NULL, '808-836-3600', NULL, 'https://hawaiifoodbank.org', 'https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/', '[\"https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/\", \"https://www.kitv.com/news/hawaii-foodbank-emergency-food-distributions-on-oahu-for-flood-impacted-residents/article_a247f570-9e46-4687-b208-57a02f71b4c9.html\"]'::jsonb, 'active', 'Sun Mar 22; times and stops may vary - check hawaiifoodbank.org', 'Stops confirmed in Hauula, Laie, and Sunset Beach area. Exact timing variable. Distribution while supplies last.', ARRAY['English']::text[], NULL, '2026-03-22T09:00:00-10:00', 'high', ARRAY['food-distribution', 'oahu', 'north-shore', 'mobile', 'hauula', 'laie', 'sunset-beach', 'hawaii-foodbank', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('oahu-foodbank-wahiawa-our-lady-of-sorrows-distribution', 'Hawaii Foodbank - Our Lady of Sorrows Church Food Distribution, Wahiawa', 'Oahu', 'Central Oahu', 'Wahiawa', 'food_distribution', 'Emergency food distribution co-hosted by Hawaii Foodbank and Our Lady of Sorrows Church for Central Oahu flood-impacted residents. Held Saturday March 21, 10 a.m. to 1 p.m. Advance registration was encouraged.', 'Hawaii Foodbank / Our Lady of Sorrows Church', NULL, NULL, NULL, '808-836-3600', NULL, 'https://hawaiifoodbank.org/hunger-blog/community-led-food-distributions-for-flood-impacted-residents-across-oahu/', 'https://hawaiifoodbank.org/hunger-blog/community-led-food-distributions-for-flood-impacted-residents-across-oahu/', '[\"https://hawaiifoodbank.org/hunger-blog/community-led-food-distributions-for-flood-impacted-residents-across-oahu/\"]'::jsonb, 'unknown', 'Sat Mar 21: 10:00 a.m. - 1:00 p.m.', 'Held March 21. May recur; check hawaiifoodbank.org for updated schedule. Registration link was available at igfn.us/form/xfK07Q.', ARRAY['English']::text[], NULL, '2026-03-21T00:00:00-10:00', 'high', ARRAY['food-distribution', 'oahu', 'central-oahu', 'wahiawa', 'hawaii-foodbank', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('oahu-foodbank-kahaluu-key-project-distribution', 'Hawaii Foodbank - Key Project Food Distribution, Kahaluu', 'Oahu', 'Windward', 'Kahaluu', 'food_distribution', 'Emergency food distribution co-hosted by Hawaii Foodbank and Key Project for North Shore and Windward Oahu flood-impacted residents. Held Saturday March 21, noon to 2 p.m.', 'Hawaii Foodbank / Key Project', '47-200 Waihee Rd, Kahaluu, HI 96744', NULL, NULL, '808-836-3600', NULL, 'https://hawaiifoodbank.org/hunger-blog/community-led-food-distributions-for-flood-impacted-residents-across-oahu/', 'https://hawaiifoodbank.org/hunger-blog/community-led-food-distributions-for-flood-impacted-residents-across-oahu/', '[\"https://hawaiifoodbank.org/hunger-blog/community-led-food-distributions-for-flood-impacted-residents-across-oahu/\"]'::jsonb, 'unknown', 'Sat Mar 21: 12:00 p.m. - 2:00 p.m.', 'Held March 21. Intended for North Shore and Windward Oahu flood-impacted residents. Check hawaiifoodbank.org for updated or recurring events.', ARRAY['English']::text[], NULL, '2026-03-21T00:00:00-10:00', 'high', ARRAY['food-distribution', 'oahu', 'windward', 'kahaluu', 'hawaii-foodbank', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('oahu-boil-water-notice-mokuleia-turtle-bay', 'Boil Water Notice - Mokuleia to Turtle Bay (North Shore)', 'Oahu', 'North Shore', NULL, 'other', 'Board of Water Supply has issued a boil water notice for all water users from Mokuleia to Turtle Bay. Do not consume tap water without boiling first. Notice is in effect until further notice.', 'Honolulu Board of Water Supply', NULL, NULL, NULL, NULL, NULL, 'https://www.boardofwatersupply.com/storm', 'https://dod.hawaii.gov/hiema/march-2026-kona-low/', '[\"https://dod.hawaii.gov/hiema/march-2026-kona-low/\", \"https://www.hawaiinewsnow.com/2026/03/21/state-city-officials-give-update-kona-low-impacts/\"]'::jsonb, 'active', 'In effect until further notice as of 4:15 p.m. March 21, 2026', 'Issued via HNL Alert 4:15 p.m. March 21, 2026. Affects all water users between Mokuleia and Turtle Bay. Check boardofwatersupply.com/storm for updates.', ARRAY['English']::text[], NULL, '2026-03-21T16:15:00-10:00', 'high', ARRAY['water-safety', 'boil-water', 'oahu', 'north-shore', 'mokuleia', 'turtle-bay', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('oahu-damage-self-report-form', 'City and County of Honolulu - Oahu Storm Damage Self-Report Form', 'Oahu', NULL, NULL, 'help_center', 'Online form for Oahu residents to self-report damage to homes and property from the Kona low storm. Used by city and county to assess recovery needs.', 'City and County of Honolulu', NULL, NULL, NULL, NULL, NULL, 'https://p.veoci.com/hnlshelter', 'https://dod.hawaii.gov/hiema/march-2026-kona-low/', '[\"https://dod.hawaii.gov/hiema/march-2026-kona-low/\"]'::jsonb, 'active', NULL, 'Online form only. Intended for residents in storm-impacted areas across Oahu to report home and property damage.', ARRAY['English']::text[], NULL, '2026-03-21T00:00:00-10:00', 'high', ARRAY['damage-reporting', 'oahu', 'recovery', 'city-county-honolulu', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('oahu-red-cross-volunteer-signup', 'American Red Cross - Hawaii Storm Response Volunteer Signup', 'Oahu', NULL, NULL, 'volunteer_coordination', 'American Red Cross is actively recruiting volunteers to support Hawaii storm response operations, including shelter staffing and direct services to displaced residents.', 'American Red Cross', NULL, NULL, NULL, '1-800-733-2767', NULL, 'https://volunteerconnection.redcross.org/?nd=vms_public_form&form_id=16352', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', '[\"https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/\", \"https://www.redcross.org/local/pacific-islands/about-us/news-and-events/news/red-cross-expands-emergency-sheltering-to-lna-i--maui-and-moloka.html\"]'::jsonb, 'active', NULL, 'Online signup form available. Red Cross also provides shelter check-in and support; no ID required at shelters.', ARRAY['English']::text[], NULL, '2026-03-21T00:00:00-10:00', 'high', ARRAY['volunteer-coordination', 'statewide', 'oahu', 'red-cross', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('oahu-lahui-foundation-volunteer-cleanup', 'LāHui Foundation - Flood Cleanup Volunteer Signup', 'Oahu', 'North Shore', NULL, 'volunteer_coordination', 'LāHui Foundation is mobilizing cleanup crews for flood-impacted North Shore areas and coordinating distribution of donated supplies. Volunteers can sign up via online form.', 'LāHui Foundation', NULL, NULL, NULL, NULL, NULL, 'https://docs.google.com/forms/d/e/1FAIpQLScRG9aOSQlWzzLK6_Bn_KW32PrM3tUyRSEAMSAA_qFaWf7PcQ/viewform', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', '[\"https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/\"]'::jsonb, 'active', NULL, 'Accepting cleanup volunteers and recovery supply donations. Supply drop-off at Kahuku Elementary School, 10 a.m. to 4 p.m. (recovery items only, no household goods).', ARRAY['English']::text[], NULL, '2026-03-20T00:00:00-10:00', 'medium', ARRAY['volunteer-coordination', 'cleanup', 'oahu', 'north-shore', 'lahui-foundation', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('oahu-waialua-beach-road-cleanup', 'Waialua Community Cleanup - Waialua Beach Road and Cane Haul Road', 'Oahu', 'North Shore', 'Waialua', 'volunteer_coordination', 'Community-organized flood cleanup at the intersection of Waialua Beach Road and Cane Haul Road. Sunday March 22 at 10 a.m.', NULL, 'Waialua Beach Rd and Cane Haul Rd, Waialua, HI 96791', NULL, NULL, NULL, NULL, NULL, 'https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/', '[\"https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/\"]'::jsonb, 'active', 'Sun Mar 22: 10:00 a.m.', 'Community-organized; sourced from KHON2 community roundup for March 22. Organizer not named - confirm via KHON2 article before traveling.', ARRAY['English']::text[], NULL, '2026-03-22T12:03:00-10:00', 'medium', ARRAY['volunteer-coordination', 'cleanup', 'oahu', 'north-shore', 'waialua', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('oahu-north-shore-stables-cleanup', 'Shore Cleanup - North Shore Stables, Waialua Road', 'Oahu', 'North Shore', NULL, 'volunteer_coordination', 'Shore cleanup hosted by One Ocean Conservation and Save the Sea Turtles International at the North Shore Stables gates off Waialua Road. Sunday March 22, 1 p.m. to 3 p.m.', 'One Ocean Conservation / Save the Sea Turtles International', 'North Shore Stables, off Waialua Rd, Oahu, HI', NULL, NULL, NULL, NULL, NULL, 'https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/', '[\"https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/\"]'::jsonb, 'active', 'Sun Mar 22: 1:00 p.m. - 3:00 p.m.', 'Focused on shoreline debris cleanup post-flooding. Organized nonprofits named.', ARRAY['English']::text[], NULL, '2026-03-22T12:03:00-10:00', 'medium', ARRAY['volunteer-coordination', 'cleanup', 'oahu', 'north-shore', 'environmental', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('oahu-aloha-united-way-helpline', 'Aloha United Way - Flood Victim Help Line', 'Oahu', NULL, NULL, 'help_center', 'Aloha United Way is operating a help call and text line to connect flooding victims with resources and support services.', 'Aloha United Way', NULL, NULL, NULL, '808-536-1951', NULL, 'https://www.auw.org', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', '[\"https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/\"]'::jsonb, 'active', NULL, 'Call or text line for flooding victims seeking resources. Check auw.org for current helpline number.', ARRAY['English']::text[], NULL, '2026-03-20T00:00:00-10:00', 'medium', ARRAY['helpline', 'oahu', 'statewide', 'aloha-united-way', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('statewide-salvation-army-disaster-relief', 'The Salvation Army - Hawaii Kona Low Disaster Relief', 'Statewide', NULL, NULL, 'help_center', 'The Salvation Army is conducting disaster relief efforts statewide, including financial assistance applications and material support. Working with city partners on Oahu. Information on financial assistance applications forthcoming per March 21 press conference.', 'The Salvation Army, Hawaii and Pacific Islands Division', NULL, NULL, NULL, '808-440-1800', NULL, 'https://hawaii.salvationarmy.org', 'https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/', '[\"https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/\", \"https://fundraise.salvationarmyhawaii.org/campaign/779616/donate\", \"https://www.staradvertiser.com/2026/03/20/breaking-news/a-list-of-oahu-evacuation-shelters-assembly-areas-and-closures/\"]'::jsonb, 'active', NULL, 'Financial assistance application process being announced. Divisional Commander Major Troy Trimmer confirmed operations at March 21 city press conference.', ARRAY['English']::text[], NULL, '2026-03-21T17:30:00-10:00', 'high', ARRAY['financial-assistance', 'disaster-relief', 'statewide', 'oahu', 'salvation-army', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('statewide-red-cross-shelter-locator', 'American Red Cross - Hawaii Shelter Locator and Emergency Line', 'Statewide', NULL, NULL, 'shelter', 'The Red Cross maintains real-time open shelter information for all islands. Find current open locations at redcross.org, via the Red Cross Emergency App, or by calling 1-800-RED CROSS. No ID required. Phone charging available at shelters.', 'American Red Cross', NULL, NULL, NULL, '1-800-733-2767', NULL, 'https://www.redcross.org/local/pacific-islands.html', 'https://www.redcross.org/local/pacific-islands/about-us/news-and-events/news/red-cross-expands-emergency-sheltering-to-lna-i--maui-and-moloka.html', '[\"https://www.redcross.org/local/pacific-islands/about-us/news-and-events/news/red-cross-expands-emergency-sheltering-to-lna-i--maui-and-moloka.html\"]'::jsonb, 'active', NULL, 'Real-time shelter list maintained at redcross.org. No ID required at any Red Cross shelter. Phone charging and emotional support available.', ARRAY['English', 'Spanish']::text[], 'No ID required for entry', '2026-03-21T00:00:00-10:00', 'high', ARRAY['shelter', 'statewide', 'red-cross', 'kona-low-2026', 'charging-station']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('statewide-hiema-march-2026-kona-low-hub', 'Hawaii Emergency Management Agency - March 2026 Kona Low Resource Hub', 'Statewide', NULL, NULL, 'help_center', 'Official state hub for the March 2026 Kona Low event. Includes real-time HNL Alert updates, shelter information, evacuation zone maps, donation guidance, damage reporting links, and multilingual resources.', 'Hawaii Emergency Management Agency (HI-EMA)', NULL, NULL, NULL, NULL, NULL, 'https://dod.hawaii.gov/hiema/march-2026-kona-low/', 'https://dod.hawaii.gov/hiema/march-2026-kona-low/', '[\"https://dod.hawaii.gov/hiema/march-2026-kona-low/\"]'::jsonb, 'active', NULL, 'Authoritative state source. Includes links to county damage reporting forms for Oahu and Maui, shelter maps, and recommended donation channels (Salvation Army, Red Cross, Stronger Hawaii Fund).', ARRAY['English', 'Chuukese', 'Olelo Hawaii', 'Ilocano', 'Japanese', 'Korean', 'Marshallese', 'Samoan', 'Spanish', 'Tagalog', 'Tongan', 'Thai', 'Vietnamese']::text[], 'Multilingual content available on page', '2026-03-21T17:00:00-10:00', 'high', ARRAY['emergency-management', 'statewide', 'official', 'resource-hub', 'multilingual', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('statewide-stronger-hawaii-fund', 'Hawaii Community Foundation - Stronger Hawaii Fund', 'Statewide', NULL, NULL, 'other', 'Disaster relief fund operated by Hawaii Community Foundation accepting monetary donations to support communities statewide affected by the Kona low flooding.', 'Hawaii Community Foundation', NULL, NULL, NULL, NULL, NULL, 'https://www.hawaiicommunityfoundation.org/stronger-hawaii-donate', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', '[\"https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/\", \"https://dod.hawaii.gov/hiema/march-2026-kona-low/\", \"https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat-2/\"]'::jsonb, 'active', NULL, 'Recommended by HI-EMA as an official donation channel. Covers statewide needs including Oahu, Maui, and neighbor islands.', ARRAY['English']::text[], NULL, '2026-03-21T00:00:00-10:00', 'high', ARRAY['donations', 'statewide', 'hawaii-community-foundation', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('statewide-hawaii-farmers-union-flood-fund', 'Hawaii Farmers Union United - Hawaii Flood Response Fund', 'Statewide', NULL, NULL, 'other', 'Dedicated flood response fund created by Hawaii Farmers Union United to support farmers and rural communities impacted by the Kona low flooding. Monetary donations accepted via PayPal.', 'Hawaii Farmers Union United', NULL, NULL, NULL, NULL, NULL, 'https://www.paypal.com/donate/?hosted_button_id=UUJD8RQG4L3L6', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', '[\"https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/\"]'::jsonb, 'active', NULL, 'Specifically targeted at farmers and rural areas hard-hit by flooding.', ARRAY['English']::text[], NULL, '2026-03-20T00:00:00-10:00', 'medium', ARRAY['donations', 'statewide', 'farmers', 'rural', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('maui-south-maui-community-park-shelter', 'South Maui Community Park Gym Evacuation Shelter', 'Maui', 'South Maui', 'Kihei', 'evacuation_center', 'Active evacuation shelter in South Maui providing cots, food, and water for residents displaced by Kona low flooding. Still open as of March 21 afternoon.', 'MEMA / Maui County Parks and Recreation / American Red Cross', '1501 Liloa Dr, Kihei, HI 96753', NULL, NULL, NULL, NULL, 'https://www.mauicounty.gov/MEMA', 'https://www.mauinews.com/news/local-news/2026/03/shelters-reamin-open-in-south-east-and-west-maui/', '[\"https://www.mauinews.com/news/local-news/2026/03/shelters-reamin-open-in-south-east-and-west-maui/\", \"https://www.mauicounty.gov/CivicAlerts.aspx?AID=18502\", \"https://www.hawaiinewsnow.com/2026/03/21/emergency-shelters-open-across-hawaii-amid-dangerous-flooding/\"]'::jsonb, 'active', 'Open as of 2026-03-21 afternoon; duration depends on conditions', 'Pet-friendly with crates. Maui Humane Society supplied extra crates at this location. Two other Maui shelters (Baldwin High and Kihei Community Center) closed at noon March 21.', ARRAY['English']::text[], 'Pet-friendly if animals are crated', '2026-03-21T13:00:00-10:00', 'high', ARRAY['shelter', 'maui', 'south-maui', 'kihei', 'red-cross', 'mema', 'kona-low-2026', 'pets-allowed']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('maui-hana-high-school-shelter', 'Hana High School Cafeteria Evacuation Shelter', 'Maui', 'East Maui', 'Hana', 'evacuation_center', 'Evacuation shelter in East Maui providing food and water for residents displaced or unable to travel due to Hana Highway closures and flood conditions.', 'MEMA / Maui County Parks and Recreation / American Red Cross', '4111 Hana Hwy, Hana, HI 96713', NULL, NULL, NULL, NULL, 'https://www.mauicounty.gov/MEMA', 'https://www.mauinews.com/news/local-news/2026/03/shelters-reamin-open-in-south-east-and-west-maui/', '[\"https://www.mauinews.com/news/local-news/2026/03/shelters-reamin-open-in-south-east-and-west-maui/\", \"https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat-2/\", \"https://www.mauicounty.gov/CivicAlerts.aspx?AID=18502\"]'::jsonb, 'active', 'Open as of 2026-03-21 afternoon; duration depends on conditions', 'Hana Highway restricted to emergency vehicles, essential workers, and local traffic. Access limited.', ARRAY['English']::text[], 'Pet-friendly if animals are crated', '2026-03-21T13:00:00-10:00', 'high', ARRAY['shelter', 'maui', 'east-maui', 'hana', 'red-cross', 'mema', 'kona-low-2026', 'pets-allowed']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('maui-lahaina-civic-center-shelter', 'Lahaina Civic Center Evacuation Shelter', 'Maui', 'West Maui', 'Lahaina', 'evacuation_center', 'Evacuation shelter in West Maui for residents displaced by flooding. Note: access is via the Napili side off Honoapiilani Highway due to road closures.', 'MEMA / Maui County Parks and Recreation / American Red Cross', '1840 Honoapiilani Hwy, Lahaina, HI 96761', NULL, NULL, NULL, NULL, 'https://www.mauicounty.gov/MEMA', 'https://mauinow.com/2026/03/21/shelter-in-central-maui-reopening-after-recent-flooding-road-closures/', '[\"https://mauinow.com/2026/03/21/shelter-in-central-maui-reopening-after-recent-flooding-road-closures/\", \"https://www.mauinews.com/news/local-news/2026/03/shelters-reamin-open-in-south-east-and-west-maui/\", \"https://www.kitv.com/news/traffic/kona-low-storm-closures-and-evacuation-shelters-due-to-severe-weather/article_f7bccbef-31b4-48dd-932e-52cad336e24d.html\"]'::jsonb, 'active', 'Open as of 2026-03-21 afternoon; duration depends on conditions', 'Access via Napili side off highway only due to Honoapiilani Hwy closures. A large sinkhole closed Lilioa St and N. Laalo St in Lahaina as of Saturday evening.', ARRAY['English']::text[], 'Pet-friendly if animals are crated; access route restricted', '2026-03-21T19:00:00-10:00', 'high', ARRAY['shelter', 'maui', 'west-maui', 'lahaina', 'red-cross', 'mema', 'kona-low-2026', 'pets-allowed']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('maui-baldwin-high-school-shelter', 'Baldwin High School Gym Evacuation Shelter', 'Maui', 'Central Maui', 'Wailuku', 'evacuation_center', 'Central Maui shelter reopened Saturday evening March 21 at 7 p.m. due to new road closures and evacuation warnings from Kona storm 2. Provides cots, food, and water.', 'MEMA / Maui County Parks and Recreation / American Red Cross', '1650 Kaahumanu Ave, Wailuku, HI 96793', NULL, NULL, NULL, NULL, 'https://www.mauicounty.gov/MEMA', 'https://www.mauicounty.gov/m/newsflash/home/detail/18546', '[\"https://www.mauicounty.gov/m/newsflash/home/detail/18546\", \"https://mauinow.com/2026/03/21/shelter-in-central-maui-reopening-after-recent-flooding-road-closures/\"]'::jsonb, 'active', 'Reopened 7:00 p.m. 2026-03-21; duration depends on conditions', 'Previously closed at noon March 21, then reopened at 7 p.m. March 21 due to second Kona storm impacts and new road closures.', ARRAY['English']::text[], 'Pet-friendly if animals are crated', '2026-03-21T19:00:00-10:00', 'high', ARRAY['shelter', 'maui', 'central-maui', 'wailuku', 'red-cross', 'mema', 'kona-low-2026', 'pets-allowed']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('molokai-kaunakakai-gym-shelter', 'Kaunakakai Gym Evacuation Shelter', 'Molokai', 'Central Molokai', 'Kaunakakai', 'evacuation_center', 'Evacuation shelter opened March 22 at 7 a.m. due to severe flash flooding from Kona storm 2 on Molokai. Provides cots, food, and water. Elevated water levels reported in Kawela Gulch and Halawa Stream.', 'MEMA / Maui County Parks and Recreation / American Red Cross', '180 Ala Malama Ave, Kaunakakai, HI 96748', NULL, NULL, NULL, NULL, 'https://www.mauicounty.gov/MEMA', 'https://www.mauicounty.gov/m/newsflash/home/detail/18561', '[\"https://www.mauicounty.gov/m/newsflash/home/detail/18561\", \"https://www.hawaiinewsnow.com/2026/03/21/emergency-shelters-open-across-hawaii-amid-dangerous-flooding/\"]'::jsonb, 'active', 'Opened 7:00 a.m. 2026-03-22; duration depends on conditions', 'Opened same-day in response to flash flooding on Molokai. Flash flood warning was in effect until approximately 8:45 a.m. March 22. Flood watch for Maui County through Sunday.', ARRAY['English']::text[], 'Pet-friendly if animals are crated', '2026-03-22T07:20:00-10:00', 'high', ARRAY['shelter', 'molokai', 'kaunakakai', 'red-cross', 'mema', 'kona-low-2026', 'pets-allowed']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('maui-food-bank-distribution', 'Maui Food Bank - Emergency Food Distribution', 'Maui', NULL, NULL, 'food_distribution', 'Maui Food Bank is delivering food to Hana and other flood-impacted areas of Maui County.', 'Maui Food Bank', NULL, NULL, NULL, NULL, NULL, 'https://mauifoodbank.org', 'https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat-2/', '[\"https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat-2/\"]'::jsonb, 'active', NULL, 'Confirmed active deliveries to Hana and other hard-hit areas. Specific distribution site schedule not published at time of collection.', ARRAY['English']::text[], NULL, '2026-03-21T00:00:00-10:00', 'medium', ARRAY['food-distribution', 'maui', 'hana', 'east-maui', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('maui-rapid-response-supply-distribution', 'Maui Rapid Response - Emergency Supply Distribution', 'Maui', NULL, NULL, 'other', 'Maui Rapid Response is distributing tarps, flashlights, first-aid kits, bottled water, and other emergency supplies to homeless communities and other vulnerable populations on Maui.', 'Maui Rapid Response', NULL, NULL, NULL, NULL, NULL, NULL, 'https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat-2/', '[\"https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat-2/\"]'::jsonb, 'active', NULL, 'Focused on homeless communities and vulnerable populations. Distributing tarps, first-aid kits, flashlights, and water. Distribution locations not specified in source.', ARRAY['English']::text[], NULL, '2026-03-21T00:00:00-10:00', 'medium', ARRAY['supply-distribution', 'maui', 'vulnerable-populations', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('maui-united-way-donations', 'Maui United Way - Flood Relief Donations', 'Maui', NULL, NULL, 'other', 'Maui United Way is collecting monetary donations to support Maui residents affected by recent flooding and other disasters.', 'Maui United Way', NULL, NULL, NULL, NULL, NULL, 'https://www.mauiunitedway.org', 'https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat-2/', '[\"https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat-2/\"]'::jsonb, 'active', NULL, 'Monetary donations only. For broader disaster-related needs on Maui.', ARRAY['English']::text[], NULL, '2026-03-21T00:00:00-10:00', 'medium', ARRAY['donations', 'maui', 'kona-low-2026']::text[], true);\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, address, latitude, longitude, public_phone, public_email, website, source_url, sources, status, hours, notes, languages, accessibility_notes, last_verified_at, confidence, tags, is_public) VALUES ('oahu-hawaiian-council-kakoo-oahu-fund', 'Hawaiian Council - Kakoo Oahu Donation Campaign', 'Oahu', NULL, NULL, 'other', 'The Hawaiian Council launched the Kakoo Oahu campaign on March 21 to support individuals and families impacted by severe weather on Oahu. Funds will address housing stability, direct financial assistance, and other critical support. The council will match every donation dollar-for-dollar up to $100,000.', 'Hawaiian Council', NULL, NULL, NULL, NULL, NULL, 'https://givebutter.com/support-the-north-shore-community-4jobpv', 'https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/', '[\"https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/\"]'::jsonb, 'active', NULL, 'Dollar-for-dollar matching up to $100,000. Addresses housing stability and direct financial assistance for impacted families. Donation URL not captured; check hawaiinewsnow.com article for link. | Donation URL confirmed: https://givebutter.com/support-the-north-shore-community-4jobpv', ARRAY['English']::text[], NULL, '2026-03-22T00:00:00-10:00', 'medium', ARRAY['donations', 'oahu', 'housing', 'financial-assistance', 'matching-fund', 'kona-low-2026']::text[], true);\n\n-- =============================================================\n-- public_need_summaries  (4 records)\n-- =============================================================\nINSERT INTO public_need_summaries (external_id, title, island, area, category, urgency, description, recommended_action, source_url, sources, last_verified_at, confidence, tags, is_public) VALUES ('need-oahu-north-shore-cleanup-volunteers', 'Flood Cleanup Volunteers Needed - North Shore Oahu', 'Oahu', 'North Shore', 'volunteers', 'urgent', 'Multiple organizations including LāHui Foundation, One Ocean Conservation, and community groups are actively requesting cleanup volunteers for Waialua, Haleiwa, and surrounding North Shore areas as of March 22. Organized events are running today.', 'volunteer', 'https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/', '[\"https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/\", \"https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/\"]'::jsonb, '2026-03-22T12:03:00-10:00', 'high', ARRAY['volunteers', 'cleanup', 'oahu', 'north-shore', 'waialua', 'haleiwa', 'kona-low-2026']::text[], true);\nINSERT INTO public_need_summaries (external_id, title, island, area, category, urgency, description, recommended_action, source_url, sources, last_verified_at, confidence, tags, is_public) VALUES ('need-oahu-boil-water-north-shore', 'Boil Water Advisory in Effect - North Shore Oahu (Mokuleia to Turtle Bay)', 'Oahu', 'North Shore', 'water', 'urgent', 'Board of Water Supply issued a boil water notice effective 4:15 p.m. March 21 for all residents between Mokuleia and Turtle Bay. Bottled water and water distribution for affected residents may be needed. Notice is in effect until further notice.', 'check_updates', 'https://dod.hawaii.gov/hiema/march-2026-kona-low/', '[\"https://dod.hawaii.gov/hiema/march-2026-kona-low/\", \"https://www.hawaiinewsnow.com/2026/03/21/state-city-officials-give-update-kona-low-impacts/\"]'::jsonb, '2026-03-21T16:15:00-10:00', 'high', ARRAY['water', 'boil-water', 'oahu', 'north-shore', 'mokuleia', 'turtle-bay', 'kona-low-2026']::text[], true);\nINSERT INTO public_need_summaries (external_id, title, island, area, category, urgency, description, recommended_action, source_url, sources, last_verified_at, confidence, tags, is_public) VALUES ('need-oahu-food-north-shore-central', 'Emergency Food Distribution Needed - North Shore and Central Oahu', 'Oahu', 'North Shore / Central Oahu', 'food', 'urgent', 'Hawaii Foodbank CEO publicly confirmed at March 21 city press conference that emergency food distributions are needed and are being organized for North Shore and Central Oahu flood-impacted residents. Distributions running March 22.', 'go_to_hub', 'https://hawaiifoodbank.org/hunger-blog/community-led-food-distributions-for-flood-impacted-residents-across-oahu/', '[\"https://hawaiifoodbank.org/hunger-blog/community-led-food-distributions-for-flood-impacted-residents-across-oahu/\", \"https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/\", \"https://www.kitv.com/news/hawaii-foodbank-emergency-food-distributions-on-oahu-for-flood-impacted-residents/article_a247f570-9e46-4687-b208-57a02f71b4c9.html\"]'::jsonb, '2026-03-22T09:00:00-10:00', 'high', ARRAY['food', 'oahu', 'north-shore', 'central-oahu', 'hawaii-foodbank', 'kona-low-2026']::text[], true);\nINSERT INTO public_need_summaries (external_id, title, island, area, category, urgency, description, recommended_action, source_url, sources, last_verified_at, confidence, tags, is_public) VALUES ('need-statewide-financial-assistance-displaced', 'Financial Assistance Applications Opening for Displaced Residents - Statewide', 'Statewide', NULL, 'other', 'soon', 'The Salvation Army confirmed at the March 21 city press conference that information on financial assistance applications for flood-impacted residents would be released. Applications not yet publicly open as of March 22 morning.', 'check_updates', 'https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/', '[\"https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/\"]'::jsonb, '2026-03-22T00:00:00-10:00', 'high', ARRAY['financial-assistance', 'statewide', 'salvation-army', 'kona-low-2026']::text[], true);",
+  "seed_json": {
+    "generated_at": "2026-03-22T12:30:00-10:00",
+    "help_hubs": [
+      {
+        "external_id": "oahu-kaneohe-district-park-shelter",
+        "name": "Kaneʻohe District Park Evacuation Shelter",
+        "island": "Oahu",
+        "area": "Windward",
+        "neighborhood": "Kaneʻohe",
+        "resource_type": "evacuation_center",
+        "description": "The sole remaining open evacuation shelter on Oahu as of Saturday evening, March 21. All other city-operated shelters closed at 6 p.m. Provides cots, food, and water. Pets allowed in crates.",
+        "organization": "City and County of Honolulu / American Red Cross",
+        "address": "45-660 Keaahala Rd, Kaneʻohe, HI 96744",
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": "https://p.veoci.com/hnlshelter",
+        "source_url": "https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat/",
+        "sources": [
+          "https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat/",
+          "https://www.khon2.com/top-stories/list-evacuation-shelters-on-oahu/",
+          "https://dod.hawaii.gov/hiema/march-2026-kona-low/",
+          "https://www.hawaiinewsnow.com/2026/03/21/state-city-officials-give-update-kona-low-impacts/"
+        ],
+        "status": "active",
+        "hours": "Open as of 2026-03-21 19:00 HST; duration depends on conditions",
+        "notes": "All other Oahu city shelters closed at 6 p.m. March 21. This is the only active city-operated shelter as of Saturday evening. Confirm status before traveling.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": "Pet-friendly if animals are crated",
+        "last_verified_at": "2026-03-21T21:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "shelter",
+          "oahu",
+          "kaneohe",
+          "windward",
+          "red-cross",
+          "kona-low-2026",
+          "pets-allowed"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "oahu-wahiawa-district-park-shelter",
+        "name": "George Fred Wright Wahiawa District Park Evacuation Shelter",
+        "island": "Oahu",
+        "area": "Central Oahu",
+        "neighborhood": "Wahiawa",
+        "resource_type": "evacuation_center",
+        "description": "City evacuation shelter opened March 20 for residents displaced by North Shore and Central Oahu flooding. Scheduled to close 6 p.m. March 21 per HNL Alert. Verify current status before traveling.",
+        "organization": "City and County of Honolulu",
+        "address": "1139 Kilani Ave, Wahiawa, HI 96786",
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": "https://p.veoci.com/hnlshelter",
+        "source_url": "https://www.staradvertiser.com/2026/03/20/breaking-news/a-list-of-oahu-evacuation-shelters-assembly-areas-and-closures/",
+        "sources": [
+          "https://www.staradvertiser.com/2026/03/20/breaking-news/a-list-of-oahu-evacuation-shelters-assembly-areas-and-closures/",
+          "https://www.khon2.com/top-stories/list-evacuation-shelters-on-oahu/",
+          "https://dod.hawaii.gov/hiema/march-2026-kona-low/"
+        ],
+        "status": "likely_closed",
+        "hours": "Opened 2026-03-20; scheduled closure 6 p.m. 2026-03-21",
+        "notes": "Scheduled to close 6 p.m. March 21 per official HNL Alert. Previously received evacuees transferred from Waialua High School after that site closed due to dam threat. Verify before traveling. | Status was unknown/scheduled-closed as of source collection. Likely closed as of 2026-03-22. Retained in dataset — may reopen. Re-verify when government offices resume (Mon 2026-03-23 or later).",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": "Pet-friendly if animals are crated",
+        "last_verified_at": "2026-03-21T15:28:00-10:00",
+        "confidence": "medium",
+        "tags": [
+          "shelter",
+          "oahu",
+          "wahiawa",
+          "central-oahu",
+          "kona-low-2026",
+          "closing"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "oahu-salvation-army-kroc-center-shelter",
+        "name": "The Salvation Army Kroc Center Hawaii Evacuation Shelter",
+        "island": "Oahu",
+        "area": "Ewa",
+        "neighborhood": "Ewa Beach",
+        "resource_type": "evacuation_center",
+        "description": "Evacuation shelter opened by Salvation Army during the Kona low storm. Scheduled to close noon Saturday March 21 per city officials. Verify current status.",
+        "organization": "The Salvation Army",
+        "address": "91-3257 Kualakai Pkwy, Ewa Beach, HI 96706",
+        "latitude": null,
+        "longitude": null,
+        "public_phone": "808-440-1800",
+        "public_email": null,
+        "website": "https://hawaii.salvationarmy.org",
+        "source_url": "https://www.staradvertiser.com/2026/03/20/breaking-news/a-list-of-oahu-evacuation-shelters-assembly-areas-and-closures/",
+        "sources": [
+          "https://www.staradvertiser.com/2026/03/20/breaking-news/a-list-of-oahu-evacuation-shelters-assembly-areas-and-closures/",
+          "https://www.khon2.com/top-stories/list-evacuation-shelters-on-oahu/"
+        ],
+        "status": "likely_closed",
+        "hours": "Opened 2026-03-20; city-noted closure noon 2026-03-21",
+        "notes": "City officials noted this shelter would close at noon Saturday March 21. Salvation Army is continuing broader disaster relief operations statewide. Call ahead to confirm. | Status was unknown/scheduled-closed as of source collection. Likely closed as of 2026-03-22. Retained in dataset — may reopen. Re-verify when government offices resume (Mon 2026-03-23 or later).",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-21T12:00:00-10:00",
+        "confidence": "medium",
+        "tags": [
+          "shelter",
+          "oahu",
+          "ewa-beach",
+          "salvation-army",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "oahu-leilehua-high-assembly-area",
+        "name": "Leilehua High School Assembly Area",
+        "island": "Oahu",
+        "area": "Central Oahu",
+        "neighborhood": "Wahiawa",
+        "resource_type": "evacuation_center",
+        "description": "Assembly area opened for North Shore evacuees, including those transferred from the closed Waialua High School site. Scheduled to close 6 p.m. March 21. Supplies were being staged here during active operations.",
+        "organization": "City and County of Honolulu",
+        "address": "1515 California Ave, Wahiawa, HI 96786",
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": "https://p.veoci.com/hnlshelter",
+        "source_url": "https://www.staradvertiser.com/2026/03/20/breaking-news/a-list-of-oahu-evacuation-shelters-assembly-areas-and-closures/",
+        "sources": [
+          "https://www.staradvertiser.com/2026/03/20/breaking-news/a-list-of-oahu-evacuation-shelters-assembly-areas-and-closures/",
+          "https://alohastatedaily.com/2026/03/20/assembly-areas-open-for-north-shore-oahu-evacuations/",
+          "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/"
+        ],
+        "status": "likely_closed",
+        "hours": "Opened 2026-03-20; scheduled closure 6 p.m. 2026-03-21",
+        "notes": "Photo documentation confirmed supplies being staged here March 20. Scheduled to close 6 p.m. March 21 per HNL Alert. Verify before traveling. | Status was unknown/scheduled-closed as of source collection. Likely closed as of 2026-03-22. Retained in dataset — may reopen. Re-verify when government offices resume (Mon 2026-03-23 or later).",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-21T15:28:00-10:00",
+        "confidence": "medium",
+        "tags": [
+          "assembly-area",
+          "oahu",
+          "wahiawa",
+          "central-oahu",
+          "kona-low-2026",
+          "closing"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "oahu-kahuku-elementary-donation-dropoff",
+        "name": "Kahuku Elementary School - LāHui Foundation Donation Drop-Off",
+        "island": "Oahu",
+        "area": "North Shore",
+        "neighborhood": "Kahuku",
+        "resource_type": "donation_dropoff",
+        "description": "LāHui Foundation accepting flood recovery supplies at Kahuku Elementary School. Recovery items only — no household goods. Open 10 a.m. to 4 p.m.",
+        "organization": "LāHui Foundation",
+        "address": "56-170 Pualalea St, Kahuku, HI 96731",
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": "https://www.facebook.com/lahuifoundation",
+        "source_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "sources": [
+          "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/"
+        ],
+        "status": "active",
+        "hours": "10:00 a.m. - 4:00 p.m.; confirm ongoing dates",
+        "notes": "Recovery supplies only. No household items accepted. LāHui is also mobilizing cleanup crews and coordinating volunteer distribution.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-20T00:00:00-10:00",
+        "confidence": "medium",
+        "tags": [
+          "donation-dropoff",
+          "oahu",
+          "north-shore",
+          "kahuku",
+          "lahui-foundation",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "oahu-north-shore-salon-donation-sorting",
+        "name": "North Shore Salon and Spa - Donation Collection and Sorting",
+        "island": "Oahu",
+        "area": "North Shore",
+        "neighborhood": "Waialua",
+        "resource_type": "donation_dropoff",
+        "description": "Donation collection and sorting site on the North Shore operating Sunday March 22, 8 a.m. to 5 p.m.",
+        "organization": null,
+        "address": "66-935 Kaukonahua Rd, Waialua, HI 96791",
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": null,
+        "source_url": "https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/",
+        "sources": [
+          "https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/"
+        ],
+        "status": "active",
+        "hours": "Sun Mar 22: 8:00 a.m. - 5:00 p.m.",
+        "notes": "Listed in KHON2 community recovery roundup for March 22. Volunteers also needed for sorting.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-22T12:03:00-10:00",
+        "confidence": "medium",
+        "tags": [
+          "donation-dropoff",
+          "volunteer-coordination",
+          "oahu",
+          "north-shore",
+          "waialua",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "oahu-foodbank-mililani-park-ride-distribution",
+        "name": "Hawaii Foodbank - Mililani Park & Ride Food Distribution",
+        "island": "Oahu",
+        "area": "Central Oahu",
+        "neighborhood": "Mililani",
+        "resource_type": "food_distribution",
+        "description": "Emergency food distribution for flood-impacted residents hosted by Hawaii Foodbank at the Mililani Park and Ride. Open Sunday March 22 starting at 9 a.m. Supplies distributed while available.",
+        "organization": "Hawaii Foodbank",
+        "address": "95-1101 Ukuwai St, Mililani, HI 96789",
+        "latitude": null,
+        "longitude": null,
+        "public_phone": "808-836-3600",
+        "public_email": null,
+        "website": "https://hawaiifoodbank.org",
+        "source_url": "https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/",
+        "sources": [
+          "https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/",
+          "https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/",
+          "https://www.kitv.com/news/hawaii-foodbank-emergency-food-distributions-on-oahu-for-flood-impacted-residents/article_a247f570-9e46-4687-b208-57a02f71b4c9.html"
+        ],
+        "status": "active",
+        "hours": "Sun Mar 22: starting 9:00 a.m., while supplies last",
+        "notes": "For flood-impacted residents of Central Oahu and North Shore. First-come, first-served. Foodbank CEO confirmed additional North Shore and Central Oahu distributions on March 22 at city press conference.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-22T12:03:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "food-distribution",
+          "oahu",
+          "central-oahu",
+          "mililani",
+          "hawaii-foodbank",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "oahu-foodbank-north-shore-mobile-distribution",
+        "name": "Hawaii Foodbank - North Shore Mobile Food Distribution",
+        "island": "Oahu",
+        "area": "North Shore",
+        "neighborhood": null,
+        "resource_type": "food_distribution",
+        "description": "Emergency mobile food distribution routing through the North Shore with stops in Hauula, Laie, and up to Sunset Beach. For flood-impacted individuals and families. Times and specific stop locations may vary.",
+        "organization": "Hawaii Foodbank",
+        "address": null,
+        "latitude": null,
+        "longitude": null,
+        "public_phone": "808-836-3600",
+        "public_email": null,
+        "website": "https://hawaiifoodbank.org",
+        "source_url": "https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/",
+        "sources": [
+          "https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/",
+          "https://www.kitv.com/news/hawaii-foodbank-emergency-food-distributions-on-oahu-for-flood-impacted-residents/article_a247f570-9e46-4687-b208-57a02f71b4c9.html"
+        ],
+        "status": "active",
+        "hours": "Sun Mar 22; times and stops may vary - check hawaiifoodbank.org",
+        "notes": "Stops confirmed in Hauula, Laie, and Sunset Beach area. Exact timing variable. Distribution while supplies last.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-22T09:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "food-distribution",
+          "oahu",
+          "north-shore",
+          "mobile",
+          "hauula",
+          "laie",
+          "sunset-beach",
+          "hawaii-foodbank",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "oahu-foodbank-wahiawa-our-lady-of-sorrows-distribution",
+        "name": "Hawaii Foodbank - Our Lady of Sorrows Church Food Distribution, Wahiawa",
+        "island": "Oahu",
+        "area": "Central Oahu",
+        "neighborhood": "Wahiawa",
+        "resource_type": "food_distribution",
+        "description": "Emergency food distribution co-hosted by Hawaii Foodbank and Our Lady of Sorrows Church for Central Oahu flood-impacted residents. Held Saturday March 21, 10 a.m. to 1 p.m. Advance registration was encouraged.",
+        "organization": "Hawaii Foodbank / Our Lady of Sorrows Church",
+        "address": null,
+        "latitude": null,
+        "longitude": null,
+        "public_phone": "808-836-3600",
+        "public_email": null,
+        "website": "https://hawaiifoodbank.org/hunger-blog/community-led-food-distributions-for-flood-impacted-residents-across-oahu/",
+        "source_url": "https://hawaiifoodbank.org/hunger-blog/community-led-food-distributions-for-flood-impacted-residents-across-oahu/",
+        "sources": [
+          "https://hawaiifoodbank.org/hunger-blog/community-led-food-distributions-for-flood-impacted-residents-across-oahu/"
+        ],
+        "status": "unknown",
+        "hours": "Sat Mar 21: 10:00 a.m. - 1:00 p.m.",
+        "notes": "Held March 21. May recur; check hawaiifoodbank.org for updated schedule. Registration link was available at igfn.us/form/xfK07Q.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-21T00:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "food-distribution",
+          "oahu",
+          "central-oahu",
+          "wahiawa",
+          "hawaii-foodbank",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "oahu-foodbank-kahaluu-key-project-distribution",
+        "name": "Hawaii Foodbank - Key Project Food Distribution, Kahaluu",
+        "island": "Oahu",
+        "area": "Windward",
+        "neighborhood": "Kahaluu",
+        "resource_type": "food_distribution",
+        "description": "Emergency food distribution co-hosted by Hawaii Foodbank and Key Project for North Shore and Windward Oahu flood-impacted residents. Held Saturday March 21, noon to 2 p.m.",
+        "organization": "Hawaii Foodbank / Key Project",
+        "address": "47-200 Waihee Rd, Kahaluu, HI 96744",
+        "latitude": null,
+        "longitude": null,
+        "public_phone": "808-836-3600",
+        "public_email": null,
+        "website": "https://hawaiifoodbank.org/hunger-blog/community-led-food-distributions-for-flood-impacted-residents-across-oahu/",
+        "source_url": "https://hawaiifoodbank.org/hunger-blog/community-led-food-distributions-for-flood-impacted-residents-across-oahu/",
+        "sources": [
+          "https://hawaiifoodbank.org/hunger-blog/community-led-food-distributions-for-flood-impacted-residents-across-oahu/"
+        ],
+        "status": "unknown",
+        "hours": "Sat Mar 21: 12:00 p.m. - 2:00 p.m.",
+        "notes": "Held March 21. Intended for North Shore and Windward Oahu flood-impacted residents. Check hawaiifoodbank.org for updated or recurring events.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-21T00:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "food-distribution",
+          "oahu",
+          "windward",
+          "kahaluu",
+          "hawaii-foodbank",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "oahu-boil-water-notice-mokuleia-turtle-bay",
+        "name": "Boil Water Notice - Mokuleia to Turtle Bay (North Shore)",
+        "island": "Oahu",
+        "area": "North Shore",
+        "neighborhood": null,
+        "resource_type": "other",
+        "description": "Board of Water Supply has issued a boil water notice for all water users from Mokuleia to Turtle Bay. Do not consume tap water without boiling first. Notice is in effect until further notice.",
+        "organization": "Honolulu Board of Water Supply",
+        "address": null,
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": "https://www.boardofwatersupply.com/storm",
+        "source_url": "https://dod.hawaii.gov/hiema/march-2026-kona-low/",
+        "sources": [
+          "https://dod.hawaii.gov/hiema/march-2026-kona-low/",
+          "https://www.hawaiinewsnow.com/2026/03/21/state-city-officials-give-update-kona-low-impacts/"
+        ],
+        "status": "active",
+        "hours": "In effect until further notice as of 4:15 p.m. March 21, 2026",
+        "notes": "Issued via HNL Alert 4:15 p.m. March 21, 2026. Affects all water users between Mokuleia and Turtle Bay. Check boardofwatersupply.com/storm for updates.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-21T16:15:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "water-safety",
+          "boil-water",
+          "oahu",
+          "north-shore",
+          "mokuleia",
+          "turtle-bay",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "oahu-damage-self-report-form",
+        "name": "City and County of Honolulu - Oahu Storm Damage Self-Report Form",
+        "island": "Oahu",
+        "area": null,
+        "neighborhood": null,
+        "resource_type": "help_center",
+        "description": "Online form for Oahu residents to self-report damage to homes and property from the Kona low storm. Used by city and county to assess recovery needs.",
+        "organization": "City and County of Honolulu",
+        "address": null,
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": "https://p.veoci.com/hnlshelter",
+        "source_url": "https://dod.hawaii.gov/hiema/march-2026-kona-low/",
+        "sources": [
+          "https://dod.hawaii.gov/hiema/march-2026-kona-low/"
+        ],
+        "status": "active",
+        "hours": null,
+        "notes": "Online form only. Intended for residents in storm-impacted areas across Oahu to report home and property damage.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-21T00:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "damage-reporting",
+          "oahu",
+          "recovery",
+          "city-county-honolulu",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "oahu-red-cross-volunteer-signup",
+        "name": "American Red Cross - Hawaii Storm Response Volunteer Signup",
+        "island": "Oahu",
+        "area": null,
+        "neighborhood": null,
+        "resource_type": "volunteer_coordination",
+        "description": "American Red Cross is actively recruiting volunteers to support Hawaii storm response operations, including shelter staffing and direct services to displaced residents.",
+        "organization": "American Red Cross",
+        "address": null,
+        "latitude": null,
+        "longitude": null,
+        "public_phone": "1-800-733-2767",
+        "public_email": null,
+        "website": "https://volunteerconnection.redcross.org/?nd=vms_public_form&form_id=16352",
+        "source_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "sources": [
+          "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+          "https://www.redcross.org/local/pacific-islands/about-us/news-and-events/news/red-cross-expands-emergency-sheltering-to-lna-i--maui-and-moloka.html"
+        ],
+        "status": "active",
+        "hours": null,
+        "notes": "Online signup form available. Red Cross also provides shelter check-in and support; no ID required at shelters.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-21T00:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "volunteer-coordination",
+          "statewide",
+          "oahu",
+          "red-cross",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "oahu-lahui-foundation-volunteer-cleanup",
+        "name": "LāHui Foundation - Flood Cleanup Volunteer Signup",
+        "island": "Oahu",
+        "area": "North Shore",
+        "neighborhood": null,
+        "resource_type": "volunteer_coordination",
+        "description": "LāHui Foundation is mobilizing cleanup crews for flood-impacted North Shore areas and coordinating distribution of donated supplies. Volunteers can sign up via online form.",
+        "organization": "LāHui Foundation",
+        "address": null,
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": "https://docs.google.com/forms/d/e/1FAIpQLScRG9aOSQlWzzLK6_Bn_KW32PrM3tUyRSEAMSAA_qFaWf7PcQ/viewform",
+        "source_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "sources": [
+          "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/"
+        ],
+        "status": "active",
+        "hours": null,
+        "notes": "Accepting cleanup volunteers and recovery supply donations. Supply drop-off at Kahuku Elementary School, 10 a.m. to 4 p.m. (recovery items only, no household goods).",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-20T00:00:00-10:00",
+        "confidence": "medium",
+        "tags": [
+          "volunteer-coordination",
+          "cleanup",
+          "oahu",
+          "north-shore",
+          "lahui-foundation",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "oahu-waialua-beach-road-cleanup",
+        "name": "Waialua Community Cleanup - Waialua Beach Road and Cane Haul Road",
+        "island": "Oahu",
+        "area": "North Shore",
+        "neighborhood": "Waialua",
+        "resource_type": "volunteer_coordination",
+        "description": "Community-organized flood cleanup at the intersection of Waialua Beach Road and Cane Haul Road. Sunday March 22 at 10 a.m.",
+        "organization": null,
+        "address": "Waialua Beach Rd and Cane Haul Rd, Waialua, HI 96791",
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": null,
+        "source_url": "https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/",
+        "sources": [
+          "https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/"
+        ],
+        "status": "active",
+        "hours": "Sun Mar 22: 10:00 a.m.",
+        "notes": "Community-organized; sourced from KHON2 community roundup for March 22. Organizer not named - confirm via KHON2 article before traveling.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-22T12:03:00-10:00",
+        "confidence": "medium",
+        "tags": [
+          "volunteer-coordination",
+          "cleanup",
+          "oahu",
+          "north-shore",
+          "waialua",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "oahu-north-shore-stables-cleanup",
+        "name": "Shore Cleanup - North Shore Stables, Waialua Road",
+        "island": "Oahu",
+        "area": "North Shore",
+        "neighborhood": null,
+        "resource_type": "volunteer_coordination",
+        "description": "Shore cleanup hosted by One Ocean Conservation and Save the Sea Turtles International at the North Shore Stables gates off Waialua Road. Sunday March 22, 1 p.m. to 3 p.m.",
+        "organization": "One Ocean Conservation / Save the Sea Turtles International",
+        "address": "North Shore Stables, off Waialua Rd, Oahu, HI",
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": null,
+        "source_url": "https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/",
+        "sources": [
+          "https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/"
+        ],
+        "status": "active",
+        "hours": "Sun Mar 22: 1:00 p.m. - 3:00 p.m.",
+        "notes": "Focused on shoreline debris cleanup post-flooding. Organized nonprofits named.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-22T12:03:00-10:00",
+        "confidence": "medium",
+        "tags": [
+          "volunteer-coordination",
+          "cleanup",
+          "oahu",
+          "north-shore",
+          "environmental",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "oahu-aloha-united-way-helpline",
+        "name": "Aloha United Way - Flood Victim Help Line",
+        "island": "Oahu",
+        "area": null,
+        "neighborhood": null,
+        "resource_type": "help_center",
+        "description": "Aloha United Way is operating a help call and text line to connect flooding victims with resources and support services.",
+        "organization": "Aloha United Way",
+        "address": null,
+        "latitude": null,
+        "longitude": null,
+        "public_phone": "808-536-1951",
+        "public_email": null,
+        "website": "https://www.auw.org",
+        "source_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "sources": [
+          "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/"
+        ],
+        "status": "active",
+        "hours": null,
+        "notes": "Call or text line for flooding victims seeking resources. Check auw.org for current helpline number.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-20T00:00:00-10:00",
+        "confidence": "medium",
+        "tags": [
+          "helpline",
+          "oahu",
+          "statewide",
+          "aloha-united-way",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "statewide-salvation-army-disaster-relief",
+        "name": "The Salvation Army - Hawaii Kona Low Disaster Relief",
+        "island": "Statewide",
+        "area": null,
+        "neighborhood": null,
+        "resource_type": "help_center",
+        "description": "The Salvation Army is conducting disaster relief efforts statewide, including financial assistance applications and material support. Working with city partners on Oahu. Information on financial assistance applications forthcoming per March 21 press conference.",
+        "organization": "The Salvation Army, Hawaii and Pacific Islands Division",
+        "address": null,
+        "latitude": null,
+        "longitude": null,
+        "public_phone": "808-440-1800",
+        "public_email": null,
+        "website": "https://hawaii.salvationarmy.org",
+        "source_url": "https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/",
+        "sources": [
+          "https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/",
+          "https://fundraise.salvationarmyhawaii.org/campaign/779616/donate",
+          "https://www.staradvertiser.com/2026/03/20/breaking-news/a-list-of-oahu-evacuation-shelters-assembly-areas-and-closures/"
+        ],
+        "status": "active",
+        "hours": null,
+        "notes": "Financial assistance application process being announced. Divisional Commander Major Troy Trimmer confirmed operations at March 21 city press conference.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-21T17:30:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "financial-assistance",
+          "disaster-relief",
+          "statewide",
+          "oahu",
+          "salvation-army",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "statewide-red-cross-shelter-locator",
+        "name": "American Red Cross - Hawaii Shelter Locator and Emergency Line",
+        "island": "Statewide",
+        "area": null,
+        "neighborhood": null,
+        "resource_type": "shelter",
+        "description": "The Red Cross maintains real-time open shelter information for all islands. Find current open locations at redcross.org, via the Red Cross Emergency App, or by calling 1-800-RED CROSS. No ID required. Phone charging available at shelters.",
+        "organization": "American Red Cross",
+        "address": null,
+        "latitude": null,
+        "longitude": null,
+        "public_phone": "1-800-733-2767",
+        "public_email": null,
+        "website": "https://www.redcross.org/local/pacific-islands.html",
+        "source_url": "https://www.redcross.org/local/pacific-islands/about-us/news-and-events/news/red-cross-expands-emergency-sheltering-to-lna-i--maui-and-moloka.html",
+        "sources": [
+          "https://www.redcross.org/local/pacific-islands/about-us/news-and-events/news/red-cross-expands-emergency-sheltering-to-lna-i--maui-and-moloka.html"
+        ],
+        "status": "active",
+        "hours": null,
+        "notes": "Real-time shelter list maintained at redcross.org. No ID required at any Red Cross shelter. Phone charging and emotional support available.",
+        "languages": [
+          "English",
+          "Spanish"
+        ],
+        "accessibility_notes": "No ID required for entry",
+        "last_verified_at": "2026-03-21T00:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "shelter",
+          "statewide",
+          "red-cross",
+          "kona-low-2026",
+          "charging-station"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "statewide-hiema-march-2026-kona-low-hub",
+        "name": "Hawaii Emergency Management Agency - March 2026 Kona Low Resource Hub",
+        "island": "Statewide",
+        "area": null,
+        "neighborhood": null,
+        "resource_type": "help_center",
+        "description": "Official state hub for the March 2026 Kona Low event. Includes real-time HNL Alert updates, shelter information, evacuation zone maps, donation guidance, damage reporting links, and multilingual resources.",
+        "organization": "Hawaii Emergency Management Agency (HI-EMA)",
+        "address": null,
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": "https://dod.hawaii.gov/hiema/march-2026-kona-low/",
+        "source_url": "https://dod.hawaii.gov/hiema/march-2026-kona-low/",
+        "sources": [
+          "https://dod.hawaii.gov/hiema/march-2026-kona-low/"
+        ],
+        "status": "active",
+        "hours": null,
+        "notes": "Authoritative state source. Includes links to county damage reporting forms for Oahu and Maui, shelter maps, and recommended donation channels (Salvation Army, Red Cross, Stronger Hawaii Fund).",
+        "languages": [
+          "English",
+          "Chuukese",
+          "Olelo Hawaii",
+          "Ilocano",
+          "Japanese",
+          "Korean",
+          "Marshallese",
+          "Samoan",
+          "Spanish",
+          "Tagalog",
+          "Tongan",
+          "Thai",
+          "Vietnamese"
+        ],
+        "accessibility_notes": "Multilingual content available on page",
+        "last_verified_at": "2026-03-21T17:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "emergency-management",
+          "statewide",
+          "official",
+          "resource-hub",
+          "multilingual",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "statewide-stronger-hawaii-fund",
+        "name": "Hawaii Community Foundation - Stronger Hawaii Fund",
+        "island": "Statewide",
+        "area": null,
+        "neighborhood": null,
+        "resource_type": "other",
+        "description": "Disaster relief fund operated by Hawaii Community Foundation accepting monetary donations to support communities statewide affected by the Kona low flooding.",
+        "organization": "Hawaii Community Foundation",
+        "address": null,
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": "https://www.hawaiicommunityfoundation.org/stronger-hawaii-donate",
+        "source_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "sources": [
+          "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+          "https://dod.hawaii.gov/hiema/march-2026-kona-low/",
+          "https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat-2/"
+        ],
+        "status": "active",
+        "hours": null,
+        "notes": "Recommended by HI-EMA as an official donation channel. Covers statewide needs including Oahu, Maui, and neighbor islands.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-21T00:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "donations",
+          "statewide",
+          "hawaii-community-foundation",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "statewide-hawaii-farmers-union-flood-fund",
+        "name": "Hawaii Farmers Union United - Hawaii Flood Response Fund",
+        "island": "Statewide",
+        "area": null,
+        "neighborhood": null,
+        "resource_type": "other",
+        "description": "Dedicated flood response fund created by Hawaii Farmers Union United to support farmers and rural communities impacted by the Kona low flooding. Monetary donations accepted via PayPal.",
+        "organization": "Hawaii Farmers Union United",
+        "address": null,
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": "https://www.paypal.com/donate/?hosted_button_id=UUJD8RQG4L3L6",
+        "source_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "sources": [
+          "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/"
+        ],
+        "status": "active",
+        "hours": null,
+        "notes": "Specifically targeted at farmers and rural areas hard-hit by flooding.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-20T00:00:00-10:00",
+        "confidence": "medium",
+        "tags": [
+          "donations",
+          "statewide",
+          "farmers",
+          "rural",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "maui-south-maui-community-park-shelter",
+        "name": "South Maui Community Park Gym Evacuation Shelter",
+        "island": "Maui",
+        "area": "South Maui",
+        "neighborhood": "Kihei",
+        "resource_type": "evacuation_center",
+        "description": "Active evacuation shelter in South Maui providing cots, food, and water for residents displaced by Kona low flooding. Still open as of March 21 afternoon.",
+        "organization": "MEMA / Maui County Parks and Recreation / American Red Cross",
+        "address": "1501 Liloa Dr, Kihei, HI 96753",
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": "https://www.mauicounty.gov/MEMA",
+        "source_url": "https://www.mauinews.com/news/local-news/2026/03/shelters-reamin-open-in-south-east-and-west-maui/",
+        "sources": [
+          "https://www.mauinews.com/news/local-news/2026/03/shelters-reamin-open-in-south-east-and-west-maui/",
+          "https://www.mauicounty.gov/CivicAlerts.aspx?AID=18502",
+          "https://www.hawaiinewsnow.com/2026/03/21/emergency-shelters-open-across-hawaii-amid-dangerous-flooding/"
+        ],
+        "status": "active",
+        "hours": "Open as of 2026-03-21 afternoon; duration depends on conditions",
+        "notes": "Pet-friendly with crates. Maui Humane Society supplied extra crates at this location. Two other Maui shelters (Baldwin High and Kihei Community Center) closed at noon March 21.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": "Pet-friendly if animals are crated",
+        "last_verified_at": "2026-03-21T13:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "shelter",
+          "maui",
+          "south-maui",
+          "kihei",
+          "red-cross",
+          "mema",
+          "kona-low-2026",
+          "pets-allowed"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "maui-hana-high-school-shelter",
+        "name": "Hana High School Cafeteria Evacuation Shelter",
+        "island": "Maui",
+        "area": "East Maui",
+        "neighborhood": "Hana",
+        "resource_type": "evacuation_center",
+        "description": "Evacuation shelter in East Maui providing food and water for residents displaced or unable to travel due to Hana Highway closures and flood conditions.",
+        "organization": "MEMA / Maui County Parks and Recreation / American Red Cross",
+        "address": "4111 Hana Hwy, Hana, HI 96713",
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": "https://www.mauicounty.gov/MEMA",
+        "source_url": "https://www.mauinews.com/news/local-news/2026/03/shelters-reamin-open-in-south-east-and-west-maui/",
+        "sources": [
+          "https://www.mauinews.com/news/local-news/2026/03/shelters-reamin-open-in-south-east-and-west-maui/",
+          "https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat-2/",
+          "https://www.mauicounty.gov/CivicAlerts.aspx?AID=18502"
+        ],
+        "status": "active",
+        "hours": "Open as of 2026-03-21 afternoon; duration depends on conditions",
+        "notes": "Hana Highway restricted to emergency vehicles, essential workers, and local traffic. Access limited.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": "Pet-friendly if animals are crated",
+        "last_verified_at": "2026-03-21T13:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "shelter",
+          "maui",
+          "east-maui",
+          "hana",
+          "red-cross",
+          "mema",
+          "kona-low-2026",
+          "pets-allowed"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "maui-lahaina-civic-center-shelter",
+        "name": "Lahaina Civic Center Evacuation Shelter",
+        "island": "Maui",
+        "area": "West Maui",
+        "neighborhood": "Lahaina",
+        "resource_type": "evacuation_center",
+        "description": "Evacuation shelter in West Maui for residents displaced by flooding. Note: access is via the Napili side off Honoapiilani Highway due to road closures.",
+        "organization": "MEMA / Maui County Parks and Recreation / American Red Cross",
+        "address": "1840 Honoapiilani Hwy, Lahaina, HI 96761",
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": "https://www.mauicounty.gov/MEMA",
+        "source_url": "https://mauinow.com/2026/03/21/shelter-in-central-maui-reopening-after-recent-flooding-road-closures/",
+        "sources": [
+          "https://mauinow.com/2026/03/21/shelter-in-central-maui-reopening-after-recent-flooding-road-closures/",
+          "https://www.mauinews.com/news/local-news/2026/03/shelters-reamin-open-in-south-east-and-west-maui/",
+          "https://www.kitv.com/news/traffic/kona-low-storm-closures-and-evacuation-shelters-due-to-severe-weather/article_f7bccbef-31b4-48dd-932e-52cad336e24d.html"
+        ],
+        "status": "active",
+        "hours": "Open as of 2026-03-21 afternoon; duration depends on conditions",
+        "notes": "Access via Napili side off highway only due to Honoapiilani Hwy closures. A large sinkhole closed Lilioa St and N. Laalo St in Lahaina as of Saturday evening.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": "Pet-friendly if animals are crated; access route restricted",
+        "last_verified_at": "2026-03-21T19:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "shelter",
+          "maui",
+          "west-maui",
+          "lahaina",
+          "red-cross",
+          "mema",
+          "kona-low-2026",
+          "pets-allowed"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "maui-baldwin-high-school-shelter",
+        "name": "Baldwin High School Gym Evacuation Shelter",
+        "island": "Maui",
+        "area": "Central Maui",
+        "neighborhood": "Wailuku",
+        "resource_type": "evacuation_center",
+        "description": "Central Maui shelter reopened Saturday evening March 21 at 7 p.m. due to new road closures and evacuation warnings from Kona storm 2. Provides cots, food, and water.",
+        "organization": "MEMA / Maui County Parks and Recreation / American Red Cross",
+        "address": "1650 Kaahumanu Ave, Wailuku, HI 96793",
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": "https://www.mauicounty.gov/MEMA",
+        "source_url": "https://www.mauicounty.gov/m/newsflash/home/detail/18546",
+        "sources": [
+          "https://www.mauicounty.gov/m/newsflash/home/detail/18546",
+          "https://mauinow.com/2026/03/21/shelter-in-central-maui-reopening-after-recent-flooding-road-closures/"
+        ],
+        "status": "active",
+        "hours": "Reopened 7:00 p.m. 2026-03-21; duration depends on conditions",
+        "notes": "Previously closed at noon March 21, then reopened at 7 p.m. March 21 due to second Kona storm impacts and new road closures.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": "Pet-friendly if animals are crated",
+        "last_verified_at": "2026-03-21T19:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "shelter",
+          "maui",
+          "central-maui",
+          "wailuku",
+          "red-cross",
+          "mema",
+          "kona-low-2026",
+          "pets-allowed"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "molokai-kaunakakai-gym-shelter",
+        "name": "Kaunakakai Gym Evacuation Shelter",
+        "island": "Molokai",
+        "area": "Central Molokai",
+        "neighborhood": "Kaunakakai",
+        "resource_type": "evacuation_center",
+        "description": "Evacuation shelter opened March 22 at 7 a.m. due to severe flash flooding from Kona storm 2 on Molokai. Provides cots, food, and water. Elevated water levels reported in Kawela Gulch and Halawa Stream.",
+        "organization": "MEMA / Maui County Parks and Recreation / American Red Cross",
+        "address": "180 Ala Malama Ave, Kaunakakai, HI 96748",
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": "https://www.mauicounty.gov/MEMA",
+        "source_url": "https://www.mauicounty.gov/m/newsflash/home/detail/18561",
+        "sources": [
+          "https://www.mauicounty.gov/m/newsflash/home/detail/18561",
+          "https://www.hawaiinewsnow.com/2026/03/21/emergency-shelters-open-across-hawaii-amid-dangerous-flooding/"
+        ],
+        "status": "active",
+        "hours": "Opened 7:00 a.m. 2026-03-22; duration depends on conditions",
+        "notes": "Opened same-day in response to flash flooding on Molokai. Flash flood warning was in effect until approximately 8:45 a.m. March 22. Flood watch for Maui County through Sunday.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": "Pet-friendly if animals are crated",
+        "last_verified_at": "2026-03-22T07:20:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "shelter",
+          "molokai",
+          "kaunakakai",
+          "red-cross",
+          "mema",
+          "kona-low-2026",
+          "pets-allowed"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "maui-food-bank-distribution",
+        "name": "Maui Food Bank - Emergency Food Distribution",
+        "island": "Maui",
+        "area": null,
+        "neighborhood": null,
+        "resource_type": "food_distribution",
+        "description": "Maui Food Bank is delivering food to Hana and other flood-impacted areas of Maui County.",
+        "organization": "Maui Food Bank",
+        "address": null,
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": "https://mauifoodbank.org",
+        "source_url": "https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat-2/",
+        "sources": [
+          "https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat-2/"
+        ],
+        "status": "active",
+        "hours": null,
+        "notes": "Confirmed active deliveries to Hana and other hard-hit areas. Specific distribution site schedule not published at time of collection.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-21T00:00:00-10:00",
+        "confidence": "medium",
+        "tags": [
+          "food-distribution",
+          "maui",
+          "hana",
+          "east-maui",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "maui-rapid-response-supply-distribution",
+        "name": "Maui Rapid Response - Emergency Supply Distribution",
+        "island": "Maui",
+        "area": null,
+        "neighborhood": null,
+        "resource_type": "other",
+        "description": "Maui Rapid Response is distributing tarps, flashlights, first-aid kits, bottled water, and other emergency supplies to homeless communities and other vulnerable populations on Maui.",
+        "organization": "Maui Rapid Response",
+        "address": null,
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": null,
+        "source_url": "https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat-2/",
+        "sources": [
+          "https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat-2/"
+        ],
+        "status": "active",
+        "hours": null,
+        "notes": "Focused on homeless communities and vulnerable populations. Distributing tarps, first-aid kits, flashlights, and water. Distribution locations not specified in source.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-21T00:00:00-10:00",
+        "confidence": "medium",
+        "tags": [
+          "supply-distribution",
+          "maui",
+          "vulnerable-populations",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "maui-united-way-donations",
+        "name": "Maui United Way - Flood Relief Donations",
+        "island": "Maui",
+        "area": null,
+        "neighborhood": null,
+        "resource_type": "other",
+        "description": "Maui United Way is collecting monetary donations to support Maui residents affected by recent flooding and other disasters.",
+        "organization": "Maui United Way",
+        "address": null,
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": "https://www.mauiunitedway.org",
+        "source_url": "https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat-2/",
+        "sources": [
+          "https://www.civilbeat.org/2026/03/see-oahu-evacuation-map-zones-shelters-amid-wahiawa-dam-threat-2/"
+        ],
+        "status": "active",
+        "hours": null,
+        "notes": "Monetary donations only. For broader disaster-related needs on Maui.",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-21T00:00:00-10:00",
+        "confidence": "medium",
+        "tags": [
+          "donations",
+          "maui",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "oahu-hawaiian-council-kakoo-oahu-fund",
+        "name": "Hawaiian Council - Kakoo Oahu Donation Campaign",
+        "island": "Oahu",
+        "area": null,
+        "neighborhood": null,
+        "resource_type": "other",
+        "description": "The Hawaiian Council launched the Kakoo Oahu campaign on March 21 to support individuals and families impacted by severe weather on Oahu. Funds will address housing stability, direct financial assistance, and other critical support. The council will match every donation dollar-for-dollar up to $100,000.",
+        "organization": "Hawaiian Council",
+        "address": null,
+        "latitude": null,
+        "longitude": null,
+        "public_phone": null,
+        "public_email": null,
+        "website": "https://givebutter.com/support-the-north-shore-community-4jobpv",
+        "source_url": "https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/",
+        "sources": [
+          "https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/"
+        ],
+        "status": "active",
+        "hours": null,
+        "notes": "Dollar-for-dollar matching up to $100,000. Addresses housing stability and direct financial assistance for impacted families. Donation URL not captured; check hawaiinewsnow.com article for link. | Donation URL confirmed: https://givebutter.com/support-the-north-shore-community-4jobpv",
+        "languages": [
+          "English"
+        ],
+        "accessibility_notes": null,
+        "last_verified_at": "2026-03-22T00:00:00-10:00",
+        "confidence": "medium",
+        "tags": [
+          "donations",
+          "oahu",
+          "housing",
+          "financial-assistance",
+          "matching-fund",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      }
+    ],
+    "public_need_summaries": [
+      {
+        "external_id": "need-oahu-north-shore-cleanup-volunteers",
+        "title": "Flood Cleanup Volunteers Needed - North Shore Oahu",
+        "island": "Oahu",
+        "area": "North Shore",
+        "category": "volunteers",
+        "urgency": "urgent",
+        "description": "Multiple organizations including LāHui Foundation, One Ocean Conservation, and community groups are actively requesting cleanup volunteers for Waialua, Haleiwa, and surrounding North Shore areas as of March 22. Organized events are running today.",
+        "recommended_action": "volunteer",
+        "source_url": "https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/",
+        "sources": [
+          "https://www.khon2.com/top-stories/get-involved-get-help-north-shore-flood-recovery-efforts/",
+          "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/"
+        ],
+        "last_verified_at": "2026-03-22T12:03:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "volunteers",
+          "cleanup",
+          "oahu",
+          "north-shore",
+          "waialua",
+          "haleiwa",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "need-oahu-boil-water-north-shore",
+        "title": "Boil Water Advisory in Effect - North Shore Oahu (Mokuleia to Turtle Bay)",
+        "island": "Oahu",
+        "area": "North Shore",
+        "category": "water",
+        "urgency": "urgent",
+        "description": "Board of Water Supply issued a boil water notice effective 4:15 p.m. March 21 for all residents between Mokuleia and Turtle Bay. Bottled water and water distribution for affected residents may be needed. Notice is in effect until further notice.",
+        "recommended_action": "check_updates",
+        "source_url": "https://dod.hawaii.gov/hiema/march-2026-kona-low/",
+        "sources": [
+          "https://dod.hawaii.gov/hiema/march-2026-kona-low/",
+          "https://www.hawaiinewsnow.com/2026/03/21/state-city-officials-give-update-kona-low-impacts/"
+        ],
+        "last_verified_at": "2026-03-21T16:15:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "water",
+          "boil-water",
+          "oahu",
+          "north-shore",
+          "mokuleia",
+          "turtle-bay",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "need-oahu-food-north-shore-central",
+        "title": "Emergency Food Distribution Needed - North Shore and Central Oahu",
+        "island": "Oahu",
+        "area": "North Shore / Central Oahu",
+        "category": "food",
+        "urgency": "urgent",
+        "description": "Hawaii Foodbank CEO publicly confirmed at March 21 city press conference that emergency food distributions are needed and are being organized for North Shore and Central Oahu flood-impacted residents. Distributions running March 22.",
+        "recommended_action": "go_to_hub",
+        "source_url": "https://hawaiifoodbank.org/hunger-blog/community-led-food-distributions-for-flood-impacted-residents-across-oahu/",
+        "sources": [
+          "https://hawaiifoodbank.org/hunger-blog/community-led-food-distributions-for-flood-impacted-residents-across-oahu/",
+          "https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/",
+          "https://www.kitv.com/news/hawaii-foodbank-emergency-food-distributions-on-oahu-for-flood-impacted-residents/article_a247f570-9e46-4687-b208-57a02f71b4c9.html"
+        ],
+        "last_verified_at": "2026-03-22T09:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "food",
+          "oahu",
+          "north-shore",
+          "central-oahu",
+          "hawaii-foodbank",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      },
+      {
+        "external_id": "need-statewide-financial-assistance-displaced",
+        "title": "Financial Assistance Applications Opening for Displaced Residents - Statewide",
+        "island": "Statewide",
+        "area": null,
+        "category": "other",
+        "urgency": "soon",
+        "description": "The Salvation Army confirmed at the March 21 city press conference that information on financial assistance applications for flood-impacted residents would be released. Applications not yet publicly open as of March 22 morning.",
+        "recommended_action": "check_updates",
+        "source_url": "https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/",
+        "sources": [
+          "https://www.hawaiinewsnow.com/2026/03/22/how-help-donation-drives-food-distributions-launched-after-oahu-flooding/"
+        ],
+        "last_verified_at": "2026-03-22T00:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "financial-assistance",
+          "statewide",
+          "salvation-army",
+          "kona-low-2026"
+        ],
+        "is_public": true
+      }
+    ]
+  },
+  "review": [
+    {
+      "external_id": "oahu-wahiawa-district-park-shelter",
+      "table": "help_hubs",
+      "name": "George Fred Wright Wahiawa District Park Evacuation Shelter",
+      "confidence": "medium",
+      "status": "likely_closed",
+      "is_public": true,
+      "reason": "Scheduled closure has passed; marked likely_closed. Retained — re-verify Mon 2026-03-23+ in case of reopening.",
+      "last_verified_at": "2026-03-21T15:28:00-10:00"
+    },
+    {
+      "external_id": "oahu-salvation-army-kroc-center-shelter",
+      "table": "help_hubs",
+      "name": "The Salvation Army Kroc Center Hawaii Evacuation Shelter",
+      "confidence": "medium",
+      "status": "likely_closed",
+      "is_public": true,
+      "reason": "Scheduled closure has passed; marked likely_closed. Retained — re-verify Mon 2026-03-23+ in case of reopening.",
+      "last_verified_at": "2026-03-21T12:00:00-10:00"
+    },
+    {
+      "external_id": "oahu-leilehua-high-assembly-area",
+      "table": "help_hubs",
+      "name": "Leilehua High School Assembly Area",
+      "confidence": "medium",
+      "status": "likely_closed",
+      "is_public": true,
+      "reason": "Scheduled closure has passed; marked likely_closed. Retained — re-verify Mon 2026-03-23+ in case of reopening.",
+      "last_verified_at": "2026-03-21T15:28:00-10:00"
+    },
+    {
+      "external_id": "oahu-kahuku-elementary-donation-dropoff",
+      "table": "help_hubs",
+      "name": "Kahuku Elementary School - LāHui Foundation Donation Drop-Off",
+      "confidence": "medium",
+      "status": "active",
+      "is_public": true,
+      "reason": "medium confidence — single source or unverified detail; manual check recommended",
+      "last_verified_at": "2026-03-20T00:00:00-10:00"
+    },
+    {
+      "external_id": "oahu-north-shore-salon-donation-sorting",
+      "table": "help_hubs",
+      "name": "North Shore Salon and Spa - Donation Collection and Sorting",
+      "confidence": "medium",
+      "status": "active",
+      "is_public": true,
+      "reason": "single-source or unconfirmed organizer; verify contact details before displaying",
+      "last_verified_at": "2026-03-22T12:03:00-10:00"
+    },
+    {
+      "external_id": "oahu-lahui-foundation-volunteer-cleanup",
+      "table": "help_hubs",
+      "name": "LāHui Foundation - Flood Cleanup Volunteer Signup",
+      "confidence": "medium",
+      "status": "active",
+      "is_public": true,
+      "reason": "medium confidence — single source or unverified detail; manual check recommended",
+      "last_verified_at": "2026-03-20T00:00:00-10:00"
+    },
+    {
+      "external_id": "oahu-waialua-beach-road-cleanup",
+      "table": "help_hubs",
+      "name": "Waialua Community Cleanup - Waialua Beach Road and Cane Haul Road",
+      "confidence": "medium",
+      "status": "active",
+      "is_public": true,
+      "reason": "single-source or unconfirmed organizer; verify contact details before displaying",
+      "last_verified_at": "2026-03-22T12:03:00-10:00"
+    },
+    {
+      "external_id": "oahu-north-shore-stables-cleanup",
+      "table": "help_hubs",
+      "name": "Shore Cleanup - North Shore Stables, Waialua Road",
+      "confidence": "medium",
+      "status": "active",
+      "is_public": true,
+      "reason": "medium confidence — single source or unverified detail; manual check recommended",
+      "last_verified_at": "2026-03-22T12:03:00-10:00"
+    },
+    {
+      "external_id": "oahu-aloha-united-way-helpline",
+      "table": "help_hubs",
+      "name": "Aloha United Way - Flood Victim Help Line",
+      "confidence": "medium",
+      "status": "active",
+      "is_public": true,
+      "reason": "medium confidence — single source or unverified detail; manual check recommended",
+      "last_verified_at": "2026-03-20T00:00:00-10:00"
+    },
+    {
+      "external_id": "statewide-hawaii-farmers-union-flood-fund",
+      "table": "help_hubs",
+      "name": "Hawaii Farmers Union United - Hawaii Flood Response Fund",
+      "confidence": "medium",
+      "status": "active",
+      "is_public": true,
+      "reason": "medium confidence — single source or unverified detail; manual check recommended",
+      "last_verified_at": "2026-03-20T00:00:00-10:00"
+    },
+    {
+      "external_id": "maui-food-bank-distribution",
+      "table": "help_hubs",
+      "name": "Maui Food Bank - Emergency Food Distribution",
+      "confidence": "medium",
+      "status": "active",
+      "is_public": true,
+      "reason": "medium confidence — single source or unverified detail; manual check recommended",
+      "last_verified_at": "2026-03-21T00:00:00-10:00"
+    },
+    {
+      "external_id": "maui-rapid-response-supply-distribution",
+      "table": "help_hubs",
+      "name": "Maui Rapid Response - Emergency Supply Distribution",
+      "confidence": "medium",
+      "status": "active",
+      "is_public": true,
+      "reason": "medium confidence — single source or unverified detail; manual check recommended",
+      "last_verified_at": "2026-03-21T00:00:00-10:00"
+    },
+    {
+      "external_id": "maui-united-way-donations",
+      "table": "help_hubs",
+      "name": "Maui United Way - Flood Relief Donations",
+      "confidence": "medium",
+      "status": "active",
+      "is_public": true,
+      "reason": "medium confidence — single source or unverified detail; manual check recommended",
+      "last_verified_at": "2026-03-21T00:00:00-10:00"
+    },
+    {
+      "external_id": "oahu-hawaiian-council-kakoo-oahu-fund",
+      "table": "help_hubs",
+      "name": "Hawaiian Council - Kakoo Oahu Donation Campaign",
+      "confidence": "medium",
+      "status": "active",
+      "is_public": true,
+      "reason": "medium confidence — single source or unverified detail; manual check recommended",
+      "last_verified_at": "2026-03-22T00:00:00-10:00"
+    }
+  ],
+  "notes": [
+    "sources column typed as jsonb. Cast literal with '\"[...]\"'::jsonb or update column type to text[] if preferred.",
+    "languages and tags columns use text[] arrays. Ensure Supabase columns are TEXT[] or JSONB; adjust cast accordingly.",
+    "All latitude/longitude values are NULL in this batch. Geocoding pass recommended before production publish.",
+    "3 shelters (wahiawa-district-park, salvation-army-kroc, leilehua-high) set to status=likely_closed with closure annotation. Retained in dataset — re-verify Mon 2026-03-23 or later in case of reopening after government resumes operations.",
+    "oahu-hawaiian-council-kakoo-oahu-fund has no website URL in source data. Donation link must be retrieved from the HawaiiNewsNow article before display.",
+    "maui-rapid-response-supply-distribution has no address or distribution locations; display only as statewide/Maui-island context until locations confirmed.",
+    "Records seeded: 31 help_hubs, 4 public_need_summaries.",
+    "Records flagged for review: 14 (all medium confidence; is_public=true but manual verification recommended).",
+    "No low-confidence records found in this batch; all records seeded with is_public=true.",
+    "Unicode Hawaiian characters (okina, macrons) preserved as-is in all string fields. Ensure database/client encoding is UTF-8.",
+    "oahu-hawaiian-council-kakoo-oahu-fund website updated to confirmed donation URL: https://givebutter.com/support-the-north-shore-community-4jobpv"
+  ]
+}

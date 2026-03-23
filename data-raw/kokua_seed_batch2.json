@@ -1,0 +1,706 @@
+{
+  "sql": {
+    "source_registry_upsert": "INSERT INTO source_registry (external_id, name, source_type, platform, base_url, organization, trust_level, update_frequency, strategy, is_active, notes) VALUES ('src-civilbeat-oahu-flood-donate-list', 'Civil Beat – LIST: Help Oʿahu Flooding Victims (March 2026)', 'news', 'website', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', 'Honolulu Civil Beat', 'high', 'ad_hoc', 'redirect', true, 'Nonprofit investigative newsroom. Article is a curated, updated list of vetted relief orgs and their direct links. Article author noted ''This story will be updated.'' Treat as redirect — follow outbound org links for authoritative signal rather than mirroring Civil Beat text. High value as a living aggregator during active event.')\n  ON CONFLICT (external_id) DO UPDATE SET name = EXCLUDED.name, source_type = EXCLUDED.source_type, platform = EXCLUDED.platform, base_url = EXCLUDED.base_url, organization = EXCLUDED.organization, trust_level = EXCLUDED.trust_level, update_frequency = EXCLUDED.update_frequency, strategy = EXCLUDED.strategy, is_active = EXCLUDED.is_active, notes = EXCLUDED.notes;\nINSERT INTO source_registry (external_id, name, source_type, platform, base_url, organization, trust_level, update_frequency, strategy, is_active, notes) VALUES ('src-facebook-mykailua', 'My Kailua – Facebook Community Page', 'social', 'facebook', 'https://www.facebook.com/mykailua', NULL, 'low', 'ad_hoc', 'monitor', true, 'Local Kailua community Facebook page. Direct fetch blocked by robots.txt. Not fetchable programmatically — requires manual human monitoring. Kailua and surrounding Windward communities experienced flooding and sewage backflow during both Kona storms (March 13-14 and March 20). Page is likely carrying community-level recovery signal, volunteer coordination, and local resource sharing. All signals derived from this source must be flagged needs_review = true and treated as social_source. Do not auto-publish. Recommend manual spot-check 1-2x per day during active recovery period.')\n  ON CONFLICT (external_id) DO UPDATE SET name = EXCLUDED.name, source_type = EXCLUDED.source_type, platform = EXCLUDED.platform, base_url = EXCLUDED.base_url, organization = EXCLUDED.organization, trust_level = EXCLUDED.trust_level, update_frequency = EXCLUDED.update_frequency, strategy = EXCLUDED.strategy, is_active = EXCLUDED.is_active, notes = EXCLUDED.notes;",
+    "source_signals_upsert": "INSERT INTO source_signals (external_id, source_external_id, title, signal_type, raw_url, raw_text_summary, raw_payload, island, area, neighborhood, derived_resource_name, derived_resource_type, derived_status, confidence, freshness_score, last_observed_at, needs_review, review_reason, suggested_action, tags) VALUES ('sig-civilbeat-salvation-army-relief', 'src-civilbeat-oahu-flood-donate-list', 'The Salvation Army – Oʿahu and Statewide Disaster Relief', 'resource', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', 'Civil Beat list names Salvation Army as conducting disaster relief on Oʿahu and across the state. Links to dedicated Kona low donation campaign.', '{\"observed_label\": \"The Salvation Army\", \"mentioned_org\": \"The Salvation Army\", \"donation_url\": \"https://fundraise.salvationarmyhawaii.org/campaign/779616/donate\", \"public_notes\": \"Conducting disaster relief on Oʿahu and statewide. Financial assistance process being announced per March 21 press conference.\"}'::jsonb, 'Statewide', NULL, NULL, 'The Salvation Army – Hawaiʻi Kona Low Disaster Relief', 'help_center', 'active', 'high', 90, '2026-03-20T00:00:00-10:00', false, NULL, 'update_help_hub', ARRAY['salvation-army', 'disaster-relief', 'statewide', 'oahu', 'donations', 'kona-low-2026']::text[])\n  ON CONFLICT (external_id) DO UPDATE SET source_external_id = EXCLUDED.source_external_id, title = EXCLUDED.title, signal_type = EXCLUDED.signal_type, raw_url = EXCLUDED.raw_url, raw_text_summary = EXCLUDED.raw_text_summary, raw_payload = EXCLUDED.raw_payload, island = EXCLUDED.island, area = EXCLUDED.area, neighborhood = EXCLUDED.neighborhood, derived_resource_name = EXCLUDED.derived_resource_name, derived_resource_type = EXCLUDED.derived_resource_type, derived_status = EXCLUDED.derived_status, confidence = EXCLUDED.confidence, freshness_score = EXCLUDED.freshness_score, last_observed_at = EXCLUDED.last_observed_at, needs_review = EXCLUDED.needs_review, review_reason = EXCLUDED.review_reason, suggested_action = EXCLUDED.suggested_action, tags = EXCLUDED.tags;\nINSERT INTO source_signals (external_id, source_external_id, title, signal_type, raw_url, raw_text_summary, raw_payload, island, area, neighborhood, derived_resource_name, derived_resource_type, derived_status, confidence, freshness_score, last_observed_at, needs_review, review_reason, suggested_action, tags) VALUES ('sig-civilbeat-lahui-foundation-cleanup-volunteers', 'src-civilbeat-oahu-flood-donate-list', 'LāHui Foundation – Cleanup Crew Volunteer Signup', 'volunteer_call', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', 'Civil Beat list names LāHui Foundation as mobilizing cleanup crews and coordinating distribution of donated items. Google Form volunteer signup linked directly.', '{\"observed_label\": \"LāHui Foundation\", \"volunteer_signup_url\": \"https://docs.google.com/forms/d/e/1FAIpQLScRG9aOSQlWzzLK6_Bn_KW32PrM3tUyRSEAMSAA_qFaWf7PcQ/viewform\", \"mentioned_location\": \"North Shore, Oʿahu\", \"public_notes\": \"Mobilizing cleanup crews. Also accepting recovery supplies (no household items) at Kahuku Elementary School 10am-4pm.\"}'::jsonb, 'Oʿahu', 'North Shore', NULL, 'LāHui Foundation – Flood Cleanup Volunteer Signup', 'volunteer_coordination', 'active', 'medium', 88, '2026-03-20T00:00:00-10:00', false, NULL, 'update_help_hub', ARRAY['lahui-foundation', 'volunteer-coordination', 'cleanup', 'north-shore', 'oahu', 'kona-low-2026']::text[])\n  ON CONFLICT (external_id) DO UPDATE SET source_external_id = EXCLUDED.source_external_id, title = EXCLUDED.title, signal_type = EXCLUDED.signal_type, raw_url = EXCLUDED.raw_url, raw_text_summary = EXCLUDED.raw_text_summary, raw_payload = EXCLUDED.raw_payload, island = EXCLUDED.island, area = EXCLUDED.area, neighborhood = EXCLUDED.neighborhood, derived_resource_name = EXCLUDED.derived_resource_name, derived_resource_type = EXCLUDED.derived_resource_type, derived_status = EXCLUDED.derived_status, confidence = EXCLUDED.confidence, freshness_score = EXCLUDED.freshness_score, last_observed_at = EXCLUDED.last_observed_at, needs_review = EXCLUDED.needs_review, review_reason = EXCLUDED.review_reason, suggested_action = EXCLUDED.suggested_action, tags = EXCLUDED.tags;\nINSERT INTO source_signals (external_id, source_external_id, title, signal_type, raw_url, raw_text_summary, raw_payload, island, area, neighborhood, derived_resource_name, derived_resource_type, derived_status, confidence, freshness_score, last_observed_at, needs_review, review_reason, suggested_action, tags) VALUES ('sig-civilbeat-lahui-foundation-donation-dropoff', 'src-civilbeat-oahu-flood-donate-list', 'LāHui Foundation – Recovery Supply Drop-Off at Kahuku Elementary', 'donation_drive', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', 'LāHui Foundation accepting flood recovery supplies at Kahuku Elementary School, 10am-4pm. Recovery items only, no household goods.', '{\"observed_label\": \"LāHui Foundation – donation drop-off\", \"address\": \"56-170 Pualalea St, Kahuku, HI 96731\", \"hours\": \"10:00am – 4:00pm\", \"restrictions\": \"Recovery supplies only. No household items.\", \"donation_facebook_url\": \"https://www.facebook.com/lahuifoundation/posts/pfbid037YusH2EAuUgXAW3ZxkPPFZTLSwm5rLuFbrE5nh7hD65ss8V4x4R8234EBYidxaB5l\"}'::jsonb, 'Oʿahu', 'North Shore', 'Kahuku', 'LāHui Foundation – Recovery Supply Drop-Off, Kahuku Elementary', 'donation_dropoff', 'active', 'medium', 88, '2026-03-20T00:00:00-10:00', false, NULL, 'update_help_hub', ARRAY['lahui-foundation', 'donation-dropoff', 'north-shore', 'kahuku', 'oahu', 'kona-low-2026']::text[])\n  ON CONFLICT (external_id) DO UPDATE SET source_external_id = EXCLUDED.source_external_id, title = EXCLUDED.title, signal_type = EXCLUDED.signal_type, raw_url = EXCLUDED.raw_url, raw_text_summary = EXCLUDED.raw_text_summary, raw_payload = EXCLUDED.raw_payload, island = EXCLUDED.island, area = EXCLUDED.area, neighborhood = EXCLUDED.neighborhood, derived_resource_name = EXCLUDED.derived_resource_name, derived_resource_type = EXCLUDED.derived_resource_type, derived_status = EXCLUDED.derived_status, confidence = EXCLUDED.confidence, freshness_score = EXCLUDED.freshness_score, last_observed_at = EXCLUDED.last_observed_at, needs_review = EXCLUDED.needs_review, review_reason = EXCLUDED.review_reason, suggested_action = EXCLUDED.suggested_action, tags = EXCLUDED.tags;\nINSERT INTO source_signals (external_id, source_external_id, title, signal_type, raw_url, raw_text_summary, raw_payload, island, area, neighborhood, derived_resource_name, derived_resource_type, derived_status, confidence, freshness_score, last_observed_at, needs_review, review_reason, suggested_action, tags) VALUES ('sig-civilbeat-hawaii-foodbank-volunteer', 'src-civilbeat-oahu-flood-donate-list', 'Hawaiʻi Food Bank – Volunteer Signup for Food Distribution', 'volunteer_call', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', 'Civil Beat list links Hawaiʻi Food Bank volunteer signup for food distribution operations supporting flood-impacted families.', '{\"observed_label\": \"Hawaiʻi Food Bank – volunteer\", \"volunteer_url\": \"https://hawaiifoodbank.org/get-involved/volunteer/\", \"public_notes\": \"Food distribution supporting Kona low flood-impacted families. Volunteer for distribution operations.\"}'::jsonb, 'Oʿahu', NULL, NULL, 'Hawaiʻi Foodbank – Volunteer Coordination', 'volunteer_coordination', 'active', 'high', 90, '2026-03-20T00:00:00-10:00', false, NULL, 'update_help_hub', ARRAY['hawaii-foodbank', 'volunteer-coordination', 'food-distribution', 'oahu', 'kona-low-2026']::text[])\n  ON CONFLICT (external_id) DO UPDATE SET source_external_id = EXCLUDED.source_external_id, title = EXCLUDED.title, signal_type = EXCLUDED.signal_type, raw_url = EXCLUDED.raw_url, raw_text_summary = EXCLUDED.raw_text_summary, raw_payload = EXCLUDED.raw_payload, island = EXCLUDED.island, area = EXCLUDED.area, neighborhood = EXCLUDED.neighborhood, derived_resource_name = EXCLUDED.derived_resource_name, derived_resource_type = EXCLUDED.derived_resource_type, derived_status = EXCLUDED.derived_status, confidence = EXCLUDED.confidence, freshness_score = EXCLUDED.freshness_score, last_observed_at = EXCLUDED.last_observed_at, needs_review = EXCLUDED.needs_review, review_reason = EXCLUDED.review_reason, suggested_action = EXCLUDED.suggested_action, tags = EXCLUDED.tags;\nINSERT INTO source_signals (external_id, source_external_id, title, signal_type, raw_url, raw_text_summary, raw_payload, island, area, neighborhood, derived_resource_name, derived_resource_type, derived_status, confidence, freshness_score, last_observed_at, needs_review, review_reason, suggested_action, tags) VALUES ('sig-civilbeat-red-cross-volunteer', 'src-civilbeat-oahu-flood-donate-list', 'American Red Cross – Volunteer Signup for Hawaiʻi Storm Response', 'volunteer_call', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', 'Civil Beat list links Red Cross volunteer form for Hawaiʻi storm response. Direct signup URL provided.', '{\"observed_label\": \"American Red Cross – volunteer\", \"volunteer_url\": \"https://volunteerconnection.redcross.org/?nd=vms_public_form&form_id=16352\", \"public_notes\": \"Seeking volunteers to assist in Hawaiʻi storm response operations.\"}'::jsonb, 'Statewide', NULL, NULL, 'American Red Cross – Hawaiʻi Storm Response Volunteer Signup', 'volunteer_coordination', 'active', 'high', 90, '2026-03-20T00:00:00-10:00', false, NULL, 'update_help_hub', ARRAY['red-cross', 'volunteer-coordination', 'statewide', 'oahu', 'kona-low-2026']::text[])\n  ON CONFLICT (external_id) DO UPDATE SET source_external_id = EXCLUDED.source_external_id, title = EXCLUDED.title, signal_type = EXCLUDED.signal_type, raw_url = EXCLUDED.raw_url, raw_text_summary = EXCLUDED.raw_text_summary, raw_payload = EXCLUDED.raw_payload, island = EXCLUDED.island, area = EXCLUDED.area, neighborhood = EXCLUDED.neighborhood, derived_resource_name = EXCLUDED.derived_resource_name, derived_resource_type = EXCLUDED.derived_resource_type, derived_status = EXCLUDED.derived_status, confidence = EXCLUDED.confidence, freshness_score = EXCLUDED.freshness_score, last_observed_at = EXCLUDED.last_observed_at, needs_review = EXCLUDED.needs_review, review_reason = EXCLUDED.review_reason, suggested_action = EXCLUDED.suggested_action, tags = EXCLUDED.tags;\nINSERT INTO source_signals (external_id, source_external_id, title, signal_type, raw_url, raw_text_summary, raw_payload, island, area, neighborhood, derived_resource_name, derived_resource_type, derived_status, confidence, freshness_score, last_observed_at, needs_review, review_reason, suggested_action, tags) VALUES ('sig-civilbeat-aina-momona-looi-restoration', 'src-civilbeat-oahu-flood-donate-list', 'ʻĀina Momona – Loʻi Restoration Donations, Kāneʻohe', 'donation_drive', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', 'ʻĀina Momona is restoring loʻi at its Aloha ʻĀina Health and Learning Center in Kāneʻohe, damaged by flooding. Accepting donations via ActBlue.', '{\"observed_label\": \"ʻĀina Momona\", \"donation_url\": \"https://secure.actblue.com/donate/aahlc\", \"mentioned_location\": \"Kāneʻohe, Oʿahu\", \"public_notes\": \"Restoring flood-damaged loʻi at Aloha ʻĀina Health and Learning Center.\"}'::jsonb, 'Oʿahu', 'Windward', 'Kāneʻohe', 'ʻĀina Momona – Loʻi Restoration, Kāneʻohe', 'other', 'active', 'medium', 85, '2026-03-20T00:00:00-10:00', false, NULL, 'create_need_summary', ARRAY['aina-momona', 'kaneohe', 'windward', 'oahu', 'looi', 'restoration', 'donations', 'kona-low-2026']::text[])\n  ON CONFLICT (external_id) DO UPDATE SET source_external_id = EXCLUDED.source_external_id, title = EXCLUDED.title, signal_type = EXCLUDED.signal_type, raw_url = EXCLUDED.raw_url, raw_text_summary = EXCLUDED.raw_text_summary, raw_payload = EXCLUDED.raw_payload, island = EXCLUDED.island, area = EXCLUDED.area, neighborhood = EXCLUDED.neighborhood, derived_resource_name = EXCLUDED.derived_resource_name, derived_resource_type = EXCLUDED.derived_resource_type, derived_status = EXCLUDED.derived_status, confidence = EXCLUDED.confidence, freshness_score = EXCLUDED.freshness_score, last_observed_at = EXCLUDED.last_observed_at, needs_review = EXCLUDED.needs_review, review_reason = EXCLUDED.review_reason, suggested_action = EXCLUDED.suggested_action, tags = EXCLUDED.tags;\nINSERT INTO source_signals (external_id, source_external_id, title, signal_type, raw_url, raw_text_summary, raw_payload, island, area, neighborhood, derived_resource_name, derived_resource_type, derived_status, confidence, freshness_score, last_observed_at, needs_review, review_reason, suggested_action, tags) VALUES ('sig-civilbeat-hawaii-community-foundation-fund', 'src-civilbeat-oahu-flood-donate-list', 'Hawaiʻi Community Foundation – Stronger Hawaiʻi Fund (Donations)', 'donation_drive', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', 'Civil Beat lists Hawaiʻi Community Foundation Stronger Hawaiʻi Fund as accepting donations for statewide disaster relief.', '{\"observed_label\": \"Hawaiʻi Community Foundation – Stronger Hawaiʻi Fund\", \"donation_url\": \"https://www.hawaiicommunityfoundation.org/stronger-hawaii-donate\", \"public_notes\": \"Statewide disaster relief fund. Also recommended by HI-EMA.\"}'::jsonb, 'Statewide', NULL, NULL, 'Hawaiʻi Community Foundation – Stronger Hawaiʻi Fund', 'other', 'active', 'high', 90, '2026-03-20T00:00:00-10:00', false, NULL, 'update_help_hub', ARRAY['hawaii-community-foundation', 'stronger-hawaii', 'donations', 'statewide', 'kona-low-2026']::text[])\n  ON CONFLICT (external_id) DO UPDATE SET source_external_id = EXCLUDED.source_external_id, title = EXCLUDED.title, signal_type = EXCLUDED.signal_type, raw_url = EXCLUDED.raw_url, raw_text_summary = EXCLUDED.raw_text_summary, raw_payload = EXCLUDED.raw_payload, island = EXCLUDED.island, area = EXCLUDED.area, neighborhood = EXCLUDED.neighborhood, derived_resource_name = EXCLUDED.derived_resource_name, derived_resource_type = EXCLUDED.derived_resource_type, derived_status = EXCLUDED.derived_status, confidence = EXCLUDED.confidence, freshness_score = EXCLUDED.freshness_score, last_observed_at = EXCLUDED.last_observed_at, needs_review = EXCLUDED.needs_review, review_reason = EXCLUDED.review_reason, suggested_action = EXCLUDED.suggested_action, tags = EXCLUDED.tags;\nINSERT INTO source_signals (external_id, source_external_id, title, signal_type, raw_url, raw_text_summary, raw_payload, island, area, neighborhood, derived_resource_name, derived_resource_type, derived_status, confidence, freshness_score, last_observed_at, needs_review, review_reason, suggested_action, tags) VALUES ('sig-civilbeat-farmers-union-flood-fund', 'src-civilbeat-oahu-flood-donate-list', 'Hawaiʻi Farmers Union United – Hawaiʻi Flood Response Fund', 'donation_drive', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', 'Civil Beat lists Hawaiʻi Farmers Union United flood fund supporting farmers and rural areas. PayPal donation link provided.', '{\"observed_label\": \"Hawaiʻi Farmers Union United – Flood Response Fund\", \"donation_url\": \"https://www.paypal.com/donate/?hosted_button_id=UUJD8RQG4L3L6\", \"public_notes\": \"Created specifically for farmers and rural flood-impacted areas.\"}'::jsonb, 'Statewide', NULL, NULL, 'Hawaiʻi Farmers Union United – Hawaiʻi Flood Response Fund', 'other', 'active', 'medium', 85, '2026-03-20T00:00:00-10:00', false, NULL, 'update_help_hub', ARRAY['farmers-union', 'donations', 'rural', 'statewide', 'kona-low-2026']::text[])\n  ON CONFLICT (external_id) DO UPDATE SET source_external_id = EXCLUDED.source_external_id, title = EXCLUDED.title, signal_type = EXCLUDED.signal_type, raw_url = EXCLUDED.raw_url, raw_text_summary = EXCLUDED.raw_text_summary, raw_payload = EXCLUDED.raw_payload, island = EXCLUDED.island, area = EXCLUDED.area, neighborhood = EXCLUDED.neighborhood, derived_resource_name = EXCLUDED.derived_resource_name, derived_resource_type = EXCLUDED.derived_resource_type, derived_status = EXCLUDED.derived_status, confidence = EXCLUDED.confidence, freshness_score = EXCLUDED.freshness_score, last_observed_at = EXCLUDED.last_observed_at, needs_review = EXCLUDED.needs_review, review_reason = EXCLUDED.review_reason, suggested_action = EXCLUDED.suggested_action, tags = EXCLUDED.tags;\nINSERT INTO source_signals (external_id, source_external_id, title, signal_type, raw_url, raw_text_summary, raw_payload, island, area, neighborhood, derived_resource_name, derived_resource_type, derived_status, confidence, freshness_score, last_observed_at, needs_review, review_reason, suggested_action, tags) VALUES ('sig-civilbeat-aloha-united-way-helpline', 'src-civilbeat-oahu-flood-donate-list', 'Aloha United Way – Flood Victim Help Call and Text Line', 'resource', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', 'Civil Beat lists Aloha United Way as operating a help call and text line for flooding victims. No specific number listed in article.', '{\"observed_label\": \"Aloha United Way – help line\", \"website\": \"https://www.auw.org/donate/\", \"public_notes\": \"Operating help call and text line for flood victims. Specific helpline number not captured in article — check auw.org.\"}'::jsonb, 'Oʿahu', NULL, NULL, 'Aloha United Way – Flood Victim Help Line', 'help_center', 'active', 'medium', 85, '2026-03-20T00:00:00-10:00', true, 'insufficient_detail', 'update_help_hub', ARRAY['aloha-united-way', 'helpline', 'oahu', 'kona-low-2026']::text[])\n  ON CONFLICT (external_id) DO UPDATE SET source_external_id = EXCLUDED.source_external_id, title = EXCLUDED.title, signal_type = EXCLUDED.signal_type, raw_url = EXCLUDED.raw_url, raw_text_summary = EXCLUDED.raw_text_summary, raw_payload = EXCLUDED.raw_payload, island = EXCLUDED.island, area = EXCLUDED.area, neighborhood = EXCLUDED.neighborhood, derived_resource_name = EXCLUDED.derived_resource_name, derived_resource_type = EXCLUDED.derived_resource_type, derived_status = EXCLUDED.derived_status, confidence = EXCLUDED.confidence, freshness_score = EXCLUDED.freshness_score, last_observed_at = EXCLUDED.last_observed_at, needs_review = EXCLUDED.needs_review, review_reason = EXCLUDED.review_reason, suggested_action = EXCLUDED.suggested_action, tags = EXCLUDED.tags;\nINSERT INTO source_signals (external_id, source_external_id, title, signal_type, raw_url, raw_text_summary, raw_payload, island, area, neighborhood, derived_resource_name, derived_resource_type, derived_status, confidence, freshness_score, last_observed_at, needs_review, review_reason, suggested_action, tags) VALUES ('sig-mykailua-fb-community-recovery-signal', 'src-facebook-mykailua', 'My Kailua Facebook – Possible Community Recovery Signal (Unverified)', 'update', 'https://www.facebook.com/mykailua', 'Facebook community page for Kailua, Oʿahu. Direct content not accessible via fetch (robots.txt blocked). Secondary reporting confirms Kailua area (near Kailua Beach Park) experienced sewage-contaminated flooding during March 13-14 first Kona storm. Windward Oʿahu also listed in NWS flash flood areas during second storm March 20-21. Page likely carrying community recovery coordination, local resource tips, and neighborhood-specific updates not covered by official channels.', '{\"observed_label\": \"My Kailua – Facebook community page\", \"fetch_status\": \"blocked_robots_txt\", \"secondary_context\": \"KITV reported sewage backflow flooding near Kailua Beach Park March 13-14. Windward Oahu listed in NWS flash flood zones March 20-21.\", \"public_notes\": \"Manual human monitoring required. No structured post data safely extractable.\"}'::jsonb, 'Oʿahu', 'Windward', 'Kailua', NULL, NULL, 'unknown', 'low', NULL, NULL, true, 'social_source', 'review_only', ARRAY['kailua', 'windward', 'oahu', 'facebook', 'community', 'sewage-flooding', 'kona-low-2026', 'manual-monitor-required']::text[])\n  ON CONFLICT (external_id) DO UPDATE SET source_external_id = EXCLUDED.source_external_id, title = EXCLUDED.title, signal_type = EXCLUDED.signal_type, raw_url = EXCLUDED.raw_url, raw_text_summary = EXCLUDED.raw_text_summary, raw_payload = EXCLUDED.raw_payload, island = EXCLUDED.island, area = EXCLUDED.area, neighborhood = EXCLUDED.neighborhood, derived_resource_name = EXCLUDED.derived_resource_name, derived_resource_type = EXCLUDED.derived_resource_type, derived_status = EXCLUDED.derived_status, confidence = EXCLUDED.confidence, freshness_score = EXCLUDED.freshness_score, last_observed_at = EXCLUDED.last_observed_at, needs_review = EXCLUDED.needs_review, review_reason = EXCLUDED.review_reason, suggested_action = EXCLUDED.suggested_action, tags = EXCLUDED.tags;\nINSERT INTO source_signals (external_id, source_external_id, title, signal_type, raw_url, raw_text_summary, raw_payload, island, area, neighborhood, derived_resource_name, derived_resource_type, derived_status, confidence, freshness_score, last_observed_at, needs_review, review_reason, suggested_action, tags) VALUES ('sig-mykailua-fb-kailua-sewage-flooding-context', 'src-facebook-mykailua', 'Kailua – Sewage Backflow Flooding Near Kailua Beach Park (Corroborated by News)', 'update', 'https://www.kitv.com/news/kailua-homes-flooded-with-sewage-after-heavy-storm/article_8e87d73c-1e5d-436e-b361-4c2ef5d8bc7a.html', 'KITV reported March 14 that Kailua homes near Kailua Beach Park experienced sewage backing up into homes as stormwater overwhelmed drainage systems during first Kona storm. Residents described it as unprecedented flooding. Windward Oʿahu cleanup needs likely ongoing.', '{\"observed_label\": \"Kailua Beach Park area – sewage flooding\", \"corroborating_source\": \"KITV Island News, published March 14 updated March 18 2026\", \"mentioned_location\": \"Kailua Beach Park area, Kailua, Oʿahu\", \"hazard_type\": \"sewage_contamination\", \"public_notes\": \"Flooding overwhelmed drainage and sewage systems. Cleanup and health hazard remediation likely still needed. Not tied to Facebook post — derived from news corroboration.\"}'::jsonb, 'Oʿahu', 'Windward', 'Kailua', NULL, 'cleanup_supply_pickup', 'unknown', 'medium', 60, '2026-03-18T00:00:00-10:00', true, 'needs_human_verification', 'create_need_summary', ARRAY['kailua', 'windward', 'oahu', 'sewage', 'flood-damage', 'cleanup', 'health-hazard', 'kona-low-2026']::text[])\n  ON CONFLICT (external_id) DO UPDATE SET source_external_id = EXCLUDED.source_external_id, title = EXCLUDED.title, signal_type = EXCLUDED.signal_type, raw_url = EXCLUDED.raw_url, raw_text_summary = EXCLUDED.raw_text_summary, raw_payload = EXCLUDED.raw_payload, island = EXCLUDED.island, area = EXCLUDED.area, neighborhood = EXCLUDED.neighborhood, derived_resource_name = EXCLUDED.derived_resource_name, derived_resource_type = EXCLUDED.derived_resource_type, derived_status = EXCLUDED.derived_status, confidence = EXCLUDED.confidence, freshness_score = EXCLUDED.freshness_score, last_observed_at = EXCLUDED.last_observed_at, needs_review = EXCLUDED.needs_review, review_reason = EXCLUDED.review_reason, suggested_action = EXCLUDED.suggested_action, tags = EXCLUDED.tags;",
+    "help_hubs_upsert": "INSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, source_name, source_type, source_url, status, notes, last_verified_at, confidence, tags, visibility_status) VALUES ('hub-salvation-army-relief', 'The Salvation Army – Hawaiʻi Kona Low Disaster Relief', 'Statewide', NULL, NULL, 'help_center', 'Civil Beat list names Salvation Army as conducting disaster relief on Oʿahu and across the state. Links to dedicated Kona low donation campaign.', 'The Salvation Army', 'Civil Beat – LIST: Help Oʿahu Flooding Victims (March 2026)', 'news', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', 'active', 'Conducting disaster relief on Oʿahu and statewide. Financial assistance process being announced per March 21 press conference.', '2026-03-20T00:00:00-10:00', 'high', ARRAY['salvation-army', 'disaster-relief', 'statewide', 'oahu', 'donations', 'kona-low-2026']::text[], 'public')\n  ON CONFLICT (external_id) DO UPDATE SET name = EXCLUDED.name, island = EXCLUDED.island, area = EXCLUDED.area, neighborhood = EXCLUDED.neighborhood, resource_type = EXCLUDED.resource_type, description = EXCLUDED.description, organization = EXCLUDED.organization, source_name = EXCLUDED.source_name, source_type = EXCLUDED.source_type, source_url = EXCLUDED.source_url, status = EXCLUDED.status, notes = EXCLUDED.notes, last_verified_at = EXCLUDED.last_verified_at, confidence = EXCLUDED.confidence, tags = EXCLUDED.tags, visibility_status = EXCLUDED.visibility_status;\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, source_name, source_type, source_url, status, notes, last_verified_at, confidence, tags, visibility_status) VALUES ('hub-lahui-foundation-cleanup-volunteers', 'LāHui Foundation – Flood Cleanup Volunteer Signup', 'Oʿahu', 'North Shore', NULL, 'volunteer_coordination', 'Civil Beat list names LāHui Foundation as mobilizing cleanup crews and coordinating distribution of donated items. Google Form volunteer signup linked directly.', 'LāHui Foundation', 'Civil Beat – LIST: Help Oʿahu Flooding Victims (March 2026)', 'news', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', 'active', 'Mobilizing cleanup crews. Also accepting recovery supplies (no household items) at Kahuku Elementary School 10am-4pm.', '2026-03-20T00:00:00-10:00', 'medium', ARRAY['lahui-foundation', 'volunteer-coordination', 'cleanup', 'north-shore', 'oahu', 'kona-low-2026']::text[], 'review')\n  ON CONFLICT (external_id) DO UPDATE SET name = EXCLUDED.name, island = EXCLUDED.island, area = EXCLUDED.area, neighborhood = EXCLUDED.neighborhood, resource_type = EXCLUDED.resource_type, description = EXCLUDED.description, organization = EXCLUDED.organization, source_name = EXCLUDED.source_name, source_type = EXCLUDED.source_type, source_url = EXCLUDED.source_url, status = EXCLUDED.status, notes = EXCLUDED.notes, last_verified_at = EXCLUDED.last_verified_at, confidence = EXCLUDED.confidence, tags = EXCLUDED.tags, visibility_status = EXCLUDED.visibility_status;\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, source_name, source_type, source_url, status, notes, last_verified_at, confidence, tags, visibility_status) VALUES ('hub-lahui-foundation-donation-dropoff', 'LāHui Foundation – Recovery Supply Drop-Off, Kahuku Elementary', 'Oʿahu', 'North Shore', 'Kahuku', 'donation_dropoff', 'LāHui Foundation accepting flood recovery supplies at Kahuku Elementary School, 10am-4pm. Recovery items only, no household goods.', 'LāHui Foundation', 'Civil Beat – LIST: Help Oʿahu Flooding Victims (March 2026)', 'news', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', 'active', NULL, '2026-03-20T00:00:00-10:00', 'medium', ARRAY['lahui-foundation', 'donation-dropoff', 'north-shore', 'kahuku', 'oahu', 'kona-low-2026']::text[], 'review')\n  ON CONFLICT (external_id) DO UPDATE SET name = EXCLUDED.name, island = EXCLUDED.island, area = EXCLUDED.area, neighborhood = EXCLUDED.neighborhood, resource_type = EXCLUDED.resource_type, description = EXCLUDED.description, organization = EXCLUDED.organization, source_name = EXCLUDED.source_name, source_type = EXCLUDED.source_type, source_url = EXCLUDED.source_url, status = EXCLUDED.status, notes = EXCLUDED.notes, last_verified_at = EXCLUDED.last_verified_at, confidence = EXCLUDED.confidence, tags = EXCLUDED.tags, visibility_status = EXCLUDED.visibility_status;\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, source_name, source_type, source_url, status, notes, last_verified_at, confidence, tags, visibility_status) VALUES ('hub-hawaii-foodbank-volunteer', 'Hawaiʻi Foodbank – Volunteer Coordination', 'Oʿahu', NULL, NULL, 'volunteer_coordination', 'Civil Beat list links Hawaiʻi Food Bank volunteer signup for food distribution operations supporting flood-impacted families.', 'Hawaiʻi Foodbank', 'Civil Beat – LIST: Help Oʿahu Flooding Victims (March 2026)', 'news', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', 'active', 'Food distribution supporting Kona low flood-impacted families. Volunteer for distribution operations.', '2026-03-20T00:00:00-10:00', 'high', ARRAY['hawaii-foodbank', 'volunteer-coordination', 'food-distribution', 'oahu', 'kona-low-2026']::text[], 'public')\n  ON CONFLICT (external_id) DO UPDATE SET name = EXCLUDED.name, island = EXCLUDED.island, area = EXCLUDED.area, neighborhood = EXCLUDED.neighborhood, resource_type = EXCLUDED.resource_type, description = EXCLUDED.description, organization = EXCLUDED.organization, source_name = EXCLUDED.source_name, source_type = EXCLUDED.source_type, source_url = EXCLUDED.source_url, status = EXCLUDED.status, notes = EXCLUDED.notes, last_verified_at = EXCLUDED.last_verified_at, confidence = EXCLUDED.confidence, tags = EXCLUDED.tags, visibility_status = EXCLUDED.visibility_status;\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, source_name, source_type, source_url, status, notes, last_verified_at, confidence, tags, visibility_status) VALUES ('hub-red-cross-volunteer', 'American Red Cross – Hawaiʻi Storm Response Volunteer Signup', 'Statewide', NULL, NULL, 'volunteer_coordination', 'Civil Beat list links Red Cross volunteer form for Hawaiʻi storm response. Direct signup URL provided.', 'American Red Cross', 'Civil Beat – LIST: Help Oʿahu Flooding Victims (March 2026)', 'news', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', 'active', 'Seeking volunteers to assist in Hawaiʻi storm response operations.', '2026-03-20T00:00:00-10:00', 'high', ARRAY['red-cross', 'volunteer-coordination', 'statewide', 'oahu', 'kona-low-2026']::text[], 'public')\n  ON CONFLICT (external_id) DO UPDATE SET name = EXCLUDED.name, island = EXCLUDED.island, area = EXCLUDED.area, neighborhood = EXCLUDED.neighborhood, resource_type = EXCLUDED.resource_type, description = EXCLUDED.description, organization = EXCLUDED.organization, source_name = EXCLUDED.source_name, source_type = EXCLUDED.source_type, source_url = EXCLUDED.source_url, status = EXCLUDED.status, notes = EXCLUDED.notes, last_verified_at = EXCLUDED.last_verified_at, confidence = EXCLUDED.confidence, tags = EXCLUDED.tags, visibility_status = EXCLUDED.visibility_status;\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, source_name, source_type, source_url, status, notes, last_verified_at, confidence, tags, visibility_status) VALUES ('hub-hawaii-community-foundation-fund', 'Hawaiʻi Community Foundation – Stronger Hawaiʻi Fund', 'Statewide', NULL, NULL, 'other', 'Civil Beat lists Hawaiʻi Community Foundation Stronger Hawaiʻi Fund as accepting donations for statewide disaster relief.', 'Hawaiʻi Community Foundation', 'Civil Beat – LIST: Help Oʿahu Flooding Victims (March 2026)', 'news', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', 'active', 'Statewide disaster relief fund. Also recommended by HI-EMA.', '2026-03-20T00:00:00-10:00', 'high', ARRAY['hawaii-community-foundation', 'stronger-hawaii', 'donations', 'statewide', 'kona-low-2026']::text[], 'public')\n  ON CONFLICT (external_id) DO UPDATE SET name = EXCLUDED.name, island = EXCLUDED.island, area = EXCLUDED.area, neighborhood = EXCLUDED.neighborhood, resource_type = EXCLUDED.resource_type, description = EXCLUDED.description, organization = EXCLUDED.organization, source_name = EXCLUDED.source_name, source_type = EXCLUDED.source_type, source_url = EXCLUDED.source_url, status = EXCLUDED.status, notes = EXCLUDED.notes, last_verified_at = EXCLUDED.last_verified_at, confidence = EXCLUDED.confidence, tags = EXCLUDED.tags, visibility_status = EXCLUDED.visibility_status;\nINSERT INTO help_hubs (external_id, name, island, area, neighborhood, resource_type, description, organization, source_name, source_type, source_url, status, notes, last_verified_at, confidence, tags, visibility_status) VALUES ('hub-farmers-union-flood-fund', 'Hawaiʻi Farmers Union United – Hawaiʻi Flood Response Fund', 'Statewide', NULL, NULL, 'other', 'Civil Beat lists Hawaiʻi Farmers Union United flood fund supporting farmers and rural areas. PayPal donation link provided.', 'Hawaiʻi Farmers Union United', 'Civil Beat – LIST: Help Oʿahu Flooding Victims (March 2026)', 'news', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', 'active', 'Created specifically for farmers and rural flood-impacted areas.', '2026-03-20T00:00:00-10:00', 'medium', ARRAY['farmers-union', 'donations', 'rural', 'statewide', 'kona-low-2026']::text[], 'review')\n  ON CONFLICT (external_id) DO UPDATE SET name = EXCLUDED.name, island = EXCLUDED.island, area = EXCLUDED.area, neighborhood = EXCLUDED.neighborhood, resource_type = EXCLUDED.resource_type, description = EXCLUDED.description, organization = EXCLUDED.organization, source_name = EXCLUDED.source_name, source_type = EXCLUDED.source_type, source_url = EXCLUDED.source_url, status = EXCLUDED.status, notes = EXCLUDED.notes, last_verified_at = EXCLUDED.last_verified_at, confidence = EXCLUDED.confidence, tags = EXCLUDED.tags, visibility_status = EXCLUDED.visibility_status;",
+    "public_need_summaries_upsert": "INSERT INTO public_need_summaries (external_id, title, island, area, category, urgency, description, source_name, source_type, source_url, last_verified_at, confidence, tags, visibility_status) VALUES ('need-aina-momona-looi-restoration', 'ʻĀina Momona – Loʻi Restoration Donations, Kāneʻohe', 'Oʿahu', 'Windward', 'donations', 'soon', 'ʻĀina Momona is restoring loʻi at its Aloha ʻĀina Health and Learning Center in Kāneʻohe, damaged by flooding. Accepting donations via ActBlue.', 'Civil Beat – LIST: Help Oʿahu Flooding Victims (March 2026)', 'news', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', '2026-03-20T00:00:00-10:00', 'medium', ARRAY['aina-momona', 'kaneohe', 'windward', 'oahu', 'looi', 'restoration', 'donations', 'kona-low-2026']::text[], 'review')\n  ON CONFLICT (external_id) DO UPDATE SET title = EXCLUDED.title, island = EXCLUDED.island, area = EXCLUDED.area, category = EXCLUDED.category, urgency = EXCLUDED.urgency, description = EXCLUDED.description, source_name = EXCLUDED.source_name, source_type = EXCLUDED.source_type, source_url = EXCLUDED.source_url, last_verified_at = EXCLUDED.last_verified_at, confidence = EXCLUDED.confidence, tags = EXCLUDED.tags, visibility_status = EXCLUDED.visibility_status;",
+    "review_queue_upsert": "INSERT INTO review_queue (external_id, queue_type, source_external_id, source_signal_external_id, title, summary, reason, priority, raw_url, payload, status) VALUES ('rq-civilbeat-aloha-united-way-helpline', 'resource_verification', 'src-civilbeat-oahu-flood-donate-list', 'sig-civilbeat-aloha-united-way-helpline', 'Aloha United Way – Flood Victim Help Call and Text Line', 'Signal identifies Aloha United Way operating a help line for flood victims but no specific phone or text number was captured in the source article. Insufficient detail to publish help_hub automatically. Retrieve contact number from auw.org before creating hub.', 'insufficient_detail — helpline contact number missing from source; cannot create actionable hub record without it', 'medium', 'https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/', '{\"observed_label\": \"Aloha United Way – help line\", \"website\": \"https://www.auw.org/donate/\", \"public_notes\": \"Operating help call and text line for flood victims. Specific helpline number not captured in article — check auw.org.\"}'::jsonb, 'pending')\n  ON CONFLICT (external_id) DO UPDATE SET queue_type = EXCLUDED.queue_type, source_external_id = EXCLUDED.source_external_id, source_signal_external_id = EXCLUDED.source_signal_external_id, title = EXCLUDED.title, summary = EXCLUDED.summary, reason = EXCLUDED.reason, priority = EXCLUDED.priority, raw_url = EXCLUDED.raw_url, payload = EXCLUDED.payload, status = EXCLUDED.status;\nINSERT INTO review_queue (external_id, queue_type, source_external_id, source_signal_external_id, title, summary, reason, priority, raw_url, payload, status) VALUES ('rq-mykailua-fb-community-recovery-signal', 'source_signal_review', 'src-facebook-mykailua', 'sig-mykailua-fb-community-recovery-signal', 'My Kailua Facebook – Possible Community Recovery Signal (Unverified)', 'My Kailua Facebook community page blocked by robots.txt. No post content safely extractable. Secondary context confirms Windward/Kailua flooding during both Kona storms. Page likely carrying neighborhood-specific recovery signal not in official channels. Requires manual human spot-check.', 'social_source; low_confidence; robots_txt_blocked; no structured data extractable — manual monitoring required 1-2x daily during active recovery', 'low', 'https://www.facebook.com/mykailua', '{\"observed_label\": \"My Kailua – Facebook community page\", \"fetch_status\": \"blocked_robots_txt\", \"secondary_context\": \"KITV reported sewage backflow flooding near Kailua Beach Park March 13-14. Windward Oahu listed in NWS flash flood zones March 20-21.\", \"public_notes\": \"Manual human monitoring required. No structured post data safely extractable.\"}'::jsonb, 'pending')\n  ON CONFLICT (external_id) DO UPDATE SET queue_type = EXCLUDED.queue_type, source_external_id = EXCLUDED.source_external_id, source_signal_external_id = EXCLUDED.source_signal_external_id, title = EXCLUDED.title, summary = EXCLUDED.summary, reason = EXCLUDED.reason, priority = EXCLUDED.priority, raw_url = EXCLUDED.raw_url, payload = EXCLUDED.payload, status = EXCLUDED.status;\nINSERT INTO review_queue (external_id, queue_type, source_external_id, source_signal_external_id, title, summary, reason, priority, raw_url, payload, status) VALUES ('rq-mykailua-fb-kailua-sewage-flooding-context', 'need_summary_review', 'src-facebook-mykailua', 'sig-mykailua-fb-kailua-sewage-flooding-context', 'Kailua – Sewage Backflow Flooding Near Kailua Beach Park (Corroborated by News)', 'KITV-corroborated report of sewage backflow flooding near Kailua Beach Park during March 13-14 Kona storm. Signal has medium confidence from news corroboration but is registered under the social (Facebook) source entry. Consider: (1) re-registering the KITV article as its own source_registry entry, (2) creating a need_summary for Kailua sewage cleanup and health hazard remediation needs, (3) verifying whether cleanup resources have already been deployed.', 'social_source_registry despite news corroboration; needs_human_verification; potential reclassification to news source to enable auto-publish; sewage hazard detail warrants careful handling', 'medium', 'https://www.kitv.com/news/kailua-homes-flooded-with-sewage-after-heavy-storm/article_8e87d73c-1e5d-436e-b361-4c2ef5d8bc7a.html', '{\"observed_label\": \"Kailua Beach Park area – sewage flooding\", \"corroborating_source\": \"KITV Island News, published March 14 updated March 18 2026\", \"mentioned_location\": \"Kailua Beach Park area, Kailua, Oʿahu\", \"hazard_type\": \"sewage_contamination\", \"public_notes\": \"Flooding overwhelmed drainage and sewage systems. Cleanup and health hazard remediation likely still needed. Not tied to Facebook post — derived from news corroboration.\"}'::jsonb, 'pending')\n  ON CONFLICT (external_id) DO UPDATE SET queue_type = EXCLUDED.queue_type, source_external_id = EXCLUDED.source_external_id, source_signal_external_id = EXCLUDED.source_signal_external_id, title = EXCLUDED.title, summary = EXCLUDED.summary, reason = EXCLUDED.reason, priority = EXCLUDED.priority, raw_url = EXCLUDED.raw_url, payload = EXCLUDED.payload, status = EXCLUDED.status;"
+  },
+  "seed_json": {
+    "source_registry": [
+      {
+        "external_id": "src-civilbeat-oahu-flood-donate-list",
+        "name": "Civil Beat – LIST: Help Oʿahu Flooding Victims (March 2026)",
+        "source_type": "news",
+        "platform": "website",
+        "base_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "organization": "Honolulu Civil Beat",
+        "trust_level": "high",
+        "update_frequency": "ad_hoc",
+        "strategy": "redirect",
+        "is_active": true,
+        "notes": "Nonprofit investigative newsroom. Article is a curated, updated list of vetted relief orgs and their direct links. Article author noted 'This story will be updated.' Treat as redirect — follow outbound org links for authoritative signal rather than mirroring Civil Beat text. High value as a living aggregator during active event."
+      },
+      {
+        "external_id": "src-facebook-mykailua",
+        "name": "My Kailua – Facebook Community Page",
+        "source_type": "social",
+        "platform": "facebook",
+        "base_url": "https://www.facebook.com/mykailua",
+        "organization": null,
+        "trust_level": "low",
+        "update_frequency": "ad_hoc",
+        "strategy": "monitor",
+        "is_active": true,
+        "notes": "Local Kailua community Facebook page. Direct fetch blocked by robots.txt. Not fetchable programmatically — requires manual human monitoring. Kailua and surrounding Windward communities experienced flooding and sewage backflow during both Kona storms (March 13-14 and March 20). Page is likely carrying community-level recovery signal, volunteer coordination, and local resource sharing. All signals derived from this source must be flagged needs_review = true and treated as social_source. Do not auto-publish. Recommend manual spot-check 1-2x per day during active recovery period."
+      }
+    ],
+    "source_signals": [
+      {
+        "external_id": "sig-civilbeat-salvation-army-relief",
+        "source_external_id": "src-civilbeat-oahu-flood-donate-list",
+        "title": "The Salvation Army – Oʿahu and Statewide Disaster Relief",
+        "signal_type": "resource",
+        "raw_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "raw_text_summary": "Civil Beat list names Salvation Army as conducting disaster relief on Oʿahu and across the state. Links to dedicated Kona low donation campaign.",
+        "raw_payload": {
+          "observed_label": "The Salvation Army",
+          "mentioned_org": "The Salvation Army",
+          "donation_url": "https://fundraise.salvationarmyhawaii.org/campaign/779616/donate",
+          "public_notes": "Conducting disaster relief on Oʿahu and statewide. Financial assistance process being announced per March 21 press conference."
+        },
+        "island": "Statewide",
+        "area": null,
+        "neighborhood": null,
+        "derived_resource_name": "The Salvation Army – Hawaiʻi Kona Low Disaster Relief",
+        "derived_resource_type": "help_center",
+        "derived_status": "active",
+        "confidence": "high",
+        "freshness_score": 90,
+        "last_observed_at": "2026-03-20T00:00:00-10:00",
+        "needs_review": false,
+        "review_reason": null,
+        "suggested_action": "update_help_hub",
+        "tags": [
+          "salvation-army",
+          "disaster-relief",
+          "statewide",
+          "oahu",
+          "donations",
+          "kona-low-2026"
+        ]
+      },
+      {
+        "external_id": "sig-civilbeat-lahui-foundation-cleanup-volunteers",
+        "source_external_id": "src-civilbeat-oahu-flood-donate-list",
+        "title": "LāHui Foundation – Cleanup Crew Volunteer Signup",
+        "signal_type": "volunteer_call",
+        "raw_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "raw_text_summary": "Civil Beat list names LāHui Foundation as mobilizing cleanup crews and coordinating distribution of donated items. Google Form volunteer signup linked directly.",
+        "raw_payload": {
+          "observed_label": "LāHui Foundation",
+          "volunteer_signup_url": "https://docs.google.com/forms/d/e/1FAIpQLScRG9aOSQlWzzLK6_Bn_KW32PrM3tUyRSEAMSAA_qFaWf7PcQ/viewform",
+          "mentioned_location": "North Shore, Oʿahu",
+          "public_notes": "Mobilizing cleanup crews. Also accepting recovery supplies (no household items) at Kahuku Elementary School 10am-4pm."
+        },
+        "island": "Oʿahu",
+        "area": "North Shore",
+        "neighborhood": null,
+        "derived_resource_name": "LāHui Foundation – Flood Cleanup Volunteer Signup",
+        "derived_resource_type": "volunteer_coordination",
+        "derived_status": "active",
+        "confidence": "medium",
+        "freshness_score": 88,
+        "last_observed_at": "2026-03-20T00:00:00-10:00",
+        "needs_review": false,
+        "review_reason": null,
+        "suggested_action": "update_help_hub",
+        "tags": [
+          "lahui-foundation",
+          "volunteer-coordination",
+          "cleanup",
+          "north-shore",
+          "oahu",
+          "kona-low-2026"
+        ]
+      },
+      {
+        "external_id": "sig-civilbeat-lahui-foundation-donation-dropoff",
+        "source_external_id": "src-civilbeat-oahu-flood-donate-list",
+        "title": "LāHui Foundation – Recovery Supply Drop-Off at Kahuku Elementary",
+        "signal_type": "donation_drive",
+        "raw_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "raw_text_summary": "LāHui Foundation accepting flood recovery supplies at Kahuku Elementary School, 10am-4pm. Recovery items only, no household goods.",
+        "raw_payload": {
+          "observed_label": "LāHui Foundation – donation drop-off",
+          "address": "56-170 Pualalea St, Kahuku, HI 96731",
+          "hours": "10:00am – 4:00pm",
+          "restrictions": "Recovery supplies only. No household items.",
+          "donation_facebook_url": "https://www.facebook.com/lahuifoundation/posts/pfbid037YusH2EAuUgXAW3ZxkPPFZTLSwm5rLuFbrE5nh7hD65ss8V4x4R8234EBYidxaB5l"
+        },
+        "island": "Oʿahu",
+        "area": "North Shore",
+        "neighborhood": "Kahuku",
+        "derived_resource_name": "LāHui Foundation – Recovery Supply Drop-Off, Kahuku Elementary",
+        "derived_resource_type": "donation_dropoff",
+        "derived_status": "active",
+        "confidence": "medium",
+        "freshness_score": 88,
+        "last_observed_at": "2026-03-20T00:00:00-10:00",
+        "needs_review": false,
+        "review_reason": null,
+        "suggested_action": "update_help_hub",
+        "tags": [
+          "lahui-foundation",
+          "donation-dropoff",
+          "north-shore",
+          "kahuku",
+          "oahu",
+          "kona-low-2026"
+        ]
+      },
+      {
+        "external_id": "sig-civilbeat-hawaii-foodbank-volunteer",
+        "source_external_id": "src-civilbeat-oahu-flood-donate-list",
+        "title": "Hawaiʻi Food Bank – Volunteer Signup for Food Distribution",
+        "signal_type": "volunteer_call",
+        "raw_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "raw_text_summary": "Civil Beat list links Hawaiʻi Food Bank volunteer signup for food distribution operations supporting flood-impacted families.",
+        "raw_payload": {
+          "observed_label": "Hawaiʻi Food Bank – volunteer",
+          "volunteer_url": "https://hawaiifoodbank.org/get-involved/volunteer/",
+          "public_notes": "Food distribution supporting Kona low flood-impacted families. Volunteer for distribution operations."
+        },
+        "island": "Oʿahu",
+        "area": null,
+        "neighborhood": null,
+        "derived_resource_name": "Hawaiʻi Foodbank – Volunteer Coordination",
+        "derived_resource_type": "volunteer_coordination",
+        "derived_status": "active",
+        "confidence": "high",
+        "freshness_score": 90,
+        "last_observed_at": "2026-03-20T00:00:00-10:00",
+        "needs_review": false,
+        "review_reason": null,
+        "suggested_action": "update_help_hub",
+        "tags": [
+          "hawaii-foodbank",
+          "volunteer-coordination",
+          "food-distribution",
+          "oahu",
+          "kona-low-2026"
+        ]
+      },
+      {
+        "external_id": "sig-civilbeat-red-cross-volunteer",
+        "source_external_id": "src-civilbeat-oahu-flood-donate-list",
+        "title": "American Red Cross – Volunteer Signup for Hawaiʻi Storm Response",
+        "signal_type": "volunteer_call",
+        "raw_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "raw_text_summary": "Civil Beat list links Red Cross volunteer form for Hawaiʻi storm response. Direct signup URL provided.",
+        "raw_payload": {
+          "observed_label": "American Red Cross – volunteer",
+          "volunteer_url": "https://volunteerconnection.redcross.org/?nd=vms_public_form&form_id=16352",
+          "public_notes": "Seeking volunteers to assist in Hawaiʻi storm response operations."
+        },
+        "island": "Statewide",
+        "area": null,
+        "neighborhood": null,
+        "derived_resource_name": "American Red Cross – Hawaiʻi Storm Response Volunteer Signup",
+        "derived_resource_type": "volunteer_coordination",
+        "derived_status": "active",
+        "confidence": "high",
+        "freshness_score": 90,
+        "last_observed_at": "2026-03-20T00:00:00-10:00",
+        "needs_review": false,
+        "review_reason": null,
+        "suggested_action": "update_help_hub",
+        "tags": [
+          "red-cross",
+          "volunteer-coordination",
+          "statewide",
+          "oahu",
+          "kona-low-2026"
+        ]
+      },
+      {
+        "external_id": "sig-civilbeat-aina-momona-looi-restoration",
+        "source_external_id": "src-civilbeat-oahu-flood-donate-list",
+        "title": "ʻĀina Momona – Loʻi Restoration Donations, Kāneʻohe",
+        "signal_type": "donation_drive",
+        "raw_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "raw_text_summary": "ʻĀina Momona is restoring loʻi at its Aloha ʻĀina Health and Learning Center in Kāneʻohe, damaged by flooding. Accepting donations via ActBlue.",
+        "raw_payload": {
+          "observed_label": "ʻĀina Momona",
+          "donation_url": "https://secure.actblue.com/donate/aahlc",
+          "mentioned_location": "Kāneʻohe, Oʿahu",
+          "public_notes": "Restoring flood-damaged loʻi at Aloha ʻĀina Health and Learning Center."
+        },
+        "island": "Oʿahu",
+        "area": "Windward",
+        "neighborhood": "Kāneʻohe",
+        "derived_resource_name": "ʻĀina Momona – Loʻi Restoration, Kāneʻohe",
+        "derived_resource_type": "other",
+        "derived_status": "active",
+        "confidence": "medium",
+        "freshness_score": 85,
+        "last_observed_at": "2026-03-20T00:00:00-10:00",
+        "needs_review": false,
+        "review_reason": null,
+        "suggested_action": "create_need_summary",
+        "tags": [
+          "aina-momona",
+          "kaneohe",
+          "windward",
+          "oahu",
+          "looi",
+          "restoration",
+          "donations",
+          "kona-low-2026"
+        ]
+      },
+      {
+        "external_id": "sig-civilbeat-hawaii-community-foundation-fund",
+        "source_external_id": "src-civilbeat-oahu-flood-donate-list",
+        "title": "Hawaiʻi Community Foundation – Stronger Hawaiʻi Fund (Donations)",
+        "signal_type": "donation_drive",
+        "raw_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "raw_text_summary": "Civil Beat lists Hawaiʻi Community Foundation Stronger Hawaiʻi Fund as accepting donations for statewide disaster relief.",
+        "raw_payload": {
+          "observed_label": "Hawaiʻi Community Foundation – Stronger Hawaiʻi Fund",
+          "donation_url": "https://www.hawaiicommunityfoundation.org/stronger-hawaii-donate",
+          "public_notes": "Statewide disaster relief fund. Also recommended by HI-EMA."
+        },
+        "island": "Statewide",
+        "area": null,
+        "neighborhood": null,
+        "derived_resource_name": "Hawaiʻi Community Foundation – Stronger Hawaiʻi Fund",
+        "derived_resource_type": "other",
+        "derived_status": "active",
+        "confidence": "high",
+        "freshness_score": 90,
+        "last_observed_at": "2026-03-20T00:00:00-10:00",
+        "needs_review": false,
+        "review_reason": null,
+        "suggested_action": "update_help_hub",
+        "tags": [
+          "hawaii-community-foundation",
+          "stronger-hawaii",
+          "donations",
+          "statewide",
+          "kona-low-2026"
+        ]
+      },
+      {
+        "external_id": "sig-civilbeat-farmers-union-flood-fund",
+        "source_external_id": "src-civilbeat-oahu-flood-donate-list",
+        "title": "Hawaiʻi Farmers Union United – Hawaiʻi Flood Response Fund",
+        "signal_type": "donation_drive",
+        "raw_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "raw_text_summary": "Civil Beat lists Hawaiʻi Farmers Union United flood fund supporting farmers and rural areas. PayPal donation link provided.",
+        "raw_payload": {
+          "observed_label": "Hawaiʻi Farmers Union United – Flood Response Fund",
+          "donation_url": "https://www.paypal.com/donate/?hosted_button_id=UUJD8RQG4L3L6",
+          "public_notes": "Created specifically for farmers and rural flood-impacted areas."
+        },
+        "island": "Statewide",
+        "area": null,
+        "neighborhood": null,
+        "derived_resource_name": "Hawaiʻi Farmers Union United – Hawaiʻi Flood Response Fund",
+        "derived_resource_type": "other",
+        "derived_status": "active",
+        "confidence": "medium",
+        "freshness_score": 85,
+        "last_observed_at": "2026-03-20T00:00:00-10:00",
+        "needs_review": false,
+        "review_reason": null,
+        "suggested_action": "update_help_hub",
+        "tags": [
+          "farmers-union",
+          "donations",
+          "rural",
+          "statewide",
+          "kona-low-2026"
+        ]
+      },
+      {
+        "external_id": "sig-civilbeat-aloha-united-way-helpline",
+        "source_external_id": "src-civilbeat-oahu-flood-donate-list",
+        "title": "Aloha United Way – Flood Victim Help Call and Text Line",
+        "signal_type": "resource",
+        "raw_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "raw_text_summary": "Civil Beat lists Aloha United Way as operating a help call and text line for flooding victims. No specific number listed in article.",
+        "raw_payload": {
+          "observed_label": "Aloha United Way – help line",
+          "website": "https://www.auw.org/donate/",
+          "public_notes": "Operating help call and text line for flood victims. Specific helpline number not captured in article — check auw.org."
+        },
+        "island": "Oʿahu",
+        "area": null,
+        "neighborhood": null,
+        "derived_resource_name": "Aloha United Way – Flood Victim Help Line",
+        "derived_resource_type": "help_center",
+        "derived_status": "active",
+        "confidence": "medium",
+        "freshness_score": 85,
+        "last_observed_at": "2026-03-20T00:00:00-10:00",
+        "needs_review": true,
+        "review_reason": "insufficient_detail",
+        "suggested_action": "update_help_hub",
+        "tags": [
+          "aloha-united-way",
+          "helpline",
+          "oahu",
+          "kona-low-2026"
+        ]
+      },
+      {
+        "external_id": "sig-mykailua-fb-community-recovery-signal",
+        "source_external_id": "src-facebook-mykailua",
+        "title": "My Kailua Facebook – Possible Community Recovery Signal (Unverified)",
+        "signal_type": "update",
+        "raw_url": "https://www.facebook.com/mykailua",
+        "raw_text_summary": "Facebook community page for Kailua, Oʿahu. Direct content not accessible via fetch (robots.txt blocked). Secondary reporting confirms Kailua area (near Kailua Beach Park) experienced sewage-contaminated flooding during March 13-14 first Kona storm. Windward Oʿahu also listed in NWS flash flood areas during second storm March 20-21. Page likely carrying community recovery coordination, local resource tips, and neighborhood-specific updates not covered by official channels.",
+        "raw_payload": {
+          "observed_label": "My Kailua – Facebook community page",
+          "fetch_status": "blocked_robots_txt",
+          "secondary_context": "KITV reported sewage backflow flooding near Kailua Beach Park March 13-14. Windward Oahu listed in NWS flash flood zones March 20-21.",
+          "public_notes": "Manual human monitoring required. No structured post data safely extractable."
+        },
+        "island": "Oʿahu",
+        "area": "Windward",
+        "neighborhood": "Kailua",
+        "derived_resource_name": null,
+        "derived_resource_type": null,
+        "derived_status": "unknown",
+        "confidence": "low",
+        "freshness_score": null,
+        "last_observed_at": null,
+        "needs_review": true,
+        "review_reason": "social_source",
+        "suggested_action": "review_only",
+        "tags": [
+          "kailua",
+          "windward",
+          "oahu",
+          "facebook",
+          "community",
+          "sewage-flooding",
+          "kona-low-2026",
+          "manual-monitor-required"
+        ]
+      },
+      {
+        "external_id": "sig-mykailua-fb-kailua-sewage-flooding-context",
+        "source_external_id": "src-facebook-mykailua",
+        "title": "Kailua – Sewage Backflow Flooding Near Kailua Beach Park (Corroborated by News)",
+        "signal_type": "update",
+        "raw_url": "https://www.kitv.com/news/kailua-homes-flooded-with-sewage-after-heavy-storm/article_8e87d73c-1e5d-436e-b361-4c2ef5d8bc7a.html",
+        "raw_text_summary": "KITV reported March 14 that Kailua homes near Kailua Beach Park experienced sewage backing up into homes as stormwater overwhelmed drainage systems during first Kona storm. Residents described it as unprecedented flooding. Windward Oʿahu cleanup needs likely ongoing.",
+        "raw_payload": {
+          "observed_label": "Kailua Beach Park area – sewage flooding",
+          "corroborating_source": "KITV Island News, published March 14 updated March 18 2026",
+          "mentioned_location": "Kailua Beach Park area, Kailua, Oʿahu",
+          "hazard_type": "sewage_contamination",
+          "public_notes": "Flooding overwhelmed drainage and sewage systems. Cleanup and health hazard remediation likely still needed. Not tied to Facebook post — derived from news corroboration."
+        },
+        "island": "Oʿahu",
+        "area": "Windward",
+        "neighborhood": "Kailua",
+        "derived_resource_name": null,
+        "derived_resource_type": "cleanup_supply_pickup",
+        "derived_status": "unknown",
+        "confidence": "medium",
+        "freshness_score": 60,
+        "last_observed_at": "2026-03-18T00:00:00-10:00",
+        "needs_review": true,
+        "review_reason": "needs_human_verification",
+        "suggested_action": "create_need_summary",
+        "tags": [
+          "kailua",
+          "windward",
+          "oahu",
+          "sewage",
+          "flood-damage",
+          "cleanup",
+          "health-hazard",
+          "kona-low-2026"
+        ]
+      }
+    ],
+    "help_hubs": [
+      {
+        "external_id": "hub-salvation-army-relief",
+        "name": "The Salvation Army – Hawaiʻi Kona Low Disaster Relief",
+        "island": "Statewide",
+        "area": null,
+        "neighborhood": null,
+        "resource_type": "help_center",
+        "description": "Civil Beat list names Salvation Army as conducting disaster relief on Oʿahu and across the state. Links to dedicated Kona low donation campaign.",
+        "organization": "The Salvation Army",
+        "source_name": "Civil Beat – LIST: Help Oʿahu Flooding Victims (March 2026)",
+        "source_type": "news",
+        "source_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "status": "active",
+        "notes": "Conducting disaster relief on Oʿahu and statewide. Financial assistance process being announced per March 21 press conference.",
+        "last_verified_at": "2026-03-20T00:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "salvation-army",
+          "disaster-relief",
+          "statewide",
+          "oahu",
+          "donations",
+          "kona-low-2026"
+        ],
+        "visibility_status": "public"
+      },
+      {
+        "external_id": "hub-lahui-foundation-cleanup-volunteers",
+        "name": "LāHui Foundation – Flood Cleanup Volunteer Signup",
+        "island": "Oʿahu",
+        "area": "North Shore",
+        "neighborhood": null,
+        "resource_type": "volunteer_coordination",
+        "description": "Civil Beat list names LāHui Foundation as mobilizing cleanup crews and coordinating distribution of donated items. Google Form volunteer signup linked directly.",
+        "organization": "LāHui Foundation",
+        "source_name": "Civil Beat – LIST: Help Oʿahu Flooding Victims (March 2026)",
+        "source_type": "news",
+        "source_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "status": "active",
+        "notes": "Mobilizing cleanup crews. Also accepting recovery supplies (no household items) at Kahuku Elementary School 10am-4pm.",
+        "last_verified_at": "2026-03-20T00:00:00-10:00",
+        "confidence": "medium",
+        "tags": [
+          "lahui-foundation",
+          "volunteer-coordination",
+          "cleanup",
+          "north-shore",
+          "oahu",
+          "kona-low-2026"
+        ],
+        "visibility_status": "review"
+      },
+      {
+        "external_id": "hub-lahui-foundation-donation-dropoff",
+        "name": "LāHui Foundation – Recovery Supply Drop-Off, Kahuku Elementary",
+        "island": "Oʿahu",
+        "area": "North Shore",
+        "neighborhood": "Kahuku",
+        "resource_type": "donation_dropoff",
+        "description": "LāHui Foundation accepting flood recovery supplies at Kahuku Elementary School, 10am-4pm. Recovery items only, no household goods.",
+        "organization": "LāHui Foundation",
+        "source_name": "Civil Beat – LIST: Help Oʿahu Flooding Victims (March 2026)",
+        "source_type": "news",
+        "source_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "status": "active",
+        "notes": null,
+        "last_verified_at": "2026-03-20T00:00:00-10:00",
+        "confidence": "medium",
+        "tags": [
+          "lahui-foundation",
+          "donation-dropoff",
+          "north-shore",
+          "kahuku",
+          "oahu",
+          "kona-low-2026"
+        ],
+        "visibility_status": "review"
+      },
+      {
+        "external_id": "hub-hawaii-foodbank-volunteer",
+        "name": "Hawaiʻi Foodbank – Volunteer Coordination",
+        "island": "Oʿahu",
+        "area": null,
+        "neighborhood": null,
+        "resource_type": "volunteer_coordination",
+        "description": "Civil Beat list links Hawaiʻi Food Bank volunteer signup for food distribution operations supporting flood-impacted families.",
+        "organization": "Hawaiʻi Foodbank",
+        "source_name": "Civil Beat – LIST: Help Oʿahu Flooding Victims (March 2026)",
+        "source_type": "news",
+        "source_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "status": "active",
+        "notes": "Food distribution supporting Kona low flood-impacted families. Volunteer for distribution operations.",
+        "last_verified_at": "2026-03-20T00:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "hawaii-foodbank",
+          "volunteer-coordination",
+          "food-distribution",
+          "oahu",
+          "kona-low-2026"
+        ],
+        "visibility_status": "public"
+      },
+      {
+        "external_id": "hub-red-cross-volunteer",
+        "name": "American Red Cross – Hawaiʻi Storm Response Volunteer Signup",
+        "island": "Statewide",
+        "area": null,
+        "neighborhood": null,
+        "resource_type": "volunteer_coordination",
+        "description": "Civil Beat list links Red Cross volunteer form for Hawaiʻi storm response. Direct signup URL provided.",
+        "organization": "American Red Cross",
+        "source_name": "Civil Beat – LIST: Help Oʿahu Flooding Victims (March 2026)",
+        "source_type": "news",
+        "source_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "status": "active",
+        "notes": "Seeking volunteers to assist in Hawaiʻi storm response operations.",
+        "last_verified_at": "2026-03-20T00:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "red-cross",
+          "volunteer-coordination",
+          "statewide",
+          "oahu",
+          "kona-low-2026"
+        ],
+        "visibility_status": "public"
+      },
+      {
+        "external_id": "hub-hawaii-community-foundation-fund",
+        "name": "Hawaiʻi Community Foundation – Stronger Hawaiʻi Fund",
+        "island": "Statewide",
+        "area": null,
+        "neighborhood": null,
+        "resource_type": "other",
+        "description": "Civil Beat lists Hawaiʻi Community Foundation Stronger Hawaiʻi Fund as accepting donations for statewide disaster relief.",
+        "organization": "Hawaiʻi Community Foundation",
+        "source_name": "Civil Beat – LIST: Help Oʿahu Flooding Victims (March 2026)",
+        "source_type": "news",
+        "source_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "status": "active",
+        "notes": "Statewide disaster relief fund. Also recommended by HI-EMA.",
+        "last_verified_at": "2026-03-20T00:00:00-10:00",
+        "confidence": "high",
+        "tags": [
+          "hawaii-community-foundation",
+          "stronger-hawaii",
+          "donations",
+          "statewide",
+          "kona-low-2026"
+        ],
+        "visibility_status": "public"
+      },
+      {
+        "external_id": "hub-farmers-union-flood-fund",
+        "name": "Hawaiʻi Farmers Union United – Hawaiʻi Flood Response Fund",
+        "island": "Statewide",
+        "area": null,
+        "neighborhood": null,
+        "resource_type": "other",
+        "description": "Civil Beat lists Hawaiʻi Farmers Union United flood fund supporting farmers and rural areas. PayPal donation link provided.",
+        "organization": "Hawaiʻi Farmers Union United",
+        "source_name": "Civil Beat – LIST: Help Oʿahu Flooding Victims (March 2026)",
+        "source_type": "news",
+        "source_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "status": "active",
+        "notes": "Created specifically for farmers and rural flood-impacted areas.",
+        "last_verified_at": "2026-03-20T00:00:00-10:00",
+        "confidence": "medium",
+        "tags": [
+          "farmers-union",
+          "donations",
+          "rural",
+          "statewide",
+          "kona-low-2026"
+        ],
+        "visibility_status": "review"
+      }
+    ],
+    "public_need_summaries": [
+      {
+        "external_id": "need-aina-momona-looi-restoration",
+        "title": "ʻĀina Momona – Loʻi Restoration Donations, Kāneʻohe",
+        "island": "Oʿahu",
+        "area": "Windward",
+        "category": "donations",
+        "urgency": "soon",
+        "description": "ʻĀina Momona is restoring loʻi at its Aloha ʻĀina Health and Learning Center in Kāneʻohe, damaged by flooding. Accepting donations via ActBlue.",
+        "source_name": "Civil Beat – LIST: Help Oʿahu Flooding Victims (March 2026)",
+        "source_type": "news",
+        "source_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "last_verified_at": "2026-03-20T00:00:00-10:00",
+        "confidence": "medium",
+        "tags": [
+          "aina-momona",
+          "kaneohe",
+          "windward",
+          "oahu",
+          "looi",
+          "restoration",
+          "donations",
+          "kona-low-2026"
+        ],
+        "visibility_status": "review"
+      }
+    ],
+    "review_queue": [
+      {
+        "external_id": "rq-civilbeat-aloha-united-way-helpline",
+        "queue_type": "resource_verification",
+        "source_external_id": "src-civilbeat-oahu-flood-donate-list",
+        "source_signal_external_id": "sig-civilbeat-aloha-united-way-helpline",
+        "title": "Aloha United Way – Flood Victim Help Call and Text Line",
+        "summary": "Signal identifies Aloha United Way operating a help line for flood victims but no specific phone or text number was captured in the source article. Insufficient detail to publish help_hub automatically. Retrieve contact number from auw.org before creating hub.",
+        "reason": "insufficient_detail — helpline contact number missing from source; cannot create actionable hub record without it",
+        "priority": "medium",
+        "raw_url": "https://www.civilbeat.org/2026/03/list-help-oahu-flooding-victims-heres-where-you-can-donate/",
+        "payload": {
+          "observed_label": "Aloha United Way – help line",
+          "website": "https://www.auw.org/donate/",
+          "public_notes": "Operating help call and text line for flood victims. Specific helpline number not captured in article — check auw.org."
+        },
+        "status": "pending"
+      },
+      {
+        "external_id": "rq-mykailua-fb-community-recovery-signal",
+        "queue_type": "source_signal_review",
+        "source_external_id": "src-facebook-mykailua",
+        "source_signal_external_id": "sig-mykailua-fb-community-recovery-signal",
+        "title": "My Kailua Facebook – Possible Community Recovery Signal (Unverified)",
+        "summary": "My Kailua Facebook community page blocked by robots.txt. No post content safely extractable. Secondary context confirms Windward/Kailua flooding during both Kona storms. Page likely carrying neighborhood-specific recovery signal not in official channels. Requires manual human spot-check.",
+        "reason": "social_source; low_confidence; robots_txt_blocked; no structured data extractable — manual monitoring required 1-2x daily during active recovery",
+        "priority": "low",
+        "raw_url": "https://www.facebook.com/mykailua",
+        "payload": {
+          "observed_label": "My Kailua – Facebook community page",
+          "fetch_status": "blocked_robots_txt",
+          "secondary_context": "KITV reported sewage backflow flooding near Kailua Beach Park March 13-14. Windward Oahu listed in NWS flash flood zones March 20-21.",
+          "public_notes": "Manual human monitoring required. No structured post data safely extractable."
+        },
+        "status": "pending"
+      },
+      {
+        "external_id": "rq-mykailua-fb-kailua-sewage-flooding-context",
+        "queue_type": "need_summary_review",
+        "source_external_id": "src-facebook-mykailua",
+        "source_signal_external_id": "sig-mykailua-fb-kailua-sewage-flooding-context",
+        "title": "Kailua – Sewage Backflow Flooding Near Kailua Beach Park (Corroborated by News)",
+        "summary": "KITV-corroborated report of sewage backflow flooding near Kailua Beach Park during March 13-14 Kona storm. Signal has medium confidence from news corroboration but is registered under the social (Facebook) source entry. Consider: (1) re-registering the KITV article as its own source_registry entry, (2) creating a need_summary for Kailua sewage cleanup and health hazard remediation needs, (3) verifying whether cleanup resources have already been deployed.",
+        "reason": "social_source_registry despite news corroboration; needs_human_verification; potential reclassification to news source to enable auto-publish; sewage hazard detail warrants careful handling",
+        "priority": "medium",
+        "raw_url": "https://www.kitv.com/news/kailua-homes-flooded-with-sewage-after-heavy-storm/article_8e87d73c-1e5d-436e-b361-4c2ef5d8bc7a.html",
+        "payload": {
+          "observed_label": "Kailua Beach Park area – sewage flooding",
+          "corroborating_source": "KITV Island News, published March 14 updated March 18 2026",
+          "mentioned_location": "Kailua Beach Park area, Kailua, Oʿahu",
+          "hazard_type": "sewage_contamination",
+          "public_notes": "Flooding overwhelmed drainage and sewage systems. Cleanup and health hazard remediation likely still needed. Not tied to Facebook post — derived from news corroboration."
+        },
+        "status": "pending"
+      }
+    ]
+  },
+  "review": [
+    {
+      "external_id": "rq-civilbeat-aloha-united-way-helpline",
+      "reason": "Help line identified in Civil Beat article but no contact number captured. Cannot publish actionable hub without phone/text number.",
+      "recommended_next_step": "Visit auw.org directly, retrieve current helpline number, update signal raw_payload, then re-run hub auto-generation."
+    },
+    {
+      "external_id": "rq-mykailua-fb-community-recovery-signal",
+      "reason": "Social source, low confidence, robots.txt blocked. No data safely extractable.",
+      "recommended_next_step": "Manually browse facebook.com/mykailua 1-2x daily. If structured resource or need is found, create a new signal with source reclassified to social_monitor and promote to medium confidence."
+    },
+    {
+      "external_id": "rq-mykailua-fb-kailua-sewage-flooding-context",
+      "reason": "News-corroborated sewage flooding event attached to social source registry entry. Medium confidence but blocked from auto-publishing. Potential need_summary candidate.",
+      "recommended_next_step": "Register KITV article (https://www.kitv.com/news/kailua-homes-flooded-with-sewage-after-heavy-storm/...) as standalone source_registry entry (source_type=news, trust_level=medium). Clone signal with new source_external_id. Re-run — will qualify for need_summary auto-generation. Also verify current status of cleanup/remediation before publishing."
+    }
+  ],
+  "notes": [
+    "source_registry: 2 candidates upserted (1 news/high-trust, 1 social/low-trust).",
+    "source_signals: 11 signals upserted. 8 from news source (Civil Beat), 2 from social monitor (My Kailua FB), 1 news-corroborated but registered under social source.",
+    "help_hubs: 7 auto-generated. Breakdown: 4 public, 3 review.",
+    "public_need_summaries: 1 auto-generated (all visibility=review — medium confidence from single news aggregator pass; upgrade to public after direct org verification).",
+    "review_queue: 3 items pending. Priorities — medium: 2, low: 1.",
+    "All suggested_action=update_help_hub signals: these are upserts — if a matching external_id already exists in help_hubs from a prior seed run, they will update in place. If no prior record exists, they will insert as new.",
+    "ʻĀina Momona loʻi restoration (sig-civilbeat-aina-momona-looi-restoration): need_summary generated with urgency='soon' — no urgency field in signal; reviewer should confirm and adjust to 'urgent' if active fundraising is time-sensitive.",
+    "Kailua sewage signal (sig-mykailua-fb-kailua-sewage-flooding-context): high-value need candidate blocked only by social source_registry assignment. Reclassifying to a KITV news source entry is the single action required to unblock auto-generation. See review queue item rq-mykailua-fb-kailua-sewage-flooding-context.",
+    "raw_payload column typed as jsonb. Ensure target column accepts jsonb or cast to text at import time.",
+    "tags column typed as text[]. Adjust cast if target schema differs.",
+    "Unicode Hawaiian diacriticals (ʻokina, macrons) preserved as UTF-8 throughout. Ensure database connection and client are UTF-8.",
+    "freshness_score is NULL for the My Kailua FB community signal — no content was fetchable. Do not interpolate."
+  ]
+}

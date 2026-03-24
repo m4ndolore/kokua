@@ -152,6 +152,7 @@ export type HelpHub = {
   id: string
   created_at: string
   updated_at: string
+  external_id: string | null
   name: string
   island: string
   area: string
@@ -162,10 +163,13 @@ export type HelpHub = {
   public_phone: string | null
   public_email: string | null
   address: string | null
+  latitude: number | null
+  longitude: number | null
   source_name: string | null
   source_type: string | null
   source_url: string | null
   source_registry_id: string | null
+  geo_reference_node_id: string | null
   confidence: string
   last_verified_at: string | null
   visibility_status: string
@@ -179,6 +183,7 @@ export type PublicNeedSummary = {
   id: string
   created_at: string
   updated_at: string
+  external_id: string | null
   island: string
   area: string | null
   title: string
@@ -189,6 +194,7 @@ export type PublicNeedSummary = {
   source_type: string | null
   source_url: string | null
   source_registry_id: string | null
+  geo_reference_node_id: string | null
   confidence: string
   last_verified_at: string | null
   visibility_status: string
@@ -238,6 +244,21 @@ export type SourceRegistry = {
   last_checked_at: string | null
 }
 
+export type GeoReferenceNode = {
+  id: string
+  created_at: string
+  key: string
+  name: string
+  island: string | null
+  area: string | null
+  latitude: number
+  longitude: number
+  radius_km: number | null
+  notice_type: string | null
+  notes: string | null
+  is_active: boolean
+}
+
 export type SourceSignal = {
   id: string
   created_at: string
@@ -280,6 +301,8 @@ export type DonationLink = {
   area: string | null
   neighborhood: string | null
   address: string | null
+  latitude: number | null
+  longitude: number | null
   hours: string | null
   destination_url: string
   source_name: string | null

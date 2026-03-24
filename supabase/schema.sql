@@ -151,6 +151,8 @@ create table if not exists donation_links (
   area text,
   neighborhood text,
   address text,
+  latitude double precision,
+  longitude double precision,
   hours text,
   destination_url text not null,
   source_name text,
@@ -168,6 +170,25 @@ create table if not exists donation_links (
 );
 
 -- ============================================================
+-- GEO REFERENCE NODES
+-- ============================================================
+
+create table if not exists geo_reference_nodes (
+  id uuid default gen_random_uuid() primary key,
+  created_at timestamptz default now() not null,
+  key text unique not null,
+  name text not null,
+  island text,
+  area text,
+  latitude double precision not null,
+  longitude double precision not null,
+  radius_km double precision,
+  notice_type text,
+  notes text,
+  is_active boolean not null default true
+);
+
+-- ============================================================
 -- PUBLIC-FACING CURATED TABLES (source-aware)
 -- ============================================================
 
@@ -176,6 +197,7 @@ create table if not exists help_hubs (
   id uuid default gen_random_uuid() primary key,
   created_at timestamptz default now() not null,
   updated_at timestamptz default now() not null,
+  external_id text unique,
   name text not null,
   island text not null,
   area text not null,
@@ -191,6 +213,8 @@ create table if not exists help_hubs (
   public_phone text,
   public_email text,
   address text,
+  latitude double precision,
+  longitude double precision,
   -- Source provenance
   source_name text,
   source_type text check (source_type is null or source_type in (
@@ -198,6 +222,7 @@ create table if not exists help_hubs (
   )),
   source_url text,
   source_registry_id uuid references source_registry(id),
+  geo_reference_node_id uuid references geo_reference_nodes(id),
   confidence text not null default 'medium' check (confidence in ('high', 'medium', 'low')),
   last_verified_at timestamptz,
   -- Visibility and trust
@@ -213,6 +238,7 @@ create table if not exists public_need_summaries (
   id uuid default gen_random_uuid() primary key,
   created_at timestamptz default now() not null,
   updated_at timestamptz default now() not null,
+  external_id text unique,
   island text not null,
   area text,
   title text not null,
@@ -229,6 +255,7 @@ create table if not exists public_need_summaries (
   )),
   source_url text,
   source_registry_id uuid references source_registry(id),
+  geo_reference_node_id uuid references geo_reference_nodes(id),
   confidence text not null default 'medium' check (confidence in ('high', 'medium', 'low')),
   last_verified_at timestamptz,
   -- Visibility
@@ -313,21 +340,31 @@ create index if not exists idx_volunteers_island on volunteers(island);
 
 -- Donations
 create index if not exists idx_donation_links_island on donation_links(island);
+create index if not exists idx_donation_links_geo on donation_links(latitude, longitude) where latitude is not null and longitude is not null;
 create index if not exists idx_donation_links_donation_type on donation_links(donation_type);
 create index if not exists idx_donation_links_confidence on donation_links(confidence);
 create index if not exists idx_donation_links_is_visible on donation_links(is_visible) where is_visible = true;
 create index if not exists idx_donation_links_needs_review on donation_links(needs_review) where needs_review = true;
 create index if not exists idx_donation_links_tags on donation_links using gin(tags);
 
+create index if not exists idx_geo_reference_nodes_key on geo_reference_nodes(key);
+create index if not exists idx_geo_reference_nodes_island on geo_reference_nodes(island);
+create index if not exists idx_geo_reference_nodes_active on geo_reference_nodes(is_active) where is_active = true;
+
 -- Public-facing
 create index if not exists idx_hubs_visibility on help_hubs(visibility_status) where visibility_status = 'public';
 create index if not exists idx_hubs_island on help_hubs(island);
+create index if not exists idx_hubs_geo on help_hubs(latitude, longitude) where latitude is not null and longitude is not null;
+create index if not exists idx_hubs_external_id on help_hubs(external_id) where external_id is not null;
+create index if not exists idx_hubs_geo_reference on help_hubs(geo_reference_node_id) where geo_reference_node_id is not null;
 create index if not exists idx_hubs_category on help_hubs(category);
 create index if not exists idx_hubs_confidence on help_hubs(confidence);
 create index if not exists idx_hubs_source_registry on help_hubs(source_registry_id);
 
 create index if not exists idx_summaries_visibility on public_need_summaries(visibility_status) where visibility_status = 'public';
 create index if not exists idx_summaries_island on public_need_summaries(island);
+create index if not exists idx_summaries_external_id on public_need_summaries(external_id) where external_id is not null;
+create index if not exists idx_summaries_geo_reference on public_need_summaries(geo_reference_node_id) where geo_reference_node_id is not null;
 
 create index if not exists idx_review_status on review_queue_items(status);
 create index if not exists idx_review_origin on review_queue_items(origin);
@@ -346,6 +383,7 @@ alter table help_requests enable row level security;
 alter table help_offers enable row level security;
 alter table volunteers enable row level security;
 alter table donation_links enable row level security;
+alter table geo_reference_nodes enable row level security;
 alter table help_hubs enable row level security;
 alter table public_need_summaries enable row level security;
 alter table review_queue_items enable row level security;
@@ -370,6 +408,9 @@ create policy "Public can read public need summaries"
 create policy "Public can read visible donation links"
   on donation_links for select
   using (is_visible = true);
+create policy "Public can read active geo reference nodes"
+  on geo_reference_nodes for select
+  using (is_active = true);
 
 -- Service role full access (dashboard backend)
 create policy "Service role full access to dashboard_users"
@@ -386,6 +427,8 @@ create policy "Service role full access to volunteers"
   on volunteers for all using (auth.role() = 'service_role');
 create policy "Service role full access to donation_links"
   on donation_links for all using (auth.role() = 'service_role');
+create policy "Service role full access to geo_reference_nodes"
+  on geo_reference_nodes for all using (auth.role() = 'service_role');
 create policy "Service role full access to help_hubs"
   on help_hubs for all using (auth.role() = 'service_role');
 create policy "Service role full access to public_need_summaries"

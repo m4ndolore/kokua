@@ -60,6 +60,11 @@ interface DonationInput {
   area?: string | null
   neighborhood?: string | null
   address?: string | null
+  latitude?: number | string | null
+  longitude?: number | string | null
+  lat?: number | string | null
+  lng?: number | string | null
+  lon?: number | string | null
   hours?: string | null
   destination_url: string
   source_name?: string | null
@@ -80,6 +85,12 @@ interface Envelope {
   source?: { name: string; type: string; url: string }
   mode?: string
   items: DonationInput[]
+}
+
+function normalizeCoordinate(value: number | string | null | undefined): number | null {
+  if (value === null || value === undefined || value === '') return null
+  const numeric = typeof value === 'number' ? value : Number(value)
+  return Number.isFinite(numeric) ? numeric : null
 }
 
 async function main() {
@@ -168,6 +179,8 @@ async function main() {
       area: item.area ?? null,
       neighborhood: item.neighborhood ?? null,
       address: item.address ?? null,
+      latitude: normalizeCoordinate(item.latitude ?? item.lat),
+      longitude: normalizeCoordinate(item.longitude ?? item.lng ?? item.lon),
       hours: item.hours ?? null,
       destination_url: item.destination_url,
       source_name: sourceName,

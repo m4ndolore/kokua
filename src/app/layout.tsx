@@ -41,6 +41,9 @@ export default function RootLayout({
               <a href="/can-help" className="text-ocean-700 hover:text-ocean-900">
                 Can Help
               </a>
+              <a href="/map" className="text-ocean-700 hover:text-ocean-900">
+                Map
+              </a>
               <a href="/can-help/share-info" className="text-ocean-700 hover:text-ocean-900">
                 Contribute
               </a>

@@ -84,11 +84,46 @@ function normalizeTextArray(value) {
   return []
 }
 
+function normalizeCoordinate(value) {
+  if (value === null || value === undefined || value === '') return null
+  const numeric = typeof value === 'number' ? value : Number(value)
+  return Number.isFinite(numeric) ? numeric : null
+}
+
 function joinNotes(...parts) {
   return parts
     .map((part) => String(part || '').trim())
     .filter(Boolean)
     .join('\n\n') || null
+}
+
+async function ensureGeoReferenceNode(supabase, node, geoNodeMap) {
+  if (!node?.key || !node?.name) return null
+
+  const payload = {
+    key: node.key,
+    name: node.name,
+    island: normalizeIsland(node.island),
+    area: node.area || null,
+    latitude: normalizeCoordinate(node.latitude ?? node.lat),
+    longitude: normalizeCoordinate(node.longitude ?? node.lng ?? node.lon),
+    radius_km: normalizeCoordinate(node.radius_km),
+    notice_type: node.notice_type || null,
+    notes: node.notes || null,
+    is_active: node.is_active ?? true,
+  }
+
+  if (payload.latitude === null || payload.longitude === null) return null
+
+  const { data, error } = await supabase
+    .from('geo_reference_nodes')
+    .upsert(payload, { onConflict: 'key' })
+    .select('id,key')
+    .single()
+
+  if (error) throw error
+  geoNodeMap.set(data.key, data.id)
+  return data.id
 }
 
 function getClient() {
@@ -218,21 +253,26 @@ async function ensureSignal(supabase, signal, externalSourceMap) {
   return data.id
 }
 
-async function ensureHub(supabase, hub) {
+async function ensureHub(supabase, hub, geoNodeMap) {
   const island = normalizeIsland(hub.island)
   const area = hub.area || hub.neighborhood || island || 'Unknown area'
   const name = hub.name
 
-  const { data: existing, error: existingError } = await supabase
+  let existingQuery = supabase
     .from('help_hubs')
     .select('id')
-    .eq('name', name)
-    .eq('island', island)
-    .eq('area', area)
-    .maybeSingle()
+
+  if (hub.external_id) {
+    existingQuery = existingQuery.eq('external_id', hub.external_id)
+  } else {
+    existingQuery = existingQuery.eq('name', name).eq('island', island).eq('area', area)
+  }
+
+  const { data: existing, error: existingError } = await existingQuery.maybeSingle()
 
   if (existingError) throw existingError
   const payload = {
+    external_id: hub.external_id || null,
     name,
     island,
     area,
@@ -243,9 +283,12 @@ async function ensureHub(supabase, hub) {
     public_phone: hub.public_phone || null,
     public_email: hub.public_email || null,
     address: hub.address || null,
+    latitude: normalizeCoordinate(hub.latitude ?? hub.lat),
+    longitude: normalizeCoordinate(hub.longitude ?? hub.lng ?? hub.lon),
     source_name: hub.source_name || hub.organization || null,
     source_type: hub.source_type || null,
     source_url: hub.source_url || null,
+    geo_reference_node_id: hub.geo_reference_node_key ? geoNodeMap.get(hub.geo_reference_node_key) || null : null,
     confidence: hub.confidence || 'medium',
     last_verified_at: hub.last_verified_at || new Date().toISOString(),
     visibility_status: normalizeVisibility(hub),
@@ -272,19 +315,25 @@ async function ensureHub(supabase, hub) {
   return data.id
 }
 
-async function ensureSummary(supabase, summary) {
+async function ensureSummary(supabase, summary, geoNodeMap) {
   const island = normalizeIsland(summary.island) || 'Statewide'
   const area = summary.area || null
 
-  const { data: existing, error: existingError } = await supabase
+  let existingQuery = supabase
     .from('public_need_summaries')
     .select('id')
-    .eq('title', summary.title)
-    .eq('island', island)
-    .maybeSingle()
+
+  if (summary.external_id) {
+    existingQuery = existingQuery.eq('external_id', summary.external_id)
+  } else {
+    existingQuery = existingQuery.eq('title', summary.title).eq('island', island)
+  }
+
+  const { data: existing, error: existingError } = await existingQuery.maybeSingle()
 
   if (existingError) throw existingError
   const payload = {
+    external_id: summary.external_id || null,
     island,
     area,
     title: summary.title,
@@ -294,6 +343,7 @@ async function ensureSummary(supabase, summary) {
     source_name: summary.source_name || null,
     source_type: summary.source_type || null,
     source_url: summary.source_url || null,
+    geo_reference_node_id: summary.geo_reference_node_key ? geoNodeMap.get(summary.geo_reference_node_key) || null : null,
     confidence: summary.confidence || 'medium',
     last_verified_at: summary.last_verified_at || new Date().toISOString(),
     visibility_status: normalizeVisibility(summary),
@@ -341,6 +391,8 @@ async function ensureDonationLink(supabase, donation) {
     area: donation.area || null,
     neighborhood: donation.neighborhood || null,
     address: donation.address || null,
+    latitude: normalizeCoordinate(donation.latitude ?? donation.lat),
+    longitude: normalizeCoordinate(donation.longitude ?? donation.lng ?? donation.lon),
     hours: donation.hours || null,
     destination_url: donation.destination_url,
     source_name: donation.source_name || null,
@@ -377,6 +429,32 @@ async function ensureDonationLink(supabase, donation) {
   return data.id
 }
 
+async function assignHubGeoReference(supabase, link, geoNodeMap) {
+  if (!link?.external_id || !link?.node_key) return
+  const geoReferenceNodeId = geoNodeMap.get(link.node_key)
+  if (!geoReferenceNodeId) return
+
+  const { error } = await supabase
+    .from('help_hubs')
+    .update({ geo_reference_node_id: geoReferenceNodeId, updated_at: new Date().toISOString() })
+    .eq('external_id', link.external_id)
+
+  if (error) throw error
+}
+
+async function assignSummaryGeoReference(supabase, link, geoNodeMap) {
+  if (!link?.external_id || !link?.node_key) return
+  const geoReferenceNodeId = geoNodeMap.get(link.node_key)
+  if (!geoReferenceNodeId) return
+
+  const { error } = await supabase
+    .from('public_need_summaries')
+    .update({ geo_reference_node_id: geoReferenceNodeId, updated_at: new Date().toISOString() })
+    .eq('external_id', link.external_id)
+
+  if (error) throw error
+}
+
 async function main() {
   const files = process.argv.slice(2)
   if (files.length === 0) {
@@ -386,12 +464,14 @@ async function main() {
 
   const supabase = getClient()
   const externalSourceMap = new Map()
+  const geoNodeMap = new Map()
   const counts = {
     sources: 0,
     signals: 0,
     hubs: 0,
     summaries: 0,
     donationLinks: 0,
+    geoReferenceNodes: 0,
     skippedReviewQueueItems: 0,
   }
 
@@ -399,6 +479,11 @@ async function main() {
     const raw = JSON.parse(readFileSync(file, 'utf8'))
     const seed = raw.seed_json || {}
     console.log(`Processing ${file}`)
+
+    for (const geoNode of seed.geo_reference_nodes || []) {
+      await ensureGeoReferenceNode(supabase, geoNode, geoNodeMap)
+      counts.geoReferenceNodes += 1
+    }
 
     for (const source of seed.source_registry || []) {
       await ensureSource(supabase, source, externalSourceMap)
@@ -411,18 +496,26 @@ async function main() {
     }
 
     for (const hub of seed.help_hubs || []) {
-      await ensureHub(supabase, hub)
+      await ensureHub(supabase, hub, geoNodeMap)
       counts.hubs += 1
     }
 
     for (const summary of seed.public_need_summaries || []) {
-      await ensureSummary(supabase, summary)
+      await ensureSummary(supabase, summary, geoNodeMap)
       counts.summaries += 1
     }
 
     for (const donation of seed.donation_links || []) {
       await ensureDonationLink(supabase, donation)
       counts.donationLinks += 1
+    }
+
+    for (const link of seed.hub_fk_links || []) {
+      await assignHubGeoReference(supabase, link, geoNodeMap)
+    }
+
+    for (const link of seed.need_fk_links || []) {
+      await assignSummaryGeoReference(supabase, link, geoNodeMap)
     }
 
     if (Array.isArray(seed.review_queue) && seed.review_queue.length > 0) {

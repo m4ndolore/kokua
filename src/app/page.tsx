@@ -32,6 +32,12 @@ export default function Home() {
           Donate &amp; Support
         </a>
         <a
+          href="/map"
+          className="block bg-white hover:bg-ocean-50 active:bg-ocean-100 border border-ocean-200 text-ocean-800 text-center rounded-xl px-6 py-4 text-base font-semibold transition-colors"
+        >
+          Open Resource Map
+        </a>
+        <a
           href="/can-help/share-info"
           className="block text-center text-sm text-ocean-700 hover:text-ocean-900 underline"
         >

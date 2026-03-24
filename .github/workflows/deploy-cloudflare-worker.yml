@@ -28,6 +28,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Preflight - required secrets present
+        env:
+          SUPABASE_SECRET_API_KEY: ${{ secrets.SUPABASE_SECRET_API_KEY }}
+          DASHBOARD_PASSWORD: ${{ secrets.DASHBOARD_PASSWORD }}
+          DASHBOARD_SESSION_SECRET: ${{ secrets.DASHBOARD_SESSION_SECRET }}
+        run: |
+          node -e "const req=['SUPABASE_SECRET_API_KEY','DASHBOARD_PASSWORD','DASHBOARD_SESSION_SECRET']; const missing=req.filter(k=>!process.env[k]||String(process.env[k]).trim()===''); if(missing.length){console.error('Missing required secrets: '+missing.join(', ')); process.exit(1)} console.log('Preflight OK: required secrets present')"
+
       - name: Deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
